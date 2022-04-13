@@ -6,11 +6,11 @@
 	"type": "module",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/legend-js-dev/anti-raid.git"
+		"url": "git+https://github.com/AngelNext/spybot.git"
 	},
 	"license": "ISC",
 	"bugs": {
-		"url": "https://github.com/legend-js-dev/anti-raid/issues"
+		"url": "https://github.com/AngelNext/spybot/issues"
 	},
 	"homepage": "https://github.com/legend-js-dev/anti-raid#readme",
 	"dependencies": {
@@ -19,6 +19,7 @@
 		"discord-api-types": "^0.27.3",
 		"discord.js": "^13.6.0",
 		"express": "^4.17.3",
+		"node": "^17.7.2",
 		"quick.db": "^7.1.3"
 	},
 	"devDependencies": {}

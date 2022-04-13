@@ -20,7 +20,7 @@ console.log('[CREDITS]: made by eldi mindcrafter#0001 & AngelNext#9162');
 
 try {
 	await rest.put(Routes.applicationCommands('939629038178295828'), {
-		body: client.slashCommands,
+		body: Array.from(client.slashCommands.values()).map(c => c.command),
 	});
 
 	console.log('Successfully reloaded application (/) commands.');
