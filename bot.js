@@ -118,7 +118,10 @@ client.on('roleCreate', async (role) => {
 				const embed = new MessageEmbed()
 					.setTitle('**Anti-Raid**')
 					.setThumbnail(user?.displayAvatarURL({ dynamic: true }) || '')
-					.setFooter(role.guild.name, role.guild.iconURL() ?? '')
+					.setFooter({
+						text: role.guild.name,
+						iconURL: role.guild.iconURL() ?? '',
+					})
 					.addField('User', user?.tag || '')
 					.addField('Case', 'Tried To Raid | breaking the role create limits')
 					.addField('Punishment', punish)
