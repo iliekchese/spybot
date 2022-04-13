@@ -5,10 +5,7 @@ export const handler = (client) => {
 		.filter((file) => file.endsWith('.js'))
 		.forEach(async (file) => {
 			const { default: pull } = await import(`../slash-commands/${file}`);
-			if (pull.name) {
-				client.slashCommands.push(pull);
-				console.log(`[${pull.name.toUpperCase()}]: loaded!`);
-			} else console.log(`[${file.toUpperCase()}]: Error`);
+			client.slashCommands.push(pull);
 		});
 	console.log('-------------------------------------');
 	console.log('[INFO]: Slash Commands Loaded!');

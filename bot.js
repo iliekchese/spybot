@@ -18,17 +18,19 @@ client.commands = new Collection();
 client.slashCommands = [];
 console.log('[CREDITS]: made by eldi mindcrafter#0001 & AngelNext#9162');
 
-try {
-	await rest.put(Routes.applicationCommands('939629038178295828'), {
-		body: client.slashCommands.map(c => c.command),
-	});
+client.once('ready', async () => {
+	try {
+		await rest.put(
+			Routes.applicationCommands('939629038178295828'), {
+				body: client.slashCommands.map(c => c.command),
+		})
 
-	console.log('Successfully reloaded application (/) commands.');
-} catch (error) {
-	console.error(error);
-}
-
-client.once('ready', () => {
+		console.log("-------------------------------------");
+		console.log('Successfully reloaded application (/) commands.');
+		console.log("-------------------------------------");
+	} catch (error) {
+		console.error(error);
+	}
 	console.log(`[INFO]: Ready on client (${client.user?.tag})`);
 	console.log(
 		`[INFO]: watching ${client.guilds.cache.size} Servers, ${client.channels.cache.size} channels & ${client.users.cache.size} users`
