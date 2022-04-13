@@ -15,12 +15,12 @@ const client = new Client({
 	intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
 });
 client.commands = new Collection();
-client.slashCommands = new Collection();
+client.slashCommands = [];
 console.log('[CREDITS]: made by eldi mindcrafter#0001 & AngelNext#9162');
 
 try {
 	await rest.put(Routes.applicationCommands('939629038178295828'), {
-		body: Array.from(client.slashCommands.values()).map(c => c.command),
+		body: client.slashCommands.map(c => c.command),
 	});
 
 	console.log('Successfully reloaded application (/) commands.');
@@ -28,7 +28,7 @@ try {
 	console.error(error);
 }
 
-client.on('ready', () => {
+client.once('ready', () => {
 	console.log(`[INFO]: Ready on client (${client.user?.tag})`);
 	console.log(
 		`[INFO]: watching ${client.guilds.cache.size} Servers, ${client.channels.cache.size} channels & ${client.users.cache.size} users`
@@ -39,13 +39,15 @@ client.on('ready', () => {
 	});
 });
 
-client.on('interactionCreate', async (interaction) => {
+client.on('interactionCreate', async interaction => {
 	if (!interaction.isCommand()) return;
-	const command = client.slashCommands.get(interaction.commandName);
+	const command = client.slashCommands.find(
+		c => c.name === interaction.commandName
+	);
 	command?.run(client, interaction, db);
 });
 
-client.on('messageCreate', async (message) => {
+client.on('messageCreate', async message => {
 	if (message.author.bot) return;
 	if (!message.content.startsWith(PREFIX)) return;
 
@@ -56,17 +58,17 @@ client.on('messageCreate', async (message) => {
 	command?.run(client, message, args, db);
 });
 
-client.on('roleCreate', async (role) => {
+client.on('roleCreate', async role => {
 	if (role.managed === true) return;
 	const log = await role.guild
 		.fetchAuditLogs({
 			type: 'ROLE_CREATE',
 		})
-		.then((audit) => audit.entries.first());
+		.then(audit => audit.entries.first());
 	const user = log?.executor;
 	if (user?.id === client.user?.id) return;
 	let whitelist = db.get(`whitelist_${role.guild.id}`);
-	if (whitelist && whitelist.find((x) => x.user === user?.id)) {
+	if (whitelist && whitelist.find(x => x.user === user?.id)) {
 		return;
 	}
 	let person = db.get(`${role.guild.id}_${user?.id}_rolecreate`);
@@ -146,13 +148,11 @@ client.on('roleCreate', async (role) => {
 			}
 		} else if (punish === 'demote') {
 			try {
-				role.guild.members.cache
-					.get(user?.id || '')
-					?.roles.cache.forEach((r) => {
-						if (r.name !== '@everyone') {
-							role.guild.members.cache.get(user?.id || '')?.roles.remove(r.id);
-						}
-					});
+				role.guild.members.cache.get(user?.id || '')?.roles.cache.forEach(r => {
+					if (r.name !== '@everyone') {
+						role.guild.members.cache.get(user?.id || '')?.roles.remove(r.id);
+					}
+				});
 				const embed = new MessageEmbed()
 					.setTitle('**Anti-Raid**')
 					.setThumbnail(user?.displayAvatarURL({ dynamic: true }) || '')
@@ -200,17 +200,17 @@ client.on('roleCreate', async (role) => {
 	}
 });
 
-client.on('roleDelete', async (role) => {
+client.on('roleDelete', async role => {
 	if (role.managed === true) return;
 	const log = await role.guild
 		.fetchAuditLogs({
 			type: 'ROLE_DELETE',
 		})
-		.then((audit) => audit.entries.first());
+		.then(audit => audit.entries.first());
 	const user = log?.executor;
 	if (user?.id === client.user?.id) return;
 	let whitelist = db.get(`whitelist_${role.guild.id}`);
-	if (whitelist && whitelist.find((x) => x.user === user?.id)) {
+	if (whitelist && whitelist.find(x => x.user === user?.id)) {
 		return;
 	}
 	let person = db.get(`${role.guild.id}_${user?.id}_roledelete`);
@@ -225,7 +225,7 @@ client.on('roleDelete', async (role) => {
 		if (punish === 'ban') {
 			role.guild.members
 				.ban(user?.id || '')
-				.then((_) => {
+				.then(_ => {
 					let embed = new MessageEmbed()
 						.setTitle('**Anti-Raid**')
 						.setThumbnail(user?.displayAvatarURL({ dynamic: true }) || '')
@@ -239,7 +239,7 @@ client.on('roleDelete', async (role) => {
 						logs.send({ embeds: [embed] });
 					}
 				})
-				.catch((_) => {
+				.catch(_ => {
 					let embed = new MessageEmbed()
 						.setTitle('**Anti-Raid**')
 						.setThumbnail(user?.displayAvatarURL({ dynamic: true }) || '')
@@ -257,7 +257,7 @@ client.on('roleDelete', async (role) => {
 			role.guild.members.cache
 				.get(user?.id || '')
 				?.kick()
-				.then((xdbruhlolmoment) => {
+				.then(xdbruhlolmoment => {
 					let embed = new MessageEmbed()
 						.setTitle('**Anti-Raid**')
 						.setThumbnail(user?.displayAvatarURL({ dynamic: true }) || '')
@@ -271,7 +271,7 @@ client.on('roleDelete', async (role) => {
 						logs.send({ embeds: [embed] });
 					}
 				})
-				.catch((err) => {
+				.catch(err => {
 					let embed = new MessageEmbed()
 						.setTitle('**Anti-Raid**')
 						.setThumbnail(user?.displayAvatarURL({ dynamic: true }) || '')
@@ -290,13 +290,11 @@ client.on('roleDelete', async (role) => {
 				});
 		} else if (punish === 'demote') {
 			try {
-				role.guild.members.cache
-					.get(user?.id || '')
-					?.roles.cache.forEach((r) => {
-						if (r.name !== '@everyone') {
-							role.guild.members.cache.get(user?.id || '')?.roles.remove(r.id);
-						}
-					});
+				role.guild.members.cache.get(user?.id || '')?.roles.cache.forEach(r => {
+					if (r.name !== '@everyone') {
+						role.guild.members.cache.get(user?.id || '')?.roles.remove(r.id);
+					}
+				});
 				let embed = new MessageEmbed()
 					.setTitle('**Anti-Raid**')
 					.setThumbnail(user?.displayAvatarURL({ dynamic: true }) || '')
@@ -342,16 +340,16 @@ client.on('roleDelete', async (role) => {
 	}
 });
 
-client.on('channelCreate', async (channel) => {
+client.on('channelCreate', async channel => {
 	const log = await channel.guild
 		.fetchAuditLogs({
 			type: 'CHANNEL_CREATE',
 		})
-		.then((audit) => audit.entries.first());
+		.then(audit => audit.entries.first());
 	const user = log?.executor;
 	if (user?.id === client.user?.id) return;
 	let whitelist = db.get(`whitelist_${channel.guild.id}`);
-	if (whitelist && whitelist.find((x) => x.user === user?.id)) {
+	if (whitelist && whitelist.find(x => x.user === user?.id)) {
 		return;
 	}
 	let person = db.get(`${channel.guild.id}_${user?.id}_channelcreate`);
@@ -366,7 +364,7 @@ client.on('channelCreate', async (channel) => {
 		if (punish === 'ban') {
 			channel.guild.members
 				.ban(user?.id || '')
-				.then((_) => {
+				.then(_ => {
 					let embed = new MessageEmbed()
 						.setTitle('**Anti-Raid**')
 						.setThumbnail(user?.displayAvatarURL({ dynamic: true }) || '')
@@ -383,7 +381,7 @@ client.on('channelCreate', async (channel) => {
 						logs.send({ embeds: [embed] });
 					}
 				})
-				.catch((_) => {
+				.catch(_ => {
 					let embed = new MessageEmbed()
 						.setTitle('**Anti-Raid**')
 						.setThumbnail(user?.displayAvatarURL({ dynamic: true }) || '')
@@ -404,7 +402,7 @@ client.on('channelCreate', async (channel) => {
 			channel.guild.members.cache
 				.get(user?.id || '')
 				?.kick()
-				.then((jsisj) => {
+				.then(jsisj => {
 					let embed = new MessageEmbed()
 						.setTitle('**Anti-Raid**')
 						.setThumbnail(user?.displayAvatarURL({ dynamic: true }) || '')
@@ -421,7 +419,7 @@ client.on('channelCreate', async (channel) => {
 						logs.send({ embeds: [embed] });
 					}
 				})
-				.catch((_) => {
+				.catch(_ => {
 					let embed = new MessageEmbed()
 						.setTitle('**Anti-Raid**')
 						.setThumbnail(user?.displayAvatarURL({ dynamic: true }) || '')
@@ -442,7 +440,7 @@ client.on('channelCreate', async (channel) => {
 			try {
 				channel?.guild?.members?.cache
 					?.get(user?.id || '')
-					?.roles.cache.forEach((r) => {
+					?.roles.cache.forEach(r => {
 						if (r.name !== '@everyone') {
 							channel?.guild?.members?.cache
 								?.get(user?.id || '')
@@ -498,19 +496,19 @@ client.on('channelCreate', async (channel) => {
 	}
 });
 
-client.on('channelDelete', async (channel) => {
-	const guild = client.guilds.cache.find((g) =>
-		Array.from(g.channels.cache.values()).some((c) => c.id === channel.id)
+client.on('channelDelete', async channel => {
+	const guild = client.guilds.cache.find(g =>
+		Array.from(g.channels.cache.values()).some(c => c.id === channel.id)
 	);
 	const log = await guild
 		?.fetchAuditLogs({
 			type: 'CHANNEL_DELETE',
 		})
-		.then((audit) => audit.entries.first());
+		.then(audit => audit.entries.first());
 	const user = log?.executor;
 	if (user?.id === client.user?.id) return;
 	let whitelist = db.get(`whitelist_${guild?.id}`);
-	if (whitelist && whitelist.find((x) => x.user === user?.id)) {
+	if (whitelist && whitelist.find(x => x.user === user?.id)) {
 		return;
 	}
 	let person = db.get(`${guild?.id}_${user?.id}_channeldelete`);
@@ -525,7 +523,7 @@ client.on('channelDelete', async (channel) => {
 		if (punish === 'ban') {
 			guild?.members
 				.ban(user?.id || '')
-				.then((hahsh) => {
+				.then(hahsh => {
 					let embed = new MessageEmbed()
 						.setTitle('**Anti-Raid**')
 						.setThumbnail(user?.displayAvatarURL({ dynamic: true }) || '')
@@ -542,7 +540,7 @@ client.on('channelDelete', async (channel) => {
 						logs.send({ embeds: [embed] });
 					}
 				})
-				.catch((err) => {
+				.catch(err => {
 					let embed = new MessageEmbed()
 						.setTitle('**Anti-Raid**')
 						.setThumbnail(user?.displayAvatarURL({ dynamic: true }) || '')
@@ -564,7 +562,7 @@ client.on('channelDelete', async (channel) => {
 				guild?.members.cache
 					.get(user?.id || '')
 					?.kick()
-					.then((gsy) => {
+					.then(gsy => {
 						let embed = new MessageEmbed()
 							.setTitle('**Anti-Raid**')
 							.setThumbnail(user?.displayAvatarURL({ dynamic: true }) || '')
@@ -600,7 +598,7 @@ client.on('channelDelete', async (channel) => {
 			}
 		} else if (punish === 'demote') {
 			try {
-				guild?.members.cache.get(user?.id || '')?.roles.cache.forEach((r) => {
+				guild?.members.cache.get(user?.id || '')?.roles.cache.forEach(r => {
 					if (r.name !== '@everyone') {
 						guild?.members.cache.get(user?.id || '')?.roles.remove(r.id);
 					}
@@ -654,7 +652,7 @@ client.on('channelDelete', async (channel) => {
 	}
 });
 
-client.on('guildMemberRemove', async (member) => {
+client.on('guildMemberRemove', async member => {
 	const _user = member.user;
 	const userData = [
 		`${member.guild.id}_${_user.id}_rolecreate`,
@@ -664,17 +662,17 @@ client.on('guildMemberRemove', async (member) => {
 		`${member.guild.id}_${_user.id}_banlimit`,
 		`${member.guild.id}_${_user.id}_kicklimit`,
 	];
-	userData.forEach((data) => db.delete(data));
+	userData.forEach(data => db.delete(data));
 
 	const log = await member.guild
 		.fetchAuditLogs({
 			type: 'MEMBER_KICK',
 		})
-		.then((audit) => audit.entries.first());
+		.then(audit => audit.entries.first());
 	const user = log?.executor;
 	if (user?.id === client.user?.id) return;
 	let whitelist = db.get(`whitelist_${member.guild.id}`);
-	if (whitelist && whitelist.find((x) => x.user === user?.id)) {
+	if (whitelist && whitelist.find(x => x.user === user?.id)) {
 		return;
 	}
 	let person = db.get(`${member.guild.id}_${user?.id}_kicklimit`);
@@ -689,7 +687,7 @@ client.on('guildMemberRemove', async (member) => {
 		if (punish === 'ban') {
 			member.guild.members
 				.ban(user?.id || '')
-				.then((_) => {
+				.then(_ => {
 					let embed = new MessageEmbed()
 						.setTitle('**Anti-Raid**')
 						.setThumbnail(user?.displayAvatarURL({ dynamic: true }) || '')
@@ -703,7 +701,7 @@ client.on('guildMemberRemove', async (member) => {
 						logs.send({ embeds: [embed] });
 					}
 				})
-				.catch((err) => {
+				.catch(err => {
 					let embed = new MessageEmbed()
 						.setTitle('**Anti-Raid**')
 						.setThumbnail(user?.displayAvatarURL({ dynamic: true }) || '')
@@ -721,7 +719,7 @@ client.on('guildMemberRemove', async (member) => {
 			member?.guild?.members?.cache
 				?.get(user?.id || '')
 				?.kick()
-				.then((ehbruh) => {
+				.then(ehbruh => {
 					let embed = new MessageEmbed()
 						.setTitle('**Anti-Raid**')
 						.setThumbnail(user?.displayAvatarURL({ dynamic: true }) || '')
@@ -735,7 +733,7 @@ client.on('guildMemberRemove', async (member) => {
 						logs.send({ embeds: [embed] });
 					}
 				})
-				.catch((_) => {
+				.catch(_ => {
 					let embed = new MessageEmbed()
 						.setTitle('**Anti-Raid**')
 						.setThumbnail(user?.displayAvatarURL({ dynamic: true }) || '')
@@ -753,7 +751,7 @@ client.on('guildMemberRemove', async (member) => {
 			try {
 				member?.guild?.members?.cache
 					?.get(user?.id || '')
-					?.roles.cache.forEach((r) => {
+					?.roles.cache.forEach(r => {
 						if (r.name !== '@everyone') {
 							member?.guild?.members?.cache
 								?.get(user?.id || '')
@@ -815,11 +813,11 @@ client.on('guildBanAdd', async (ban, userr) => {
 		.fetchAuditLogs({
 			type: 'MEMBER_BAN_ADD',
 		})
-		.then((audit) => audit.entries.first());
+		.then(audit => audit.entries.first());
 	const user = log?.executor;
 	if (user?.id === client.user?.id) return;
 	let whitelist = db.get(`whitelist_${member?.guild.id}`);
-	if (whitelist && whitelist.find((x) => x.user === user?.id)) {
+	if (whitelist && whitelist.find(x => x.user === user?.id)) {
 		return;
 	}
 	let person = db.get(`${member?.guild.id}_${user?.id}_banlimit`);
@@ -834,7 +832,7 @@ client.on('guildBanAdd', async (ban, userr) => {
 		if (punish === 'ban') {
 			member?.guild.members
 				.ban(user?.id || '')
-				.then((lolxdbruh) => {
+				.then(lolxdbruh => {
 					let embed = new MessageEmbed()
 						.setTitle('**Anti-Raid**')
 						.setThumbnail(user?.displayAvatarURL({ dynamic: true }) || '')
@@ -848,7 +846,7 @@ client.on('guildBanAdd', async (ban, userr) => {
 						logs.send({ embeds: [embed] });
 					}
 				})
-				.catch((err) => {
+				.catch(err => {
 					let embed = new MessageEmbed()
 						.setTitle('**Anti-Raid**')
 						.setThumbnail(user?.displayAvatarURL({ dynamic: true }) || '')
@@ -866,7 +864,7 @@ client.on('guildBanAdd', async (ban, userr) => {
 			member?.guild?.members?.cache
 				?.get(user?.id || '')
 				?.kick()
-				.then((_) => {
+				.then(_ => {
 					let embed = new MessageEmbed()
 						.setTitle('**Anti-Raid**')
 						.setThumbnail(user?.displayAvatarURL({ dynamic: true }) || '')
@@ -880,7 +878,7 @@ client.on('guildBanAdd', async (ban, userr) => {
 						logs.send({ embeds: [embed] });
 					}
 				})
-				.catch((err) => {
+				.catch(err => {
 					let embed = new MessageEmbed()
 						.setTitle('**Anti-Raid**')
 						.setThumbnail(user?.displayAvatarURL({ dynamic: true }) || '')
@@ -898,7 +896,7 @@ client.on('guildBanAdd', async (ban, userr) => {
 			try {
 				member?.guild?.members?.cache
 					?.get(user?.id || '')
-					?.roles.cache.forEach((r) => {
+					?.roles.cache.forEach(r => {
 						if (r.name !== '@everyone') {
 							member?.guild?.members?.cache
 								?.get(user?.id || '')
@@ -963,4 +961,4 @@ app.listen(3000, () => {
 
 client
 	.login(process.env.TOKEN)
-	.catch((_) => console.log('[ERROR]: Invalid Token Provided'));
+	.catch(_ => console.log('[ERROR]: Invalid Token Provided'));
