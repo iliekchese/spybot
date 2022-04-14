@@ -20,14 +20,13 @@ console.log('[CREDITS]: made by eldi mindcrafter#0001 & AngelNext#9162');
 
 client.once('ready', async () => {
 	try {
-		await rest.put(
-			Routes.applicationCommands('939629038178295828'), {
-				body: client.slashCommands.map(c => c.command),
-		})
+		await rest.put(Routes.applicationCommands('939629038178295828'), {
+			body: client.slashCommands.map(c => c.command),
+		});
 
-		console.log("-------------------------------------");
+		console.log('-------------------------------------');
 		console.log('Successfully reloaded application (/) commands.');
-		console.log("-------------------------------------");
+		console.log('-------------------------------------');
 	} catch (error) {
 		console.error(error);
 	}
