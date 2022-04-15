@@ -3,7 +3,7 @@ import { Routes } from 'discord-api-types/v9';
 import { REST } from '@discordjs/rest';
 import { Database } from '@devsnowflake/quick.db';
 import { drawCard, LinearGradient } from 'discord-welcome-card';
-import fastify from 'fastify';
+import Fastify from 'fastify';
 import { readdir } from 'fs/promises';
 const handlers = await readdir('./handlers/');
 handlers
@@ -659,15 +659,13 @@ client.on('guildMemberAdd', async (member) => {
         welcomeChannel.send({ files: [image] });
     }
 });
-const app = fastify();
-app.get('/', async () => {
-    return 'Hello World';
-});
+const server = Fastify();
+server.get('/', async () => 'Hello World');
 try {
-    await app.listen(3000);
+    await server.listen(3000, '0.0.0.0');
 }
 catch (_) {
-    app.log.error('Error starting server');
+    console.error('Error starting server');
 }
 client
     .login(process.env.TOKEN)
