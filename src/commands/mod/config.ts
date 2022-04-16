@@ -166,7 +166,7 @@ export default {
 					break;
 				}
 				console.log(channel.id);
-				db.set(`logs_${message.guild?.id}`, channel.id);
+				db.set(`logs_${message.guild?.id}`, `${channel.id}`);
 				channel.send('**Anti Raid logs Channel**');
 				message.channel.send(
 					'**The logs channel has been set to ' + args[1] + '**'

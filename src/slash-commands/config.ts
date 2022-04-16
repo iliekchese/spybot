@@ -102,14 +102,18 @@ export default {
 		switch (interaction.options.getSubcommand()) {
 			case 'show':
 				const disabled = ':x: Disabled';
-				const rcl = db.get(`rolecreate_${interaction.guild?.id}`) || disabled;
-				const rdl = db.get(`roledelete_${interaction.guild?.id}`) || disabled;
-				const ccl =
+				const rcl: number =
+					db.get(`rolecreate_${interaction.guild?.id}`) || disabled;
+				const rdl: number =
+					db.get(`roledelete_${interaction.guild?.id}`) || disabled;
+				const ccl: number =
 					db.get(`channelcreate_${interaction.guild?.id}`) || disabled;
-				const cdl =
+				const cdl: number =
 					db.get(`channeldelete_${interaction.guild?.id}`) || disabled;
-				const bl = db.get(`banlimit_${interaction.guild?.id}`) || disabled;
-				const kl = db.get(`kicklimit_${interaction.guild?.id}`) || disabled;
+				const bl: number =
+					db.get(`banlimit_${interaction.guild?.id}`) || disabled;
+				const kl: number =
+					db.get(`kicklimit_${interaction.guild?.id}`) || disabled;
 				const logs = db.get(`logs_${interaction.guild?.id}`) || disabled;
 				const punish = db.get(`punish_${interaction.guild?.id}`) || disabled;
 				const logsChannel =
@@ -125,14 +129,14 @@ export default {
 						text: interaction.guild?.name || '',
 						iconURL: interaction.guild?.iconURL() ?? '',
 					})
-					.addField('Channel Create Limit', ccl)
-					.addField('Channel Delete Limit', cdl)
-					.addField('Role Create Limit', rcl)
-					.addField('Role Delete Limit', rdl)
-					.addField('Ban Limits', bl)
-					.addField('Kick Limits', kl)
-					.addField('Logs', logsChannel)
-					.addField('Punishment', punish)
+					.addField('Channel Create Limit', ccl.toString())
+					.addField('Channel Delete Limit', cdl.toString())
+					.addField('Role Create Limit', rcl.toString())
+					.addField('Role Delete Limit', rdl.toString())
+					.addField('Ban Limits', bl.toString())
+					.addField('Kick Limits', kl.toString())
+					.addField('Logs', logsChannel.toString())
+					.addField('Punishment', punish.toString())
 					.setColor('GREEN');
 				await interaction.reply({ embeds: [show] });
 				break;
@@ -207,7 +211,7 @@ export default {
 				const channel = interaction.options.getChannel(
 					'channel'
 				) as TextChannel;
-				db.set(`logs_${interaction.guild?.id}`, channel?.id);
+				db.set(`logs_${interaction.guild?.id}`, `${channel?.id}`);
 				channel?.send('**Anti Raid logs Channel**');
 				await interaction.reply(
 					`**The logs channel has been set to <#${channel.id}> **`
