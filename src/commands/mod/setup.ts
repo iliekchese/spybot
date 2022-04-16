@@ -1,7 +1,8 @@
 import type { ICommandArgs } from '../..';
-
 // TODO
 export default {
 	name: 'setup',
-	async run({ client, message, args }: ICommandArgs) {},
-};
+	async run({ message }: ICommandArgs) {
+		message.channel.send("setup is working!")
+  }
+}

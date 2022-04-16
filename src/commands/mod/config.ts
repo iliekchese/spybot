@@ -24,7 +24,6 @@ const limitTypeCheck = (message: Message, args: string[]) => {
 export default {
 	name: 'config',
 	run({ client, message, args, db }: ICommandArgs) {
-		const disabled = ':x: Disabled';
 		const bruh = new MessageEmbed()
 			.setTitle('<:Settings:939853181180080168> **Anti-Raid | Config**')
 			.setDescription(
@@ -49,22 +48,22 @@ export default {
 				iconURL: message.author.displayAvatarURL(),
 			})
 			.setFooter({
-				text: message.guild?.name || '',
+				text: message.guild?.name || ':x:',
 				iconURL: message.guild?.iconURL() ?? '',
 			});
 
 		switch (args[0]?.toLowerCase()) {
 			case 'show':
-				const rcl = db.get(`rolecreate_${message.guild?.id}`) || disabled;
-				const rdl = db.get(`roledelete_${message.guild?.id}`) || disabled;
-				const ccl = db.get(`channelcreate_${message.guild?.id}`) || disabled;
-				const cdl = db.get(`channeldelete_${message.guild?.id}`) || disabled;
-				const bl = db.get(`banlimit_${message.guild?.id}`) || disabled;
-				const kl = db.get(`kicklimit_${message.guild?.id}`) || disabled;
-				const logs = db.get(`logs_${message.guild?.id}`) || disabled;
-				const punish = db.get(`punish_${message.guild?.id}`) || disabled;
-				const logsChannel =
-					client.channels.cache.get(logs)?.toString() || disabled;
+				const disabled = ':x: Disabled';
+				const rcl = db.get(`rolecreate_${message.guild?.id}`)?.toString();
+				const rdl = db.get(`roledelete_${message.guild?.id}`)?.toString();
+				const ccl = db.get(`channelcreate_${message.guild?.id}`)?.toString();
+				const cdl = db.get(`channeldelete_${message.guild?.id}`)?.toString();
+				const bl = db.get(`banlimit_${message.guild?.id}`)?.toString();
+				const kl = db.get(`kicklimit_${message.guild?.id}`)?.toString();
+				const logs = db.get(`logs_${message.guild?.id}`);
+				const punish = db.get(`punish_${message.guild?.id}`);
+				console.log(logs)
 				const show = new MessageEmbed()
 					.setTitle('**Anti-Raid | Config**')
 					.setAuthor({
@@ -76,14 +75,14 @@ export default {
 						text: message.guild?.name || '',
 						iconURL: message.guild?.iconURL() ?? '',
 					})
-					.addField('Channel Create Limit', ccl)
-					.addField('Channel Delete Limit', cdl)
-					.addField('Role Create Limit', rcl)
-					.addField('Role Delete Limit', rdl)
-					.addField('Ban Limits', bl)
-					.addField('Kick Limits', kl)
-					.addField('Logs', logsChannel)
-					.addField('Punishment', punish)
+					.addField('Channel Create Limit', ccl ?? disabled)
+					.addField('Channel Delete Limit', cdl ?? disabled)
+					.addField('Role Create Limit', rcl ?? disabled)
+					.addField('Role Delete Limit', rdl ?? disabled)
+					.addField('Ban Limits', bl ?? disabled)
+					.addField('Kick Limits', kl ?? disabled)
+					.addField('Logs', logs ? `<#${logs}>` : disabled)
+					.addField('Punishment', punish ?? disabled)
 					.setColor('GREEN');
 				message.channel.send({ embeds: [show] });
 				break;
@@ -166,6 +165,7 @@ export default {
 					);
 					break;
 				}
+				console.log(channel.id)
 				db.set(`logs_${message.guild?.id}`, channel.id);
 				channel.send('**Anti Raid logs Channel**');
 				message.channel.send(

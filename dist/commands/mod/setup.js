@@ -1,5 +1,7 @@
 // TODO
 export default {
     name: 'setup',
-    async run({ client, message, args }) { },
+    async run({ message }) {
+        message.channel.send("setup is working!");
+    }
 };

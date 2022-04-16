@@ -3,6 +3,7 @@ import type { IHandler } from '..';
 import { MessageEmbed } from 'discord.js';
 
 export const handler = ({ client, db }: IHandler) => {
+	const disabled = ':x: Disabled'
 	client.on('roleCreate', async role => {
 		if (role.managed === true) return;
 		const audits = await role.guild.fetchAuditLogs({
@@ -15,9 +16,10 @@ export const handler = ({ client, db }: IHandler) => {
 		if (whitelist?.find(x => x.user.id === user?.id)) return;
 		const person: number = db.get(`${role.guild.id}_${user?.id}_rolecreate`);
 		const limit: number = db.get(`rolecreate_${role.guild.id}`);
-		if (limit === null) return;
+		if (!limit) return;
+		if (!person) return;
 		const logsID = db.get(`logs_${role.guild.id}`);
-		const punish = db.get(`punish_${role.guild.id}`);
+		const punish = db.get(`punish_${role.guild.id}`) || disabled;
 		const logs = client.channels.cache.get(logsID) as TextChannel;
 		const embed = new MessageEmbed()
 			.setTitle('**Anti-Raid**')
@@ -62,10 +64,10 @@ export const handler = ({ client, db }: IHandler) => {
 				embed.addField(`${punish}ed`, 'Yes');
 				await role.guild.members.cache.get(user?.id || '')?.kick();
 				await role.guild.members.ban(user?.id || '');
-				logs.send({ embeds: [embed] });
+				logs?.send({ embeds: [embed] });
 			} catch (_) {
 				embed.addField(`${punish}ed`, 'No');
-				logs.send({ embeds: [embed] });
+				logs?.send({ embeds: [embed] });
 			}
 		} else db.add(`${role.guild.id}_${user?.id}_rolecreate`, 1);
 	});
@@ -84,7 +86,7 @@ export const handler = ({ client, db }: IHandler) => {
 		const limit: number = db.get(`roledelete_${role.guild.id}`);
 		if (limit === null) return;
 		const logsID = db.get(`logs_${role.guild.id}`);
-		const punish = db.get(`punish_${role.guild.id}`);
+		const punish = db.get(`punish_${role.guild.id}`) || disabled;
 		const logs = client.channels.cache.get(logsID) as TextChannel;
 		const embed = new MessageEmbed()
 			.setTitle('**Anti-Raid**')
@@ -124,10 +126,10 @@ export const handler = ({ client, db }: IHandler) => {
 							});
 				}
 				embed.addField(`${punish}ed`, 'Yes');
-				logs.send({ embeds: [embed] });
+				logs?.send({ embeds: [embed] });
 			} catch (_) {
 				embed.addField(`${punish}ed`, 'No');
-				logs.send({ embeds: [embed] });
+				logs?.send({ embeds: [embed] });
 			}
 		} else db.add(`${role.guild.id}_${user?.id}_roledelete`, 1);
 	});
