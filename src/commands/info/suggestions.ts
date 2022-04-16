@@ -14,7 +14,7 @@ export default {
 					return message.channel.send(
 						':x: | **That channel is not from this server**'
 					);
-				db.set(`suggestions_${message.guild?.id}`, channel.id);
+				db.set(`suggestions_${message.guild?.id}`, `s${channel.id}`);
 				channel.send('**Suggestions Channel**');
 				return message.channel.send(
 					`**The suggestions channel has been set to ${args[1]}**`
@@ -26,7 +26,7 @@ export default {
 					.setDescription(args.slice(1).join(' '))
 					.setColor('#2F3136');
 				const suggestionsChannel = client.channels.cache.get(
-					db.get(`suggestions_${message.guild?.id}`)
+					db.get(`suggestions_${message.guild?.id}`).slice(1)
 				) as TextChannel;
 				suggestionsChannel?.send({ embeds: [embed] }).then(({ react }) => {
 					react('✅');

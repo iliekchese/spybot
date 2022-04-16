@@ -178,7 +178,7 @@ export default {
 
 			default:
 				message.channel.send(
-					':x: | **Enter a valid subcommand: EXAMPLE: .config help**'
+					':x: | **Enter a valid subcommand, EXAMPLE: .config help**'
 				);
 		}
 	},
