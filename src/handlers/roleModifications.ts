@@ -3,9 +3,9 @@ import type { IHandler } from '..';
 import { MessageEmbed } from 'discord.js';
 
 export const handler = ({ client, db }: IHandler) => {
-	const disabled = ':x: Disabled'
+	const disabled = ':x: Disabled';
 	client.on('roleCreate', async role => {
-		if (role.managed === true) return;
+		if (role.managed) return;
 		const audits = await role.guild.fetchAuditLogs({
 			type: 'ROLE_CREATE',
 		});
@@ -20,7 +20,7 @@ export const handler = ({ client, db }: IHandler) => {
 		if (!person) return;
 		const logsID = db.get(`logs_${role.guild.id}`);
 		const punish = db.get(`punish_${role.guild.id}`) || disabled;
-		const logs = client.channels.cache.get(logsID) as TextChannel;
+		const logs = client.channels.cache.get(logsID) as TextChannel | undefined;
 		const embed = new MessageEmbed()
 			.setTitle('**Anti-Raid**')
 			.setThumbnail(user?.displayAvatarURL({ dynamic: true }) || '')
@@ -73,7 +73,7 @@ export const handler = ({ client, db }: IHandler) => {
 	});
 
 	client.on('roleDelete', async role => {
-		if (role.managed === true) return;
+		if (role.managed) return;
 		const audits = await role.guild.fetchAuditLogs({
 			type: 'ROLE_DELETE',
 		});
@@ -87,7 +87,7 @@ export const handler = ({ client, db }: IHandler) => {
 		if (limit === null) return;
 		const logsID = db.get(`logs_${role.guild.id}`);
 		const punish = db.get(`punish_${role.guild.id}`) || disabled;
-		const logs = client.channels.cache.get(logsID) as TextChannel;
+		const logs = client.channels.cache.get(logsID) as TextChannel | undefined;
 		const embed = new MessageEmbed()
 			.setTitle('**Anti-Raid**')
 			.setThumbnail(user?.displayAvatarURL({ dynamic: true }) || '')
@@ -108,12 +108,14 @@ export const handler = ({ client, db }: IHandler) => {
 							reason: `You have been banned for deleting too many roles.`,
 						});
 						break;
+
 					case 'kick':
 						await role.guild.members.kick(
 							user?.id || '',
 							`You have been kicked for deleting too many roles.`
 						);
 						break;
+
 					case 'demote':
 						role.guild.members.cache
 							.get(user?.id || '')

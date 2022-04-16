@@ -23,7 +23,7 @@ const limitTypeCheck = (message: Message, args: string[]) => {
 
 export default {
 	name: 'config',
-	run({ client, message, args, db }: ICommandArgs) {
+	run({ message, args, db }: ICommandArgs) {
 		const bruh = new MessageEmbed()
 			.setTitle('<:Settings:939853181180080168> **Anti-Raid | Config**')
 			.setDescription(
@@ -63,7 +63,7 @@ export default {
 				const kl = db.get(`kicklimit_${message.guild?.id}`)?.toString();
 				const logs = db.get(`logs_${message.guild?.id}`);
 				const punish = db.get(`punish_${message.guild?.id}`);
-				console.log(logs)
+				console.log(logs);
 				const show = new MessageEmbed()
 					.setTitle('**Anti-Raid | Config**')
 					.setAuthor({
@@ -165,7 +165,7 @@ export default {
 					);
 					break;
 				}
-				console.log(channel.id)
+				console.log(channel.id);
 				db.set(`logs_${message.guild?.id}`, channel.id);
 				channel.send('**Anti Raid logs Channel**');
 				message.channel.send(

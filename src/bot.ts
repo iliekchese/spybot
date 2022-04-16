@@ -11,8 +11,8 @@ import { Database } from '@devsnowflake/quick.db';
 import { drawCard, LinearGradient } from 'discord-welcome-card';
 import Fastify from 'fastify';
 import { readdir } from 'fs/promises';
-const handlers = await readdir('./handlers/');
 
+const handlers = await readdir('./handlers/');
 handlers
 	.filter(file => file.endsWith('.js'))
 	.forEach(file => {
@@ -120,7 +120,7 @@ client.on('channelCreate', async channel => {
 			channel.guild.members.cache
 				.get(user?.id || '')
 				?.kick()
-				.then(jsisj => {
+				.then(_jsisj => {
 					let embed = new MessageEmbed()
 						.setTitle('**Anti-Raid**')
 						.setThumbnail(user?.displayAvatarURL({ dynamic: true }) || '')
@@ -244,7 +244,7 @@ client.on('channelDelete', async channel => {
 		if (punish === 'ban') {
 			guild?.members
 				.ban(user?.id || '')
-				.then(hahsh => {
+				.then(_hahsh => {
 					let embed = new MessageEmbed()
 						.setTitle('**Anti-Raid**')
 						.setThumbnail(user?.displayAvatarURL({ dynamic: true }) || '')
@@ -261,7 +261,7 @@ client.on('channelDelete', async channel => {
 						logs.send({ embeds: [embed] });
 					}
 				})
-				.catch(err => {
+				.catch(_err => {
 					let embed = new MessageEmbed()
 						.setTitle('**Anti-Raid**')
 						.setThumbnail(user?.displayAvatarURL({ dynamic: true }) || '')
@@ -283,7 +283,7 @@ client.on('channelDelete', async channel => {
 				guild?.members.cache
 					.get(user?.id || '')
 					?.kick()
-					.then(gsy => {
+					.then(_ => {
 						let embed = new MessageEmbed()
 							.setTitle('**Anti-Raid**')
 							.setThumbnail(user?.displayAvatarURL({ dynamic: true }) || '')
@@ -301,7 +301,7 @@ client.on('channelDelete', async channel => {
 						}
 					});
 			} catch (err) {
-				let embed = new MessageEmbed()
+				const embed = new MessageEmbed()
 					.setTitle('**Anti-Raid**')
 					.setThumbnail(user?.displayAvatarURL({ dynamic: true }) || '')
 					.setFooter(guild?.name || '', guild?.iconURL() ?? '')
@@ -320,14 +320,16 @@ client.on('channelDelete', async channel => {
 		} else if (punish === 'demote') {
 			try {
 				guild?.members.cache.get(user?.id || '')?.roles.cache.forEach(r => {
-					if (r.name !== '@everyone') {
+					if (r.name !== '@everyone')
 						guild?.members.cache.get(user?.id || '')?.roles.remove(r.id);
-					}
 				});
-				let embed = new MessageEmbed()
+				const embed = new MessageEmbed()
 					.setTitle('**Anti-Raid**')
 					.setThumbnail(user?.displayAvatarURL({ dynamic: true }) || '')
-					.setFooter(guild?.name + '', guild?.iconURL() ?? '')
+					.setFooter({
+						text: guild?.name + '',
+						iconURL: guild?.iconURL() ?? '',
+					})
 					.addField('User', user?.tag || '')
 					.addField(
 						'Case',
@@ -340,10 +342,13 @@ client.on('channelDelete', async channel => {
 					logs.send({ embeds: [embed] });
 				}
 			} catch (err) {
-				let embed = new MessageEmbed()
+				const embed = new MessageEmbed()
 					.setTitle('**Anti-Raid**')
 					.setThumbnail(user?.displayAvatarURL({ dynamic: true }) || '')
-					.setFooter(guild?.name || '', guild?.iconURL() ?? '')
+					.setFooter({
+						text: guild?.name || '',
+						iconURL: guild?.iconURL() ?? '',
+					})
 					.setColor('#2f3136')
 					.addField('User', user?.tag || '')
 					.addField('Case', 'Tried to Raid | Breaking channel delete limits')
@@ -356,12 +361,12 @@ client.on('channelDelete', async channel => {
 		}
 	} else {
 		db.add(`${guild?.id}_${guild?.id}_channeldelete`, 1);
-		let pog = db.get(`${guild?.id}_${user?.id}_channeldelete`);
-		let bruh = db.get(`channeldelete_${guild?.id}`);
-		let embed = new MessageEmbed()
+		const pog = db.get(`${guild?.id}_${user?.id}_channeldelete`);
+		const bruh = db.get(`channeldelete_${guild?.id}`);
+		const embed = new MessageEmbed()
 			.setTitle('**Anti-Raid**')
 			.setThumbnail(user?.displayAvatarURL({ dynamic: true }) || '')
-			.setFooter(guild?.name || '', guild?.iconURL() ?? '')
+			.setFooter({ text: guild?.name || '', iconURL: guild?.iconURL() ?? '' })
 			.addField('User', user?.tag || '')
 			.addField('Case', 'Deleting channels...')
 			.addField('Punishment', punish || ':x: Disabled')
@@ -425,7 +430,7 @@ client.on('guildMemberRemove', async member => {
 						logs.send({ embeds: [embed] });
 					}
 				})
-				.catch(err => {
+				.catch(_err => {
 					let embed = new MessageEmbed()
 						.setTitle('**Anti-Raid**')
 						.setThumbnail(user?.displayAvatarURL({ dynamic: true }) || '')
@@ -443,7 +448,7 @@ client.on('guildMemberRemove', async member => {
 			member?.guild?.members?.cache
 				?.get(user?.id || '')
 				?.kick()
-				.then(ehbruh => {
+				.then(_ehbruh => {
 					let embed = new MessageEmbed()
 						.setTitle('**Anti-Raid**')
 						.setThumbnail(user?.displayAvatarURL({ dynamic: true }) || '')
@@ -553,13 +558,13 @@ client.on('guildBanAdd', async ban => {
 		return;
 	}
 	let logsID = db.get(`logs_${member?.guild.id}`);
-	const logs = client.channels.cache.get(logsID) as TextChannel;
+	const logs = client.channels.cache.get(logsID) as TextChannel | undefined;
 	let punish = db.get(`punish_${member?.guild.id}`);
 	if (person > limit - 1) {
 		if (punish === 'ban') {
 			member?.guild.members
 				.ban(user?.id || '')
-				.then(lolxdbruh => {
+				.then(_lolxdbruh => {
 					let embed = new MessageEmbed()
 						.setTitle('**Anti-Raid**')
 						.setThumbnail(user?.displayAvatarURL({ dynamic: true }) || '')
@@ -569,11 +574,9 @@ client.on('guildBanAdd', async ban => {
 						.addField('Punishment', punish)
 						.addField('Banned', 'Yes')
 						.setColor('#2f3136');
-					if (logs?.isText()) {
-						logs.send({ embeds: [embed] });
-					}
+					logs?.send({ embeds: [embed] });
 				})
-				.catch(err => {
+				.catch(_err => {
 					let embed = new MessageEmbed()
 						.setTitle('**Anti-Raid**')
 						.setThumbnail(user?.displayAvatarURL({ dynamic: true }) || '')
@@ -583,13 +586,11 @@ client.on('guildBanAdd', async ban => {
 						.addField('Punishment', punish)
 						.addField('Banned', 'No')
 						.setColor('#2f3136');
-					//if (logs?.isText()) {
 					logs?.send({ embeds: [embed] });
-					//}
 				});
 		} else if (punish === 'kick') {
-			member?.guild?.members?.cache
-				?.get(user?.id || '')
+			member?.guild.members.cache
+				.get(user?.id || '')
 				?.kick()
 				.then(_ => {
 					let embed = new MessageEmbed()
@@ -601,28 +602,27 @@ client.on('guildBanAdd', async ban => {
 						.addField('Punishment', punish)
 						.addField('kicked', 'Yes')
 						.setColor('#2f3136');
-					if (logs?.isText()) {
-						logs.send({ embeds: [embed] });
-					}
+					logs?.send({ embeds: [embed] });
 				})
-				.catch(err => {
+				.catch(_ => {
 					let embed = new MessageEmbed()
 						.setTitle('**Anti-Raid**')
 						.setThumbnail(user?.displayAvatarURL({ dynamic: true }) || '')
-						.setFooter(member?.guild.name || '', member?.guild.iconURL() ?? '')
+						.setFooter({
+							text: member?.guild.name || '',
+							iconURL: member?.guild.iconURL() ?? '',
+						})
 						.addField('User', user?.tag || '')
 						.addField('Case', 'Tried To Raid | breaking the ban limits')
 						.addField('Punishment', punish)
 						.addField('kicked', 'No')
 						.setColor('#2f3136');
-					if (logs?.isText()) {
-						logs.send({ embeds: [embed] });
-					}
+					logs?.send({ embeds: [embed] });
 				});
 		} else if (punish === 'demote') {
 			try {
-				member?.guild?.members?.cache
-					?.get(user?.id || '')
+				member?.guild.members.cache
+					.get(user?.id || '')
 					?.roles.cache.forEach(r => {
 						if (r.name !== '@everyone') {
 							member?.guild?.members?.cache
@@ -630,7 +630,7 @@ client.on('guildBanAdd', async ban => {
 								?.roles.remove(r.id);
 						}
 					});
-				let embed = new MessageEmbed()
+				const embed = new MessageEmbed()
 					.setTitle('**Anti-Raid**')
 					.setThumbnail(user?.displayAvatarURL({ dynamic: true }) || '')
 					.setFooter(member?.guild.name || '', member?.guild.iconURL() ?? '')
@@ -639,9 +639,7 @@ client.on('guildBanAdd', async ban => {
 					.addField('Punishment', punish)
 					.addField('demoted', 'Yes')
 					.setColor('#2f3136');
-				if (logs?.isText()) {
-					logs.send({ embeds: [embed] });
-				}
+				logs?.send({ embeds: [embed] });
 			} catch (_) {
 				let embed = new MessageEmbed()
 					.setTitle('**Anti-Raid**')
@@ -652,16 +650,14 @@ client.on('guildBanAdd', async ban => {
 					.addField('Case', 'Tried to Raid | Breaking ban limits')
 					.addField('Punishment', punish)
 					.addField('demoted', 'No');
-				if (logs?.isText()) {
-					logs.send({ embeds: [embed] });
-				}
+				logs?.send({ embeds: [embed] });
 			}
 		}
 	} else {
 		db.add(`${member?.guild.id}_${user?.id}_banlimit`, 1);
-		let pog = db.get(`${member?.guild.id}_${user?.id}_banlimit`);
-		let bruh = db.get(`banlimit_${member?.guild.id}`);
-		let embed = new MessageEmbed()
+		const pog = db.get(`${member?.guild.id}_${user?.id}_banlimit`);
+		const bruh = db.get(`banlimit_${member?.guild.id}`);
+		const embed = new MessageEmbed()
 			.setTitle('**Anti-Raid**')
 			.setThumbnail(user?.displayAvatarURL({ dynamic: true }) || '')
 			.setFooter(member?.guild.name || '', member?.guild.iconURL() ?? '')
@@ -670,9 +666,7 @@ client.on('guildBanAdd', async ban => {
 			.addField('Punishment', punish)
 			.addField('Times', `${pog || 0}/${bruh || 0}`)
 			.setColor('#2f3136');
-		if (logs?.isText()) {
-			logs.send({ embeds: [embed] });
-		}
+		logs?.send({ embeds: [embed] });
 	}
 });
 
@@ -696,11 +690,10 @@ client.on('guildMemberAdd', async member => {
 		border: true,
 		rounded: true,
 	});
-	const welcomeChannel = client.channels.cache.get('964225446420041809');
-	console.log(welcomeChannel);
-	if (welcomeChannel?.isText()) {
-		welcomeChannel.send({ files: [image] });
-	}
+	const welcomeChannel = client.channels.cache.get(
+		'964225446420041809'
+	) as TextChannel;
+	welcomeChannel.send({ files: [image] });
 });
 
 const server = Fastify();
@@ -709,10 +702,7 @@ server.get('/', async () => 'Hello World');
 
 try {
 	await server.listen(3000, '0.0.0.0');
-} catch (_) {
-	console.error('Error starting server');
+	await client.login(process.env.TOKEN);
+} catch (e) {
+	console.error('[ERROR]: The bot or the server failed to start');
 }
-
-client
-	.login(process.env.TOKEN)
-	.catch(_ => console.log('[ERROR]: Invalid Token Provided'));
