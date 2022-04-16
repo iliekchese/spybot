@@ -28,6 +28,7 @@ export default {
 				const suggestionsChannel = client.channels.cache.get(
 					db.get(`suggestions_${message.guild?.id}`).slice(1)
 				) as TextChannel;
+				console.log(db.get(`suggestions_${message.guild?.id}`).slice(1))
 				suggestionsChannel?.send({ embeds: [embed] }).then(({ react }) => {
 					react('✅');
 					react('❌');

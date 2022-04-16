@@ -12,6 +12,12 @@ import { drawCard, LinearGradient } from 'discord-welcome-card';
 import Fastify from 'fastify';
 import { readdir } from 'fs/promises';
 
+process.on('uncaughtException', ({ name, message, cause }) => {
+	console.log(`${name}: ${message}`);
+	console.log('--------------------------')
+	console.log(cause + '\n');
+});
+
 const handlers = await readdir('./handlers/');
 handlers
 	.filter(file => file.endsWith('.js'))

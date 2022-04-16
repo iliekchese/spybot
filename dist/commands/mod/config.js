@@ -137,7 +137,7 @@ export default {
                 message.channel.send({ embeds: [bruh] });
                 break;
             default:
-                message.channel.send(':x: | **Enter a valid subcommand: EXAMPLE: .config help**');
+                message.channel.send(':x: | **Enter a valid subcommand, EXAMPLE: .config help**');
         }
     },
 };

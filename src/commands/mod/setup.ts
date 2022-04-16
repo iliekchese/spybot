@@ -2,10 +2,6 @@ import type { Role, TextChannel } from 'discord.js';
 import type { ICommandArgs } from '../..';
 import { MessageEmbed } from "discord.js"
 
-process.on('uncaughtException', (err) => {
-    console.log(err.message);
-});
-
 export default {
 	name: 'setup',
 	async run({ message, db }: ICommandArgs) {
