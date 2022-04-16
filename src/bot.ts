@@ -557,8 +557,10 @@ client.on('guildBanAdd', async ban => {
 	if (limit === null) {
 		return;
 	}
-	let logsID = db.get(`logs_${member?.guild.id}`);
-	const logs = client.channels.cache.get(logsID) as TextChannel | undefined;
+	const logsID: string = db.get(`logs_${member?.guild.id}`);
+	const logs = client.channels.cache.get(logsID.slice(1)) as
+		| TextChannel
+		| undefined;
 	let punish = db.get(`punish_${member?.guild.id}`);
 	if (person > limit - 1) {
 		if (punish === 'ban') {

@@ -20,7 +20,9 @@ export const handler = ({ client, db }: IHandler) => {
 		if (!person) return;
 		const logsID = db.get(`logs_${role.guild.id}`);
 		const punish = db.get(`punish_${role.guild.id}`) || disabled;
-		const logs = client.channels.cache.get(logsID) as TextChannel | undefined;
+		const logs = client.channels.cache.get(logsID.slice(1)) as
+			| TextChannel
+			| undefined;
 		const embed = new MessageEmbed()
 			.setTitle('**Anti-Raid**')
 			.setThumbnail(user?.displayAvatarURL({ dynamic: true }) || '')
@@ -87,7 +89,9 @@ export const handler = ({ client, db }: IHandler) => {
 		if (limit === null) return;
 		const logsID = db.get(`logs_${role.guild.id}`);
 		const punish = db.get(`punish_${role.guild.id}`) || disabled;
-		const logs = client.channels.cache.get(logsID) as TextChannel | undefined;
+		const logs = client.channels.cache.get(logsID.slice(1)) as
+			| TextChannel
+			| undefined;
 		const embed = new MessageEmbed()
 			.setTitle('**Anti-Raid**')
 			.setThumbnail(user?.displayAvatarURL({ dynamic: true }) || '')
