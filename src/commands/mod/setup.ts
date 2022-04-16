@@ -1,5 +1,10 @@
 import type { Role, TextChannel } from 'discord.js';
 import type { ICommandArgs } from '../..';
+import { MessageEmbed } from "discord.js"
+
+process.on('uncaughtException', (err) => {
+    console.log(err.message);
+});
 
 export default {
 	name: 'setup',
@@ -30,6 +35,7 @@ export default {
 				muteRole = await message.guild?.roles.create({
 					color: 'RED',
 					name: 'Muted',
+          position: 5,
 				});
 				message.guild?.channels.cache.forEach(async c => {
 					const channel = c as TextChannel;
@@ -41,7 +47,25 @@ export default {
 					});
 				});
 			}
+			const setupEmbed = new MessageEmbed()
+				.setTitle('Setup Was Completed')
+				.setDescription('✅ Setup was successfully completed')
+				.setColor('#2F3136')
+				.setFooter({
+					text: 'Spy Bot',
+					iconURL: 'https://cdn.discordapp.com/avatars/939629038178295828/46177dc48e152f86718afb5f05884159.webp?size=80%22)',
+				});
+			message.channel.send({ embeds: [setupEmbed] });
 		} catch (err) {
+			const setupEmbed = new MessageEmbed()
+				.setTitle('Setup Not Completed')
+				.setDescription('❌ Setup not was successfully completed')
+				.setColor('#2F3136')
+				.setFooter({
+					text: 'Spy Bot',
+					iconURL: 'https://cdn.discordapp.com/avatars/939629038178295828/46177dc48e152f86718afb5f05884159.webp?size=80%22)',
+				});
+			message.channel.send({ embeds: [setupEmbed] });
 			console.error(err);
 		}
 	},

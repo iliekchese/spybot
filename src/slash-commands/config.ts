@@ -114,7 +114,7 @@ export default {
 					db.get(`banlimit_${interaction.guild?.id}`) || disabled;
 				const kl: number =
 					db.get(`kicklimit_${interaction.guild?.id}`) || disabled;
-				const logs = db.get(`logs_${interaction.guild?.id}`) || disabled;
+				const logs = db.get(`logs_${interaction.guild?.id}`).slice(1) || disabled;
 				const punish = db.get(`punish_${interaction.guild?.id}`) || disabled;
 				const logsChannel =
 					client.channels.cache.get(logs)?.toString() || disabled;

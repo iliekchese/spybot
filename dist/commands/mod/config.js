@@ -17,7 +17,7 @@ const limitTypeCheck = (message, args) => {
 };
 export default {
     name: 'config',
-    run({ client, message, args, db }) {
+    run({ message, args, db }) {
         const bruh = new MessageEmbed()
             .setTitle('<:Settings:939853181180080168> **Anti-Raid | Config**')
             .setDescription(`
@@ -52,7 +52,7 @@ export default {
                 const cdl = db.get(`channeldelete_${message.guild?.id}`)?.toString();
                 const bl = db.get(`banlimit_${message.guild?.id}`)?.toString();
                 const kl = db.get(`kicklimit_${message.guild?.id}`)?.toString();
-                const logs = db.get(`logs_${message.guild?.id}`);
+                const logs = db.get(`logs_${message.guild?.id}`).slice(1);
                 const punish = db.get(`punish_${message.guild?.id}`);
                 console.log(logs);
                 const show = new MessageEmbed()
@@ -129,8 +129,7 @@ export default {
                     message.channel.send(':x: | **That channel is not from this server**');
                     break;
                 }
-                console.log(channel.id);
-                db.set(`logs_${message.guild?.id}`, channel.id);
+                db.set(`logs_${message.guild?.id}`, `i${channel.id}`);
                 channel.send('**Anti Raid logs Channel**');
                 message.channel.send('**The logs channel has been set to ' + args[1] + '**');
                 break;
