@@ -19,9 +19,9 @@ export default {
                     .setColor('#2F3136');
                 const suggestionsChannel = client.channels.cache.get(db.get(`suggestions_${message.guild?.id}`).slice(1));
                 console.log(db.get(`suggestions_${message.guild?.id}`).slice(1));
-                suggestionsChannel?.send({ embeds: [embed] }).then(({ react }) => {
-                    react('✅');
-                    react('❌');
+                suggestionsChannel?.send({ embeds: [embed] }).then((msg) => {
+                    msg.react('✅');
+                    msg.react('❌');
                 });
         }
     },

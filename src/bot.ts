@@ -7,10 +7,10 @@ import {
 } from 'discord.js';
 import { Routes } from 'discord-api-types/v9';
 import { REST } from '@discordjs/rest';
-import { Database } from '@devsnowflake/quick.db';
 import { drawCard, LinearGradient } from 'discord-welcome-card';
 import Fastify from 'fastify';
 import { readdir } from 'fs/promises';
+import Database from "@replit/database";
 
 process.on('uncaughtException', ({ name, message, cause }) => {
 	console.log(`${name}: ${message}`);
@@ -25,7 +25,7 @@ handlers
 		import(`./handlers/${file}`).then(({ handler }) => handler({ client, db }));
 	});
 
-const db = new Database('database.db');
+const db = new Database();
 const rest = new REST({ version: '9' }).setToken(process.env.TOKEN || '');
 
 console.log('[INFO]: Loading...');
@@ -70,17 +70,13 @@ client.on('channelCreate', async channel => {
 	const user = log?.executor;
 	if (user?.id === client.user?.id) return;
 	let whitelist = db.get(`whitelist_${channel.guild.id}`);
-	if (
-		whitelist &&
-		whitelist.find((x: { user: string | undefined }) => x.user === user?.id)
+	if (whitelist?.find((x: { user: string | undefined }) => x.user === user?.id)
 	) {
 		return;
 	}
 	let person = db.get(`${channel.guild.id}_${user?.id}_channelcreate`);
 	let limit = db.get(`channelcreate_${channel.guild.id}`);
-	if (limit === null) {
-		return;
-	}
+	if (!limit) return;
 	let logsID = db.get(`logs_${channel.guild.id}`);
 	let logs = client.channels.cache.get(logsID);
 	let punish = db.get(`punish_${channel.guild.id}`);

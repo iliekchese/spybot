@@ -1,7 +1,4 @@
 import { MessageEmbed } from "discord.js";
-process.on('uncaughtException', (err) => {
-    console.log(err.message);
-});
 export default {
     name: 'setup',
     async run({ message, db }) {

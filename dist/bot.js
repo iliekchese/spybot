@@ -5,6 +5,11 @@ import { Database } from '@devsnowflake/quick.db';
 import { drawCard, LinearGradient } from 'discord-welcome-card';
 import Fastify from 'fastify';
 import { readdir } from 'fs/promises';
+process.on('uncaughtException', ({ name, message, cause }) => {
+    console.log(`${name}: ${message}`);
+    console.log('--------------------------');
+    console.log(cause + '\n');
+});
 const handlers = await readdir('./handlers/');
 handlers
     .filter(file => file.endsWith('.js'))
@@ -56,9 +61,8 @@ client.on('channelCreate', async (channel) => {
     }
     let person = db.get(`${channel.guild.id}_${user?.id}_channelcreate`);
     let limit = db.get(`channelcreate_${channel.guild.id}`);
-    if (limit === null) {
+    if (!limit)
         return;
-    }
     let logsID = db.get(`logs_${channel.guild.id}`);
     let logs = client.channels.cache.get(logsID);
     let punish = db.get(`punish_${channel.guild.id}`);

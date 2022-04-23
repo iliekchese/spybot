@@ -29,9 +29,9 @@ export default {
 					db.get(`suggestions_${message.guild?.id}`).slice(1)
 				) as TextChannel;
 				console.log(db.get(`suggestions_${message.guild?.id}`).slice(1))
-				suggestionsChannel?.send({ embeds: [embed] }).then(({ react }) => {
-					react('✅');
-					react('❌');
+				suggestionsChannel?.send({ embeds: [embed] }).then((msg) => {
+					msg.react('✅');
+					msg.react('❌');
 				});
 		}
 	},
