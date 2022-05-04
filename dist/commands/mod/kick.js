@@ -38,29 +38,49 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var discord_js_1 = require("discord.js");
 exports.default = {
-    name: 'clearuser',
+    name: 'kick',
     run: function (_a) {
-        var _b, _c, _d, _e, _f, _g, _h;
-        var message = _a.message, db = _a.db;
-        return __awaiter(this, void 0, void 0, function () {
-            var user, userMods;
-            return __generator(this, function (_j) {
-                if (!((_b = message.member) === null || _b === void 0 ? void 0 : _b.permissions.has(discord_js_1.Permissions.FLAGS.ADMINISTRATOR))) {
-                    message.channel.send("You don't have permission to do this!");
-                    return [2];
-                }
-                user = message.mentions.users.first();
-                userMods = [
-                    "".concat((_c = message.guild) === null || _c === void 0 ? void 0 : _c.id, "_").concat(user === null || user === void 0 ? void 0 : user.id, "_rolecreate"),
-                    "".concat((_d = message.guild) === null || _d === void 0 ? void 0 : _d.id, "_").concat(user === null || user === void 0 ? void 0 : user.id, "_roledelete"),
-                    "".concat((_e = message.guild) === null || _e === void 0 ? void 0 : _e.id, "_").concat(user === null || user === void 0 ? void 0 : user.id, "_channelcreate"),
-                    "".concat((_f = message.guild) === null || _f === void 0 ? void 0 : _f.id, "_").concat(user === null || user === void 0 ? void 0 : user.id, "_channeldelete"),
-                    "".concat((_g = message.guild) === null || _g === void 0 ? void 0 : _g.id, "_").concat(user === null || user === void 0 ? void 0 : user.id, "_banlimit"),
-                    "".concat((_h = message.guild) === null || _h === void 0 ? void 0 : _h.id, "_").concat(user === null || user === void 0 ? void 0 : user.id, "_kicklimit"),
-                ];
-                userMods.forEach(function (mod) { return db.delete(mod); });
-                return [2, message.channel.send('**Done!**')];
-            });
+        var _this = this;
+        var _b;
+        var message = _a.message, args = _a.args, client = _a.client;
+        var member = (_b = message.mentions.members) === null || _b === void 0 ? void 0 : _b.first();
+        var kickEmbed = new discord_js_1.MessageEmbed()
+            .setTitle("Are you sure you want to kick ".concat(member === null || member === void 0 ? void 0 : member.user.tag, "?"))
+            .setDescription('Please click below if you would like to continue')
+            .setColor('#2F3136')
+            .setFooter({
+            text: 'Spy Bot',
+            iconURL: 'https://cdn.discordapp.com/avatars/939629038178295828/861602a3003bf4b82e3397aaf1285ed2.webp?size=80)',
         });
+        var row = new discord_js_1.MessageActionRow().addComponents(new discord_js_1.MessageButton()
+            .setCustomId('kickAllowed')
+            .setLabel('Continue')
+            .setStyle('SUCCESS'), new discord_js_1.MessageButton()
+            .setCustomId('kickNotAllowed')
+            .setLabel('Cancel')
+            .setStyle('DANGER'));
+        message.channel.send({ embeds: [kickEmbed], components: [row] });
+        client.on("interactionCreate", function (interaction) { return __awaiter(_this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        if (!interaction.isButton())
+                            return [2];
+                        if (!(interaction.customId === "kickAllowed")) return [3, 2];
+                        member === null || member === void 0 ? void 0 : member.kick(args[1]);
+                        return [4, interaction.reply("".concat(member === null || member === void 0 ? void 0 : member.user, " was succesfully kicked!"))];
+                    case 1:
+                        _a.sent();
+                        return [3, 4];
+                    case 2:
+                        if (!(interaction.customId === "kickNotAllowed")) return [3, 4];
+                        return [4, interaction.reply("Operation canceled.")];
+                    case 3:
+                        _a.sent();
+                        _a.label = 4;
+                    case 4: return [2];
+                }
+            });
+        }); });
     },
 };

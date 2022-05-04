@@ -21,7 +21,7 @@ export default {
 			subcommand
 				.setName('new')
 				.setDescription('Add new suggestion')
-				.addNumberOption(message =>
+				.addStringOption(message =>
 					message
 						.setName('message')
 						.setDescription("The suggestion's body")
@@ -43,6 +43,7 @@ export default {
 				break;
 
 			case 'new':
+        await interaction.reply("**Suggestion submitted**")
 				const message = interaction.options.getString('message');
 				const embed = new MessageEmbed()
 					.setTitle(`A new suggestion was submitted by ${interaction.user.tag}`)

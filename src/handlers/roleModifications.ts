@@ -11,18 +11,16 @@ export const handler = ({ client, db }: IHandler) => {
 		});
 		const log = audits.entries.first();
 		const user = log?.executor;
-		if (user?.id === client.user?.id) return;
-		const whitelist: GuildMember[] = db.get(`whitelist_${role.guild.id}`);
-		if (whitelist?.find(x => x.user.id === user?.id)) return;
-		const person: number = db.get(`${role.guild.id}_${user?.id}_rolecreate`);
+		const whitelist: string[] = db.get(`whitelist_${role.guild.id}`);
+		const personLimit: number = db.get(`${role.guild.id}_${user?.id}_rolecreate`);
 		const limit: number = db.get(`rolecreate_${role.guild.id}`);
+		if (whitelist?.some(id => id === user?.id)) return;
+		if (user?.id === client.user?.id) return;
 		if (!limit) return;
-		if (!person) return;
+		if (!personLimit) return;
 		const logsID = db.get(`logs_${role.guild.id}`);
 		const punish = db.get(`punish_${role.guild.id}`) || disabled;
-		const logs = client.channels.cache.get(logsID.slice(1)) as
-			| TextChannel
-			| undefined;
+		const logs = client.channels.cache.get(logsID?.slice(1))! as TextChannel
 		const embed = new MessageEmbed()
 			.setTitle('**Anti-Raid**')
 			.setThumbnail(user?.displayAvatarURL({ dynamic: true }) || '')
@@ -34,42 +32,37 @@ export const handler = ({ client, db }: IHandler) => {
 			.addField('Case', 'Tried To Raid | breaking the role create limits')
 			.addField('Punishment', punish)
 			.setColor('#2f3136');
-
-		if (person >= limit) {
+		const member = role.guild.members.cache.get(user?.id!)
+		if (personLimit >= limit) {
 			try {
 				switch (punish) {
 					case 'kick':
-						await role.guild.members.kick(
-							user?.id || '',
-							`You have been kicked for creating too many roles.`
-						);
+						await member?.kick(`You have been kicked for creating too many roles.`);
 						break;
 
 					case 'ban':
-						await role.guild.members.ban(user?.id || '', {
-							reason: `You have been banned for creating too many roles.`,
-						});
+						await member?.ban({ reason: `You have been banned for creating too many roles.` });
+						break;
+            
+					case 'demote':
+						member?.roles.cache
+							.filter(r => r.name !== '@everyone')
+							.forEach(async r => await member?.roles.remove(r.id));
 						break;
 
-					case 'demote':
-						role.guild.members.cache
-							.get(user?.id || '')
-							?.roles.cache.forEach(async r => {
-								if (r.name !== '@everyone') {
-									await role.guild.members.cache
-										.get(user?.id || '')
-										?.roles.remove(r.id);
-								}
-							});
+          case 'quarantine':
+            const quarantineRole = member?.guild.roles.cache.find(role => role.name === "Quarantine");
+						member?.roles.cache
+							.filter(r => r.name !== '@everyone')
+							.forEach(async r => await member?.roles.remove(r.id));
+						member?.roles.add(quarantineRole!);
 						break;
 				}
 				embed.addField(`${punish}ed`, 'Yes');
-				await role.guild.members.cache.get(user?.id || '')?.kick();
-				await role.guild.members.ban(user?.id || '');
-				logs?.send({ embeds: [embed] });
 			} catch (_) {
 				embed.addField(`${punish}ed`, 'No');
-				logs?.send({ embeds: [embed] });
+			} finally {
+				logs.send({ embeds: [embed] });
 			}
 		} else db.add(`${role.guild.id}_${user?.id}_rolecreate`, 1);
 	});
@@ -81,17 +74,16 @@ export const handler = ({ client, db }: IHandler) => {
 		});
 		const log = audits.entries.first();
 		const user = log?.executor;
-		if (user?.id === client.user?.id) return;
 		const whitelist: GuildMember[] = db.get(`whitelist_${role.guild.id}`);
-		if (whitelist?.find(x => x.user.id === user?.id)) return;
-		const person: number = db.get(`${role.guild.id}_${user?.id}_roledelete`);
+		const personLimit: number = db.get(`${role.guild.id}_${user?.id}_roledelete`);
 		const limit: number = db.get(`roledelete_${role.guild.id}`);
-		if (limit === null) return;
+		if (user?.id === client.user?.id) return;
+		if (whitelist?.find(x => x.user.id === user?.id)) return;
+		if (!personLimit) return;
+		if (limit!) return;
 		const logsID = db.get(`logs_${role.guild.id}`);
 		const punish = db.get(`punish_${role.guild.id}`) || disabled;
-		const logs = client.channels.cache.get(logsID.slice(1)) as
-			| TextChannel
-			| undefined;
+		const logs = client.channels.cache.get(logsID?.slice(1))! as TextChannel
 		const embed = new MessageEmbed()
 			.setTitle('**Anti-Raid**')
 			.setThumbnail(user?.displayAvatarURL({ dynamic: true }) || '')
@@ -103,39 +95,37 @@ export const handler = ({ client, db }: IHandler) => {
 			.addField('Case', 'Tried To Raid | breaking the role delete limits')
 			.addField('Punishment', punish)
 			.setColor('#2f3136');
-
-		if (person >= limit) {
+		const member = role.guild.members.cache.get(user?.id!)
+		if (personLimit >= limit) {
 			try {
 				switch (punish) {
-					case 'ban':
-						await role.guild.members.ban(user?.id || '', {
-							reason: `You have been banned for deleting too many roles.`,
-						});
-						break;
-
 					case 'kick':
-						await role.guild.members.kick(
-							user?.id || '',
-							`You have been kicked for deleting too many roles.`
-						);
+						await member?.kick(`You have been kicked for creating too many roles.`);
 						break;
 
+					case 'ban':
+						await member?.ban({ reason: `You have been banned for creating too many roles.` });
+						break;
+            
 					case 'demote':
-						role.guild.members.cache
-							.get(user?.id || '')
-							?.roles.cache.forEach(async r => {
-								if (r.name !== '@everyone') {
-									await role.guild.members.cache
-										.get(user?.id || '')
-										?.roles.remove(r.id);
-								}
-							});
+						member?.roles.cache
+							.filter(r => r.name !== '@everyone')
+							.forEach(async r => await member?.roles.remove(r.id));
+						break;
+
+          case 'quarantine':
+            const quarantineRole = member?.guild.roles.cache.find(role => role.name === "Quarantine");
+						member?.roles.cache
+							.filter(r => r.name !== '@everyone')
+							.forEach(async r => await member?.roles.remove(r.id));
+						member?.roles.add(quarantineRole!);
+						break;
 				}
 				embed.addField(`${punish}ed`, 'Yes');
-				logs?.send({ embeds: [embed] });
 			} catch (_) {
 				embed.addField(`${punish}ed`, 'No');
-				logs?.send({ embeds: [embed] });
+			} finally {
+				logs.send({ embeds: [embed] })
 			}
 		} else db.add(`${role.guild.id}_${user?.id}_roledelete`, 1);
 	});

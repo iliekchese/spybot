@@ -13,7 +13,7 @@ export default {
 			.setFooter({
 				text: 'Spy Bot',
 				iconURL:
-					'https://cdn.discordapp.com/avatars/939629038178295828/46177dc48e152f86718afb5f05884159.webp?size=80%22)',
+					'https://cdn.discordapp.com/avatars/939629038178295828/861602a3003bf4b82e3397aaf1285ed2.webp?size=80)',
 			});
 
 		const row = new MessageActionRow().addComponents(

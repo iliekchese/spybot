@@ -37,29 +37,45 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var discord_js_1 = require("discord.js");
+var builders_1 = require("@discordjs/builders");
 exports.default = {
-    name: 'clearuser',
+    name: 'info',
+    command: new builders_1.SlashCommandBuilder()
+        .setName("info")
+        .setDescription("Info about a user!")
+        .addUserOption(function (user) {
+        return user
+            .setName("user")
+            .setDescription("The user");
+    }),
     run: function (_a) {
-        var _b, _c, _d, _e, _f, _g, _h;
-        var message = _a.message, db = _a.db;
+        var interaction = _a.interaction;
         return __awaiter(this, void 0, void 0, function () {
-            var user, userMods;
-            return __generator(this, function (_j) {
-                if (!((_b = message.member) === null || _b === void 0 ? void 0 : _b.permissions.has(discord_js_1.Permissions.FLAGS.ADMINISTRATOR))) {
-                    message.channel.send("You don't have permission to do this!");
-                    return [2];
+            var member, infoEmbed, row;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        member = interaction.options.getMember("user") || interaction.member;
+                        infoEmbed = new discord_js_1.MessageEmbed()
+                            .setTitle("".concat(interaction.user.username, "?"))
+                            .addField("Id", "".concat(interaction.user.id))
+                            .addField("Account Created", "Test")
+                            .addField("Joined", "Test")
+                            .addField("Bot", "member.user.bot.toString()")
+                            .setColor('#2F3136')
+                            .setFooter({
+                            text: 'Spy Bot',
+                            iconURL: 'https://cdn.discordapp.com/avatars/939629038178295828/46177dc48e152f86718afb5f05884159.webp?size=80%22)',
+                        });
+                        row = new discord_js_1.MessageActionRow().addComponents(new discord_js_1.MessageButton()
+                            .setURL('https://discordjs.guide/#before-you-begin')
+                            .setLabel('Users Avatar')
+                            .setStyle('LINK'));
+                        return [4, interaction.reply({ embeds: [infoEmbed], components: [row] })];
+                    case 1:
+                        _b.sent();
+                        return [2];
                 }
-                user = message.mentions.users.first();
-                userMods = [
-                    "".concat((_c = message.guild) === null || _c === void 0 ? void 0 : _c.id, "_").concat(user === null || user === void 0 ? void 0 : user.id, "_rolecreate"),
-                    "".concat((_d = message.guild) === null || _d === void 0 ? void 0 : _d.id, "_").concat(user === null || user === void 0 ? void 0 : user.id, "_roledelete"),
-                    "".concat((_e = message.guild) === null || _e === void 0 ? void 0 : _e.id, "_").concat(user === null || user === void 0 ? void 0 : user.id, "_channelcreate"),
-                    "".concat((_f = message.guild) === null || _f === void 0 ? void 0 : _f.id, "_").concat(user === null || user === void 0 ? void 0 : user.id, "_channeldelete"),
-                    "".concat((_g = message.guild) === null || _g === void 0 ? void 0 : _g.id, "_").concat(user === null || user === void 0 ? void 0 : user.id, "_banlimit"),
-                    "".concat((_h = message.guild) === null || _h === void 0 ? void 0 : _h.id, "_").concat(user === null || user === void 0 ? void 0 : user.id, "_kicklimit"),
-                ];
-                userMods.forEach(function (mod) { return db.delete(mod); });
-                return [2, message.channel.send('**Done!**')];
             });
         });
     },

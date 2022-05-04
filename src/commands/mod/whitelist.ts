@@ -1,80 +1,63 @@
-import type { GuildMember } from 'discord.js';
 import type { ICommandArgs } from '../..';
-import { MessageEmbed } from 'discord.js';
+import { MessageEmbed, Permissions } from 'discord.js';
 
 export default {
 	name: 'whitelist',
 	run({ message, args, db }: ICommandArgs) {
+		const whitelist: string[] = db.get(`whitelist_${message.guild?.id}`);
+		console.log(whitelist)
+		const user = message.mentions.users.first();
 		switch (args[0]) {
 			case 'add':
-				if (message.author.id === message.guild?.ownerId) {
-					const user = message.mentions.users.first();
-					if (!user) return message.channel.send(':x: | **Mention The User**');
-					let whitelist = db.get(`whitelist_${message.guild.id}`);
-					if (
-						whitelist &&
-						whitelist.find((x: { user: string }) => x.user == user.id)
-					) {
-						return message.channel.send(
-							':x: | **The User is already whitelisted**'
-						);
-					}
-					db.push(`whitelist_${message.guild.id}`, { user: user.id });
-					return message.channel.send(`**The user has been whitelisted!**`);
-				} else {
-					return message.channel.send(
-						':x: | **Only The owner of the Server can whitelist people**'
-					);
+				if (!message.member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
+					message.channel.send("You don't have permission to do this!")
+					break;
 				}
+				if (!user) {
+					message.channel.send(':x: | **Mention The User**')
+					break;
+				}
+				if (whitelist?.some(id => id === user.id)) {
+					message.channel.send(':x: | **The User is already whitelisted**');
+					break;
+				}
+				db.push(`whitelist_${message.guild?.id}`, user.id);
+				message.channel.send(`**The user has been whitelisted!**`);
+				break;
+			
 			case 'remove':
-				if (message.author.id === message.guild?.ownerId) {
-					const user = message.mentions.users.first();
-					if (!user) return message.channel.send(':x: | **Mention The User**');
-					const whitelist: GuildMember[] = db.get(
-						`whitelist_${message.guild.id}`
-					);
-					if (whitelist) {
-						const whitelistedUser = whitelist.find(x => x.user.id === user?.id);
-						if (!whitelistedUser)
-							return message.channel.send(
-								':x: | **The user is not whitelisted!**'
-							);
-						const index = whitelist.indexOf(whitelistedUser);
-						delete whitelist[index];
-						const fix = whitelist.filter(x => !!x);
-						db.set(`whitelist_${message.guild.id}`, fix);
-						return message.channel.send('**The user has been unwhitelisted!**');
-					} else {
-						return message.channel.send(
-							':x: | **The user is not whitelisted!**'
-						);
-					}
-				} else {
-					return message.channel.send(
-						':x: | **Only The owner of the Server can unwhitelist people**'
-					);
+				if (!message.member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
+					message.channel.send("You don't have permission to do this!")
+					break;
 				}
+				if (!user) {
+					db.set(`whitelist_${message.guild?.id}`, []);
+					message.channel.send('**Whitelist has been resetted!**');
+					break;
+				};
+				if (!whitelist?.some(id => id === user?.id)) {
+					message.channel.send(':x: | **The user is not whitelisted!**');
+					break;
+				}
+				const index = whitelist.indexOf(user.id);
+				delete whitelist[index];
+				db.set(`whitelist_${message.guild?.id}`, whitelist.filter(x => !!x));
+				message.channel.send('**The user has been unwhitelisted!**');
+				break;
+
 			case 'show':
 				const embed = new MessageEmbed()
 					.setTitle('**The list of whitelisted users**')
-					.setAuthor({
-						name: message.author.tag,
-						iconURL: message.author.displayAvatarURL({ dynamic: true }),
-					})
-					.setFooter({
-						text: message.guild?.name || '',
-						iconURL: message.guild?.iconURL() ?? '',
-					})
+					.setAuthor({ name: message.author.tag, iconURL: message.author.displayAvatarURL({ dynamic: true }) })
+					.setFooter({ text: message.guild?.name!, iconURL: message.guild?.iconURL()! })
 					.setThumbnail(message.guild?.iconURL() ?? '');
-				const whitelisted: string[] = db
-					.get(`whitelist_${message.guild?.id}`)
-					?.map((x: GuildMember) => `<@${x.user}>`);
+				const whitelisted = whitelist?.map(id => `<@${id}>`);
 				if (whitelisted?.length) {
 					embed.addField('**Users**', `${whitelisted.join('\n')}`);
 					embed.setColor('GREEN');
 				} else {
 					embed.setDescription(':x: | **No whitelisted Users Found**');
-					embed.setColor('#FF0000');
+					embed.setColor('RED');
 				}
 				message.channel.send({ embeds: [embed] });
 		}

@@ -36,12 +36,15 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+var builders_1 = require("@discordjs/builders");
 var discord_js_1 = require("discord.js");
 exports.default = {
-    name: 'setup',
+    command: new builders_1.SlashCommandBuilder()
+        .setName('setup')
+        .setDescription('Setup command'),
     run: function (_a) {
         var _b, _c, _d, _e;
-        var message = _a.message;
+        var interaction = _a.interaction;
         return __awaiter(this, void 0, void 0, function () {
             var setupEmbed, muteRole_1, _1;
             var _this = this;
@@ -56,23 +59,23 @@ exports.default = {
                         });
                         _f.label = 1;
                     case 1:
-                        _f.trys.push([1, 3, 4, 5]);
-                        (_b = message.guild) === null || _b === void 0 ? void 0 : _b.channels.create('spy-bot-logs', {
+                        _f.trys.push([1, 3, 4, 6]);
+                        (_b = interaction.guild) === null || _b === void 0 ? void 0 : _b.channels.create('spy-bot-logs', {
                             type: 'GUILD_TEXT',
                             permissionOverwrites: [{
-                                    id: message.guild.id,
+                                    id: interaction.guild.id,
                                     deny: ['SEND_MESSAGES', 'VIEW_CHANNEL'],
                                 }],
                         });
-                        return [4, ((_c = message.guild) === null || _c === void 0 ? void 0 : _c.roles.create({
+                        return [4, ((_c = interaction.guild) === null || _c === void 0 ? void 0 : _c.roles.create({
                                 color: 'RED',
                                 name: 'Quarantine',
-                                position: ((_d = message.guild) === null || _d === void 0 ? void 0 : _d.roles.cache.size) - 1,
+                                position: ((_d = interaction.guild) === null || _d === void 0 ? void 0 : _d.roles.cache.size) - 1,
                                 reason: 'Server setup'
                             }))];
                     case 2:
                         muteRole_1 = _f.sent();
-                        (_e = message.guild) === null || _e === void 0 ? void 0 : _e.channels.cache.forEach(function (c) { return __awaiter(_this, void 0, void 0, function () {
+                        (_e = interaction.guild) === null || _e === void 0 ? void 0 : _e.channels.cache.forEach(function (c) { return __awaiter(_this, void 0, void 0, function () {
                             return __generator(this, function (_a) {
                                 switch (_a.label) {
                                     case 0:
@@ -95,17 +98,18 @@ exports.default = {
                         setupEmbed
                             .setTitle('Setup Was Completed')
                             .setDescription('✅ Setup was successfully completed');
-                        return [3, 5];
+                        return [3, 6];
                     case 3:
                         _1 = _f.sent();
                         setupEmbed
                             .setTitle('Setup Not Completed')
                             .setDescription('❌ Setup was not successfully completed');
-                        return [3, 5];
-                    case 4:
-                        message.channel.send({ embeds: [setupEmbed] });
+                        return [3, 6];
+                    case 4: return [4, interaction.reply({ embeds: [setupEmbed] })];
+                    case 5:
+                        _f.sent();
                         return [7];
-                    case 5: return [2];
+                    case 6: return [2];
                 }
             });
         });

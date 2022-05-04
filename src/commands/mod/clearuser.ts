@@ -1,8 +1,13 @@
 import type { ICommandArgs } from '../..';
+import { Permissions } from 'discord.js'
 
 export default {
 	name: 'clearuser',
 	async run({ message, db }: ICommandArgs) {
+    if (!message.member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
+			message.channel.send("You don't have permission to do this!")
+			return;
+		}
 		const user = message.mentions.users.first();
 		const userMods = [
 			`${message.guild?.id}_${user?.id}_rolecreate`,

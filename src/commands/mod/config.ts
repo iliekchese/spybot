@@ -1,6 +1,6 @@
 import type { ICommandArgs } from '../..';
 import type { Message, TextChannel } from 'discord.js';
-import { MessageEmbed } from 'discord.js';
+import { MessageEmbed, Permissions } from 'discord.js';
 
 const limitTypeCheck = (message: Message, args: string[]) => {
 	if (!args[1]) {
@@ -23,7 +23,7 @@ const limitTypeCheck = (message: Message, args: string[]) => {
 
 export default {
 	name: 'config',
-	run({ message, args, db }: ICommandArgs) {
+	async run({ message, args, db }: ICommandArgs) {
 		const bruh = new MessageEmbed()
 			.setTitle('<:Settings:939853181180080168> **Anti-Raid | Config**')
 			.setDescription(
@@ -49,7 +49,7 @@ export default {
 			})
 			.setFooter({
 				text: message.guild?.name || ':x:',
-				iconURL: message.guild?.iconURL() ?? '',
+				iconURL: message.guild?.iconURL()!,
 			});
 
 		switch (args[0]?.toLowerCase()) {
@@ -61,9 +61,8 @@ export default {
 				const cdl = db.get(`channeldelete_${message.guild?.id}`)?.toString();
 				const bl = db.get(`banlimit_${message.guild?.id}`)?.toString();
 				const kl = db.get(`kicklimit_${message.guild?.id}`)?.toString();
-				const logs = db.get(`logs_${message.guild?.id}`).slice(1);
+				const logs = db.get(`logs_${message.guild?.id}`)?.slice(1);
 				const punish = db.get(`punish_${message.guild?.id}`);
-				console.log(logs);
 				const show = new MessageEmbed()
 					.setTitle('**Anti-Raid | Config**')
 					.setAuthor({
@@ -88,6 +87,10 @@ export default {
 				break;
 
 			case 'channelcreatelimit':
+        if (!message.member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
+					message.channel.send("You don't have permission to do this!")
+					break;
+				}
 				limitTypeCheck(message, args);
 				db.set(`channelcreate_${message.guild?.id}`, Number(args[1]));
 				message.channel.send(
@@ -96,6 +99,10 @@ export default {
 				break;
 
 			case 'channeldeletelimit':
+        if (!message.member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
+					message.channel.send("You don't have permission to do this!")
+					break;
+				}
 				limitTypeCheck(message, args);
 				db.set(`channeldelete_${message.guild?.id}`, Number(args[1]));
 				message.channel.send(
@@ -104,6 +111,10 @@ export default {
 				break;
 
 			case 'rolecreatelimit':
+        if (!message.member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
+					message.channel.send("You don't have permission to do this!")
+					break;
+				}
 				limitTypeCheck(message, args);
 				db.set(`rolecreate_${message.guild?.id}`, Number(args[1]));
 				message.channel.send(
@@ -112,6 +123,10 @@ export default {
 				break;
 
 			case 'roledeletelimit':
+        if (!message.member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
+					message.channel.send("You don't have permission to do this!")
+					break;
+				}
 				limitTypeCheck(message, args);
 				db.set(`roledelete_${message.guild?.id}`, Number(args[1]));
 				message.channel.send(
@@ -120,6 +135,10 @@ export default {
 				break;
 
 			case 'banlimit':
+        if (!message.member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
+					message.channel.send("You don't have permission to do this!")
+					break;
+				}
 				limitTypeCheck(message, args);
 				db.set(`banlimit_${message.guild?.id}`, Number(args[1]));
 				message.channel.send(
@@ -128,6 +147,10 @@ export default {
 				break;
 
 			case 'kicklimit':
+        if (!message.member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
+					message.channel.send("You don't have permission to do this!")
+					break;
+				}
 				limitTypeCheck(message, args);
 				db.set(`kicklimit_${message.guild?.id}`, Number(args[1]));
 				message.channel.send(
@@ -136,15 +159,19 @@ export default {
 				break;
 
 			case 'punishment':
+        if (!message.member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
+					message.channel.send("You don't have permission to do this!")
+					break;
+				}
 				if (!args[1]) {
 					message.channel.send(':x: | **Provide The punishment**');
 					break;
 				}
 				if (
-					!(args[1] === 'ban' || args[1] === 'kick' || args[1] === 'demote')
+					!(args[1] === 'ban' || args[1] === 'kick' || args[1] === 'demote' || args[1] === 'quarantine')
 				) {
 					message.channel.send(
-						':x: | **The punishment can only be kick, ban or demote**'
+						':x: | **The punishment can only be kick, ban, quarantine or demote**'
 					);
 					break;
 				}
@@ -155,6 +182,10 @@ export default {
 				break;
 
 			case 'logs':
+        if (!message.member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
+					message.channel.send("You don't have permission to do this!")
+					break;
+				}
 				const channel = message.mentions.channels.first() as TextChannel;
 				if (!channel) {
 					message.channel.send(':x: | **Mention The channel**');
@@ -180,6 +211,11 @@ export default {
 				message.channel.send(
 					':x: | **Enter a valid subcommand, EXAMPLE: .config help**'
 				);
+		}
+		const logs = db.get(`logs_${message.guild?.id}`)?.slice(1)
+		const channel = await message.guild?.channels.fetch(logs)
+		if (!channel) {
+			message.reply("\nThe logs channel isn't set, consider to set with `.config logs <logs_channel>`!");
 		}
 	},
 };

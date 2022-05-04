@@ -23,6 +23,7 @@ export default {
 			case 'new':
 				const embed = new MessageEmbed()
 					.setTitle(`A new suggestion was submitted by ${message.author.tag}`)
+          .setThumbnail(message.author.avatarURL()!)
 					.setDescription(args.slice(1).join(' '))
 					.setColor('#2F3136');
 				const suggestionsChannel = client.channels.cache.get(
@@ -32,6 +33,7 @@ export default {
 				suggestionsChannel?.send({ embeds: [embed] }).then((msg) => {
 					msg.react('✅');
 					msg.react('❌');
+          message.channel.send("**Suggestion submitted**")
 				});
 		}
 	},

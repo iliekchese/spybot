@@ -38,28 +38,37 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var discord_js_1 = require("discord.js");
 exports.default = {
-    name: 'clearuser',
+    name: 'info',
     run: function (_a) {
-        var _b, _c, _d, _e, _f, _g, _h;
-        var message = _a.message, db = _a.db;
+        var _b, _c;
+        var message = _a.message, args = _a.args;
         return __awaiter(this, void 0, void 0, function () {
-            var user, userMods;
-            return __generator(this, function (_j) {
-                if (!((_b = message.member) === null || _b === void 0 ? void 0 : _b.permissions.has(discord_js_1.Permissions.FLAGS.ADMINISTRATOR))) {
-                    message.channel.send("You don't have permission to do this!");
-                    return [2];
-                }
-                user = message.mentions.users.first();
-                userMods = [
-                    "".concat((_c = message.guild) === null || _c === void 0 ? void 0 : _c.id, "_").concat(user === null || user === void 0 ? void 0 : user.id, "_rolecreate"),
-                    "".concat((_d = message.guild) === null || _d === void 0 ? void 0 : _d.id, "_").concat(user === null || user === void 0 ? void 0 : user.id, "_roledelete"),
-                    "".concat((_e = message.guild) === null || _e === void 0 ? void 0 : _e.id, "_").concat(user === null || user === void 0 ? void 0 : user.id, "_channelcreate"),
-                    "".concat((_f = message.guild) === null || _f === void 0 ? void 0 : _f.id, "_").concat(user === null || user === void 0 ? void 0 : user.id, "_channeldelete"),
-                    "".concat((_g = message.guild) === null || _g === void 0 ? void 0 : _g.id, "_").concat(user === null || user === void 0 ? void 0 : user.id, "_banlimit"),
-                    "".concat((_h = message.guild) === null || _h === void 0 ? void 0 : _h.id, "_").concat(user === null || user === void 0 ? void 0 : user.id, "_kicklimit"),
-                ];
-                userMods.forEach(function (mod) { return db.delete(mod); });
-                return [2, message.channel.send('**Done!**')];
+            var member, infoEmbed, row;
+            return __generator(this, function (_d) {
+                member = ((_b = message.mentions.members) === null || _b === void 0 ? void 0 : _b.first()) || ((_c = message.guild) === null || _c === void 0 ? void 0 : _c.members.cache.get(args[0])) || message.member;
+                infoEmbed = new discord_js_1.MessageEmbed()
+                    .setTitle("Who is ".concat(member.user.tag, "?"))
+                    .addField("Username", "".concat(member.user.tag))
+                    .addField("Id", "".concat(member.user.id))
+                    .addField("Account Created", "<t:".concat(Math.floor(member.user.createdTimestamp / 1000) + 3600, ":R>"))
+                    .addField("Joined", "<t:".concat(Math.floor(member.joinedTimestamp / 1000) + 3600, ":R>"))
+                    .addField("Bot", member.user.bot.toString())
+                    .addField("Roles", member.roles.cache
+                    .filter(function (role) { return role.name !== "@everyone"; })
+                    .map(function (role) { return "<@&".concat(role.id, ">"); })
+                    .join(member.roles.cache.size >= 10 ? " | " : "\n"))
+                    .setThumbnail(member.user.avatarURL())
+                    .setColor('#2F3136')
+                    .setFooter({
+                    text: 'Spy Bot',
+                    iconURL: 'https://cdn.discordapp.com/avatars/939629038178295828/861602a3003bf4b82e3397aaf1285ed2.webp?size=80)',
+                });
+                row = new discord_js_1.MessageActionRow().addComponents(new discord_js_1.MessageButton()
+                    .setURL(member.user.avatarURL())
+                    .setLabel('Users Avatar')
+                    .setStyle('LINK'));
+                message.channel.send({ embeds: [infoEmbed], components: [row] });
+                return [2];
             });
         });
     },

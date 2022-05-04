@@ -1,7 +1,9 @@
 import type { IHandler, ISlash } from '..';
 import { readdir } from 'fs/promises';
+import { Loxt } from "loxt"
 
 export const handler = async ({ client }: IHandler) => {
+	const loxt = new Loxt()
 	const commandsDir = await readdir('./slash-commands/');
 	commandsDir
 		.filter(file => file.endsWith('.js'))
@@ -11,6 +13,5 @@ export const handler = async ({ client }: IHandler) => {
 			);
 			client.slashCommands.push(pull);
 		});
-	console.log('-------------------------------------');
-	console.log('[INFO]: Slash Commands Loaded!');
+	loxt.info('Slash Commands Loaded!');
 };
