@@ -36,31 +36,63 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+var database_1 = require("../../database");
 var discord_js_1 = require("discord.js");
 exports.default = {
-    name: 'clearuser',
+    name: "limits",
     run: function (_a) {
-        var _b, _c, _d, _e, _f, _g, _h;
-        var message = _a.message, db = _a.db;
+        var _b;
+        var message = _a.message, args = _a.args;
         return __awaiter(this, void 0, void 0, function () {
-            var user, userMods;
-            return __generator(this, function (_j) {
-                if (!((_b = message.member) === null || _b === void 0 ? void 0 : _b.permissions.has(discord_js_1.Permissions.FLAGS.ADMINISTRATOR))) {
-                    message.channel.send("You don't have permission to do this!");
-                    return [2];
+            var type, limit, isLimit;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
+                    case 0:
+                        type = args[0], limit = args[1];
+                        if (!((_b = message.member) === null || _b === void 0 ? void 0 : _b.permissions.has(discord_js_1.Permissions.FLAGS.ADMINISTRATOR))) {
+                            message.channel.send("You don't have permission to do this!");
+                            return [2];
+                        }
+                        if (!args[1]) {
+                            message.channel.send(':x: | **Provide The limit**');
+                            return [2];
+                        }
+                        try {
+                            if (Number(args[1]) < 1) {
+                                message.channel.send(':x: | **The limit cannot be zero or negative number**');
+                                return [2];
+                            }
+                        }
+                        catch (_) {
+                            message.channel.send(':x: | **The limit has to be a number**');
+                            return [2];
+                        }
+                        isLimit = type === "channelcreate" ||
+                            type === "channeldelete" ||
+                            type === "rolecreate" ||
+                            type === "roledelete" ||
+                            type === "kick" ||
+                            type === "ban" ||
+                            type === "warn";
+                        if (!isLimit) {
+                            message.channel.send("\n\t\t\t\tNot a valid limit, valid limits are:\n\n\t\t\t\t**channelcreate, channeldelete,\n\t\t\t\trolecreate, roledelete, \n\t\t\t\tkick, ban,\n\t\t\t\twarn**\n\t\t\t");
+                            return [2];
+                        }
+                        return [4, database_1.prisma.limit.upsert({
+                                where: { guild: message.guildId, type: type },
+                                update: { limit: Number(limit) },
+                                create: {
+                                    guild: message.guildId,
+                                    type: type,
+                                    limit: Number(limit)
+                                }
+                            })];
+                    case 1:
+                        _c.sent();
+                        message.channel.send("".concat(limit, " has been updated!"));
+                        return [2];
                 }
-                user = message.mentions.users.first();
-                userMods = [
-                    "".concat((_c = message.guild) === null || _c === void 0 ? void 0 : _c.id, "_").concat(user === null || user === void 0 ? void 0 : user.id, "_rolecreate"),
-                    "".concat((_d = message.guild) === null || _d === void 0 ? void 0 : _d.id, "_").concat(user === null || user === void 0 ? void 0 : user.id, "_roledelete"),
-                    "".concat((_e = message.guild) === null || _e === void 0 ? void 0 : _e.id, "_").concat(user === null || user === void 0 ? void 0 : user.id, "_channelcreate"),
-                    "".concat((_f = message.guild) === null || _f === void 0 ? void 0 : _f.id, "_").concat(user === null || user === void 0 ? void 0 : user.id, "_channeldelete"),
-                    "".concat((_g = message.guild) === null || _g === void 0 ? void 0 : _g.id, "_").concat(user === null || user === void 0 ? void 0 : user.id, "_banlimit"),
-                    "".concat((_h = message.guild) === null || _h === void 0 ? void 0 : _h.id, "_").concat(user === null || user === void 0 ? void 0 : user.id, "_kicklimit"),
-                ];
-                userMods.forEach(function (mod) { return db.delete(mod); });
-                return [2, message.channel.send('**Done!**')];
             });
         });
-    },
+    }
 };

@@ -20,6 +20,7 @@ export default {
 				iconURL:
 					'https://cdn.discordapp.com/avatars/939629038178295828/861602a3003bf4b82e3397aaf1285ed2.webp?size=80)',
 			});
+		
 		await interaction.reply({ embeds: [commandsEmbed] });
 	},
 };

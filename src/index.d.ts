@@ -4,15 +4,18 @@ import type {
 	Client,
 	Message,
 } from 'discord.js';
-import type { Database } from '@devsnowflake/quick.db';
 import type { SlashCommandBuilder } from '@discordjs/builders';
 
 declare module 'discord.js' {
 	export interface Client {
 		commands: Collection<string, ICommand>;
 		slashCommands: ISlash[];
-		eventHandler(): void;
 	}
+}
+
+interface Data {
+	[`${string}_${string}_warns`]: string;
+	[`warnlimit_${string}`]: number
 }
 
 export interface IHandler {
@@ -33,12 +36,10 @@ export interface ICommand {
 export interface ISlashArgs {
 	client: Client;
 	interaction: CommandInteraction;
-	db: Database;
 }
 
 export interface ICommandArgs {
 	client: Client;
 	message: Message;
 	args: string[];
-	db: Database;
 }

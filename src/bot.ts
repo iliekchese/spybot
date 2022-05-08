@@ -2,21 +2,19 @@ import { Client, Collection, Intents } from 'discord.js';
 import { Routes } from 'discord-api-types/v9';
 import { REST } from '@discordjs/rest';
 import Fastify from 'fastify';
-import { readdir } from 'fs/promises';
-import { Database } from "@devsnowflake/quick.db"
+import { readdir } from 'node:fs/promises';
 import { Loxt } from "loxt"
 
 const loxt = new Loxt()
 
-process.on('uncaughtException', (err) => loxt.error(err.message));
+process.on('uncaughtException', (err) => loxt.error(err));
 
 readdir('./handlers/').then(handlers => 
 	handlers
 		.filter(file => file.endsWith('.js'))
-		.forEach(file => import(`./handlers/${file}`).then(({ handler }) => handler({ client, db })))
+		.forEach(file => import(`./handlers/${file}`).then(({ handler }) => handler({ client })))
 )
 
-const db = new Database();
 const rest = new REST({ version: '9' }).setToken(process.env.TOKEN || '');
 
 loxt.start('Loading')
@@ -33,7 +31,7 @@ loxt.info('made by eldi mindcrafter#0001 & AngelNext#9162')
 client.once('ready', async () => {
 	try {
 		await rest.put(Routes.applicationCommands('939629038178295828'), {
-			body: client.slashCommands.map(c => c.command),
+			body: client.slashCommands.map(c => c.command.toJSON()),
 		});
 		loxt.ready('application commands')
 	} catch (error) {
@@ -53,16 +51,15 @@ client.once('ready', async () => {
 // ------- MAKE COMMANDS INTERACT -----
 client.on('interactionCreate', async interaction => {
 	if (!interaction.isCommand()) return;
-	const command = client.slashCommands.find(
-		c => c.command.name === interaction.commandName
-	);
-	command?.run({ client, interaction, db });
+	const command = client.slashCommands.find(c => c.command.name === interaction.commandName);
+	command?.run({ client, interaction });
 });
 
 client.on('messageCreate', async message => {
 	const prefix = '.';
-	const { content, author } = message;
 
+	const { content, author } = message;
+	
 	if (author.bot) return;
 	if (!content.startsWith(prefix)) return;
 
@@ -70,16 +67,15 @@ client.on('messageCreate', async message => {
 	const cmd = args.shift()?.toLowerCase();
 
 	const command = client.commands.get(cmd!);
-	command?.run({ client, message, args, db });
+	command?.run({ client, message, args });
 });
 
 
 // -------- START BOT ------------
-const server = Fastify();
-
-server.get('/', async () => 'Bot is ready!');
-
 (async () => {
+	const server = Fastify();
+	server.get('/', async () => 'Bot is ready!');
+	
 	try {
 		await server.listen(3000, '0.0.0.0');
 		await client.login(process.env.TOKEN);

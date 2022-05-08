@@ -60,7 +60,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.handler = void 0;
-var promises_1 = require("fs/promises");
+var promises_1 = require("node:fs/promises");
 var loxt_1 = require("loxt");
 var handler = function (_a) {
     var client = _a.client;

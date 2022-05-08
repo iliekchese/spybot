@@ -1,68 +1,22 @@
 import type { ICommandArgs } from '../..';
-import type { Message, TextChannel } from 'discord.js';
+import type { TextChannel } from 'discord.js';
 import { MessageEmbed, Permissions } from 'discord.js';
-
-const limitTypeCheck = (message: Message, args: string[]) => {
-	if (!args[1]) {
-		message.channel.send(':x: | **Provide The limit**');
-		return;
-	}
-
-	try {
-		if (Number(args[1]) < 1) {
-			message.channel.send(
-				':x: | **The limit cannot be zero or negative number**'
-			);
-			return;
-		}
-	} catch (_) {
-		message.channel.send(':x: | **The limit has to be a number**');
-		return;
-	}
-};
+import { prisma } from '../../database';
 
 export default {
 	name: 'config',
-	async run({ message, args, db }: ICommandArgs) {
-		const bruh = new MessageEmbed()
-			.setTitle('<:Settings:939853181180080168> **Anti-Raid | Config**')
-			.setDescription(
-				`
-					**The Options are listed below:**
-					config channelCreateLimit
-					config channelDeleteLimit
-					config roleCreateLimit
-					config roleDeleteLimit
-					config banLimit
-					config kickLimit
-					config logs
-					config show
-					config punishment
-					config help
-				`
-			)
-			.setColor('#FF0000')
-			.setThumbnail(message.author.displayAvatarURL({ dynamic: true }))
-			.setAuthor({
-				name: message.author.tag,
-				iconURL: message.author.displayAvatarURL(),
-			})
-			.setFooter({
-				text: message.guild?.name || ':x:',
-				iconURL: message.guild?.iconURL()!,
-			});
-
+	async run({ message, args }: ICommandArgs) {
+		const logs = await prisma.logsChannel.findUnique({
+			where: { guild: message.guildId! },
+			select: { id: true }
+		});
 		switch (args[0]?.toLowerCase()) {
 			case 'show':
 				const disabled = ':x: Disabled';
-				const rcl = db.get(`rolecreate_${message.guild?.id}`)?.toString();
-				const rdl = db.get(`roledelete_${message.guild?.id}`)?.toString();
-				const ccl = db.get(`channelcreate_${message.guild?.id}`)?.toString();
-				const cdl = db.get(`channeldelete_${message.guild?.id}`)?.toString();
-				const bl = db.get(`banlimit_${message.guild?.id}`)?.toString();
-				const kl = db.get(`kicklimit_${message.guild?.id}`)?.toString();
-				const logs = db.get(`logs_${message.guild?.id}`)?.slice(1);
-				const punish = db.get(`punish_${message.guild?.id}`);
+				const punish = await prisma.punish.findUnique({
+					where: { guild: message.guildId! },
+					select: { option: true }
+				})
 				const show = new MessageEmbed()
 					.setTitle('**Anti-Raid | Config**')
 					.setAuthor({
@@ -71,91 +25,13 @@ export default {
 					})
 					.setThumbnail(message.author.displayAvatarURL({ dynamic: true }))
 					.setFooter({
-						text: message.guild?.name || '',
-						iconURL: message.guild?.iconURL() ?? '',
+						text: message.guild?.name!,
+						iconURL: message.guild?.iconURL()!,
 					})
-					.addField('Channel Create Limit', ccl ?? disabled)
-					.addField('Channel Delete Limit', cdl ?? disabled)
-					.addField('Role Create Limit', rcl ?? disabled)
-					.addField('Role Delete Limit', rdl ?? disabled)
-					.addField('Ban Limits', bl ?? disabled)
-					.addField('Kick Limits', kl ?? disabled)
-					.addField('Logs', logs ? `<#${logs}>` : disabled)
-					.addField('Punishment', punish ?? disabled)
+					.addField('Logs', logs?.id ? `<#${logs.id}>` : disabled)
+					.addField('Punishment', punish?.option ?? disabled)
 					.setColor('GREEN');
 				message.channel.send({ embeds: [show] });
-				break;
-
-			case 'channelcreatelimit':
-        if (!message.member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
-					message.channel.send("You don't have permission to do this!")
-					break;
-				}
-				limitTypeCheck(message, args);
-				db.set(`channelcreate_${message.guild?.id}`, Number(args[1]));
-				message.channel.send(
-					'**The channel Create limit has been set to ' + Number(args[1]) + '**'
-				);
-				break;
-
-			case 'channeldeletelimit':
-        if (!message.member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
-					message.channel.send("You don't have permission to do this!")
-					break;
-				}
-				limitTypeCheck(message, args);
-				db.set(`channeldelete_${message.guild?.id}`, Number(args[1]));
-				message.channel.send(
-					'**The channel Delete limit has been set to ' + Number(args[1]) + '**'
-				);
-				break;
-
-			case 'rolecreatelimit':
-        if (!message.member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
-					message.channel.send("You don't have permission to do this!")
-					break;
-				}
-				limitTypeCheck(message, args);
-				db.set(`rolecreate_${message.guild?.id}`, Number(args[1]));
-				message.channel.send(
-					'**The role Create limit has been set to ' + args[1] + '**'
-				);
-				break;
-
-			case 'roledeletelimit':
-        if (!message.member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
-					message.channel.send("You don't have permission to do this!")
-					break;
-				}
-				limitTypeCheck(message, args);
-				db.set(`roledelete_${message.guild?.id}`, Number(args[1]));
-				message.channel.send(
-					'**The role Delete limit has been set to ' + args[1] + '**'
-				);
-				break;
-
-			case 'banlimit':
-        if (!message.member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
-					message.channel.send("You don't have permission to do this!")
-					break;
-				}
-				limitTypeCheck(message, args);
-				db.set(`banlimit_${message.guild?.id}`, Number(args[1]));
-				message.channel.send(
-					'**The ban limit has been set to ' + Number(args[1]) + '**'
-				);
-				break;
-
-			case 'kicklimit':
-        if (!message.member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
-					message.channel.send("You don't have permission to do this!")
-					break;
-				}
-				limitTypeCheck(message, args);
-				db.set(`kicklimit_${message.guild?.id}`, Number(args[1]));
-				message.channel.send(
-					'**The kick limit has been set to ' + Number(args[1]) + '**'
-				);
 				break;
 
 			case 'punishment':
@@ -167,15 +43,19 @@ export default {
 					message.channel.send(':x: | **Provide The punishment**');
 					break;
 				}
-				if (
-					!(args[1] === 'ban' || args[1] === 'kick' || args[1] === 'demote' || args[1] === 'quarantine')
-				) {
-					message.channel.send(
-						':x: | **The punishment can only be kick, ban, quarantine or demote**'
-					);
+				if (!(args[1] === 'ban' || args[1] === 'kick' || args[1] === 'demote' || args[1] === 'quarantine')) {
+					message.channel.send(':x: | **The punishment can only be kick, ban, quarantine or demote**');
 					break;
 				}
-				db.set(`punish_${message.guild?.id}`, args[1].toLowerCase());
+				await prisma.punish.upsert({
+					where: { guild: message.guildId! },
+					update: { option: args[1] },
+					create: {
+						guild: message.guildId!,
+						option: args[1]
+					}
+				})
+
 				message.channel.send(
 					'**The punishment has been set to ' + args[1] + '**'
 				);
@@ -186,34 +66,54 @@ export default {
 					message.channel.send("You don't have permission to do this!")
 					break;
 				}
-				const channel = message.mentions.channels.first() as TextChannel;
+				const channel = message.mentions.channels.first()! as TextChannel;
 				if (!channel) {
 					message.channel.send(':x: | **Mention The channel**');
 					break;
-				} else if (channel.guild.id !== message.guild?.id) {
-					message.channel.send(
-						':x: | **That channel is not from this server**'
-					);
+				} 
+				if (channel.guild.id !== message.guild?.id) {
+					message.channel.send(':x: | **That channel is not from this server**');
 					break;
 				}
-				db.set(`logs_${message.guild?.id}`, `i${channel.id}`);
+				await prisma.logsChannel.upsert({
+					where: { guild: message.guildId! },
+					update: { id: channel.id },
+					create: {
+						guild: message.guildId!,
+						id: channel.id
+					}
+				})
 				channel.send('**Anti Raid logs Channel**');
 				message.channel.send(
 					'**The logs channel has been set to ' + args[1] + '**'
 				);
 				break;
 
-			case 'help':
-				message.channel.send({ embeds: [bruh] });
-				break;
-
 			default:
-				message.channel.send(
-					':x: | **Enter a valid subcommand, EXAMPLE: .config help**'
-				);
+				const helpEmbed = new MessageEmbed()
+					.setTitle('<:Settings:939853181180080168> **Anti-Raid | Config**')
+					.setDescription(
+						`
+							**The Options are listed below:**
+							config show
+							config logs
+							config punishment
+						`
+					)
+					.setColor('#FF0000')
+					.setThumbnail(message.author.displayAvatarURL({ dynamic: true }))
+					.setAuthor({
+						name: message.author.tag,
+						iconURL: message.author.displayAvatarURL(),
+					})
+					.setFooter({
+						text: message.guild?.name!,
+						iconURL: message.guild?.iconURL()!,
+					});
+				message.channel.send({ embeds: [helpEmbed] });
+				break;
 		}
-		const logs = db.get(`logs_${message.guild?.id}`)?.slice(1)
-		const channel = await message.guild?.channels.fetch(logs)
+		const channel = await message.guild?.channels.fetch(logs?.id!)
 		if (!channel) {
 			message.reply("\nThe logs channel isn't set, consider to set with `.config logs <logs_channel>`!");
 		}

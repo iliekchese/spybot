@@ -38,6 +38,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var builders_1 = require("@discordjs/builders");
 var discord_js_1 = require("discord.js");
+var database_1 = require("../database");
 exports.default = {
     command: new builders_1.SlashCommandBuilder()
         .setName('whitelist')
@@ -68,81 +69,92 @@ exports.default = {
             .setDescription('List all users on the whitelist');
     }),
     run: function (_a) {
-        var _b, _c, _d, _e, _f, _g, _h, _j, _k;
-        var interaction = _a.interaction, db = _a.db;
+        var _b, _c, _d, _e, _f, _g, _h;
+        var interaction = _a.interaction;
         return __awaiter(this, void 0, void 0, function () {
-            var _l, user_1, whitelist, user_2, whitelist, whitelistedUser, index, fix, embed, whitelisted;
-            return __generator(this, function (_m) {
-                switch (_m.label) {
-                    case 0:
-                        _l = interaction.options.getSubcommand();
-                        switch (_l) {
-                            case 'add': return [3, 1];
-                            case 'remove': return [3, 7];
-                            case 'show': return [3, 15];
-                        }
-                        return [3, 17];
+            var whitelist, user, _j, embed, whitelisted;
+            return __generator(this, function (_k) {
+                switch (_k.label) {
+                    case 0: return [4, database_1.prisma.whitelist.findUnique({
+                            where: { guild: interaction.guildId },
+                            select: { users: true }
+                        })];
                     case 1:
-                        if (!(((_b = interaction.guild) === null || _b === void 0 ? void 0 : _b.ownerId) === interaction.user.id)) return [3, 5];
-                        user_1 = interaction.options.getUser('user');
-                        whitelist = db.get("whitelist_".concat(interaction.guild.id));
-                        if (!(whitelist === null || whitelist === void 0 ? void 0 : whitelist.find(function (x) { return x.user === (user_1 === null || user_1 === void 0 ? void 0 : user_1.id); }))) return [3, 3];
-                        return [4, interaction.reply(':x: | **The User is already whitelisted**')];
+                        whitelist = _k.sent();
+                        user = interaction.options.getUser("user");
+                        _j = interaction.options.getSubcommand();
+                        switch (_j) {
+                            case 'add': return [3, 2];
+                            case 'remove': return [3, 11];
+                            case 'show': return [3, 20];
+                        }
+                        return [3, 22];
                     case 2:
-                        _m.sent();
-                        return [3, 17];
+                        if (!(interaction.user.id !== interaction.guildId)) return [3, 4];
+                        return [4, interaction.reply(':x: | **Only The owner of the Server can whitelist people**')];
                     case 3:
-                        db.push("whitelist_".concat(interaction.guild.id), { user: user_1 === null || user_1 === void 0 ? void 0 : user_1.id });
-                        return [4, interaction.reply("**The user has been whitelisted!**")];
+                        _k.sent();
+                        return [3, 22];
                     case 4:
-                        _m.sent();
-                        return [3, 17];
-                    case 5: return [4, interaction.reply(':x: | **Only The owner of the Server can whitelist people**')];
+                        if (!!user) return [3, 6];
+                        return [4, interaction.reply(':x: | **Mention The User**')];
+                    case 5:
+                        _k.sent();
+                        return [3, 22];
                     case 6:
-                        _m.sent();
-                        return [3, 17];
+                        if (!(whitelist === null || whitelist === void 0 ? void 0 : whitelist.users.some(function (id) { return id === user.id; }))) return [3, 8];
+                        return [4, interaction.reply(':x: | **The User is already whitelisted**')];
                     case 7:
-                        if (!(interaction.user.id === ((_c = interaction.guild) === null || _c === void 0 ? void 0 : _c.ownerId))) return [3, 13];
-                        user_2 = interaction.options.getUser('user');
-                        whitelist = db.get("whitelist_".concat(interaction.guild.id));
-                        if (!whitelist) return [3, 11];
-                        whitelistedUser = whitelist.find(function (x) { return x.user.id === (user_2 === null || user_2 === void 0 ? void 0 : user_2.id); });
-                        if (!whitelistedUser) return [3, 9];
-                        return [4, interaction.reply(':x: | **The user is not whitelisted!**')];
-                    case 8:
-                        _m.sent();
-                        return [3, 17];
+                        _k.sent();
+                        return [3, 22];
+                    case 8: return [4, database_1.prisma.whitelist.upsert({
+                            where: { guild: (_b = interaction.guild) === null || _b === void 0 ? void 0 : _b.id },
+                            update: { users: {
+                                    push: user.id
+                                } },
+                            create: { guild: interaction.guildId, users: [user.id] }
+                        })];
                     case 9:
-                        index = whitelist.indexOf(whitelistedUser || {});
-                        delete whitelist[index];
-                        fix = whitelist.filter(function (x) { return !!x; });
-                        db.set("whitelist_".concat(interaction.guild.id), fix);
-                        return [4, interaction.reply('**The user has been unwhitelisted!**')];
+                        _k.sent();
+                        return [4, interaction.reply("**The user has been whitelisted!**")];
                     case 10:
-                        _m.sent();
-                        return [3, 17];
-                    case 11: return [4, interaction.reply(':x: | **The user is not whitelisted!**')];
+                        _k.sent();
+                        return [3, 22];
+                    case 11:
+                        if (!(interaction.user.id !== ((_c = interaction.guild) === null || _c === void 0 ? void 0 : _c.id))) return [3, 13];
+                        return [4, interaction.reply(':x: | **Only The owner of the Server can unwhitelist people**')];
                     case 12:
-                        _m.sent();
-                        return [3, 15];
-                    case 13: return [4, interaction.reply(':x: | **Only The owner of the Server can unwhitelist people**')];
+                        _k.sent();
+                        return [3, 22];
+                    case 13:
+                        if (!!user) return [3, 15];
+                        return [4, interaction.reply(':x: | **Mention The User**')];
                     case 14:
-                        _m.sent();
-                        return [3, 17];
+                        _k.sent();
+                        return [3, 22];
                     case 15:
+                        if (!!((_d = whitelist === null || whitelist === void 0 ? void 0 : whitelist.users) === null || _d === void 0 ? void 0 : _d.find(function (id) { return id === (user === null || user === void 0 ? void 0 : user.id); }))) return [3, 17];
+                        return [4, interaction.reply(':x: | **The user is not whitelisted!**')];
+                    case 16:
+                        _k.sent();
+                        return [3, 22];
+                    case 17: return [4, database_1.prisma.whitelist.update({
+                            where: { guild: interaction.guildId },
+                            data: { users: whitelist.users.filter(function (id) { return id !== (user === null || user === void 0 ? void 0 : user.id); }) }
+                        })];
+                    case 18:
+                        _k.sent();
+                        return [4, interaction.reply('**The user has been unwhitelisted!**')];
+                    case 19:
+                        _k.sent();
+                        return [3, 22];
+                    case 20:
                         embed = new discord_js_1.MessageEmbed()
                             .setTitle('**The list of whitelisted users**')
-                            .setAuthor({
-                            name: interaction.user.tag,
-                            iconURL: interaction.user.displayAvatarURL({ dynamic: true }),
-                        })
-                            .setFooter({
-                            text: ((_d = interaction.guild) === null || _d === void 0 ? void 0 : _d.name) || '',
-                            iconURL: (_f = (_e = interaction.guild) === null || _e === void 0 ? void 0 : _e.iconURL()) !== null && _f !== void 0 ? _f : '',
-                        })
-                            .setThumbnail((_h = (_g = interaction.guild) === null || _g === void 0 ? void 0 : _g.iconURL()) !== null && _h !== void 0 ? _h : '');
-                        whitelisted = (_k = db
-                            .get("whitelist_".concat((_j = interaction.guild) === null || _j === void 0 ? void 0 : _j.id))) === null || _k === void 0 ? void 0 : _k.map(function (x) { return "<@".concat(x.user, ">"); });
+                            .setAuthor({ name: interaction.user.tag, iconURL: interaction.user.displayAvatarURL({ dynamic: true }) })
+                            .setFooter({ text: (_e = interaction.guild) === null || _e === void 0 ? void 0 : _e.name, iconURL: (_f = interaction.guild) === null || _f === void 0 ? void 0 : _f.iconURL() })
+                            .setThumbnail((_g = interaction.guild) === null || _g === void 0 ? void 0 : _g.iconURL());
+                        whitelisted = (_h = whitelist === null || whitelist === void 0 ? void 0 : whitelist.users) === null || _h === void 0 ? void 0 : _h.map(function (id) { return "<@".concat(id, ">"); });
                         if (whitelisted === null || whitelisted === void 0 ? void 0 : whitelisted.length) {
                             embed.addField('**Users**', "".concat(whitelisted.join('\n')));
                             embed.setColor('GREEN');
@@ -152,10 +164,10 @@ exports.default = {
                             embed.setColor('#FF0000');
                         }
                         return [4, interaction.reply({ embeds: [embed] })];
-                    case 16:
-                        _m.sent();
-                        return [3, 17];
-                    case 17: return [2];
+                    case 21:
+                        _k.sent();
+                        return [3, 22];
+                    case 22: return [2];
                 }
             });
         });

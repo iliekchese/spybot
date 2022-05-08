@@ -66,20 +66,18 @@ var discord_js_1 = require("discord.js");
 var v9_1 = require("discord-api-types/v9");
 var rest_1 = require("@discordjs/rest");
 var fastify_1 = __importDefault(require("fastify"));
-var promises_1 = require("fs/promises");
-var quick_db_1 = require("@devsnowflake/quick.db");
+var promises_1 = require("node:fs/promises");
 var loxt_1 = require("loxt");
 var loxt = new loxt_1.Loxt();
-process.on('uncaughtException', function (err) { return loxt.error(err.message); });
+process.on('uncaughtException', function (err) { return loxt.error(err); });
 (0, promises_1.readdir)('./handlers/').then(function (handlers) {
     return handlers
         .filter(function (file) { return file.endsWith('.js'); })
         .forEach(function (file) { return Promise.resolve().then(function () { return __importStar(require("./handlers/".concat(file))); }).then(function (_a) {
         var handler = _a.handler;
-        return handler({ client: client, db: db });
+        return handler({ client: client });
     }); });
 });
-var db = new quick_db_1.Database();
 var rest = new rest_1.REST({ version: '9' }).setToken(process.env.TOKEN || '');
 loxt.start('Loading');
 var client = new discord_js_1.Client({
@@ -96,7 +94,7 @@ client.once('ready', function () { return __awaiter(void 0, void 0, void 0, func
             case 0:
                 _c.trys.push([0, 2, , 3]);
                 return [4, rest.put(v9_1.Routes.applicationCommands('939629038178295828'), {
-                        body: client.slashCommands.map(function (c) { return c.command; }),
+                        body: client.slashCommands.map(function (c) { return c.command.toJSON(); }),
                     })];
             case 1:
                 _c.sent();
@@ -124,7 +122,7 @@ client.on('interactionCreate', function (interaction) { return __awaiter(void 0,
         if (!interaction.isCommand())
             return [2];
         command = client.slashCommands.find(function (c) { return c.command.name === interaction.commandName; });
-        command === null || command === void 0 ? void 0 : command.run({ client: client, interaction: interaction, db: db });
+        command === null || command === void 0 ? void 0 : command.run({ client: client, interaction: interaction });
         return [2];
     });
 }); });
@@ -141,32 +139,34 @@ client.on('messageCreate', function (message) { return __awaiter(void 0, void 0,
         args = content.slice(prefix.length).trim().split(/ +/);
         cmd = (_a = args.shift()) === null || _a === void 0 ? void 0 : _a.toLowerCase();
         command = client.commands.get(cmd);
-        command === null || command === void 0 ? void 0 : command.run({ client: client, message: message, args: args, db: db });
+        command === null || command === void 0 ? void 0 : command.run({ client: client, message: message, args: args });
         return [2];
     });
 }); });
-var server = (0, fastify_1.default)();
-server.get('/', function () { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
-    return [2, 'Bot is ready!'];
-}); }); });
 (function () { return __awaiter(void 0, void 0, void 0, function () {
-    var _1;
+    var server, _1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                _a.trys.push([0, 3, , 4]);
-                return [4, server.listen(3000, '0.0.0.0')];
+                server = (0, fastify_1.default)();
+                server.get('/', function () { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
+                    return [2, 'Bot is ready!'];
+                }); }); });
+                _a.label = 1;
             case 1:
-                _a.sent();
-                return [4, client.login(process.env.TOKEN)];
+                _a.trys.push([1, 4, , 5]);
+                return [4, server.listen(3000, '0.0.0.0')];
             case 2:
                 _a.sent();
-                return [3, 4];
+                return [4, client.login(process.env.TOKEN)];
             case 3:
+                _a.sent();
+                return [3, 5];
+            case 4:
                 _1 = _a.sent();
                 loxt.error('The bot or the server failed to start');
-                return [3, 4];
-            case 4: return [2];
+                return [3, 5];
+            case 5: return [2];
         }
     });
 }); })();

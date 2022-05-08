@@ -1,5 +1,5 @@
 import type { ICommand, IHandler } from '..';
-import { readdir } from 'fs/promises';
+import { readdir } from 'node:fs/promises';
 import { Loxt } from "loxt"
 
 export const handler = async ({ client }: IHandler) => {

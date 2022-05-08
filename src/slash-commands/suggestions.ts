@@ -1,6 +1,7 @@
 import type { ISlashArgs } from '..';
 import { MessageEmbed, TextChannel } from 'discord.js';
 import { SlashCommandBuilder } from '@discordjs/builders';
+import { prisma } from '../database';
 
 export default {
 	command: new SlashCommandBuilder()
@@ -21,41 +22,51 @@ export default {
 			subcommand
 				.setName('new')
 				.setDescription('Add new suggestion')
-				.addStringOption(message =>
-					message
-						.setName('message')
-						.setDescription("The suggestion's body")
+				.addStringOption(title =>
+					title
+						.setName('title')
+						.setDescription("The suggestion's title")
+						.setRequired(true)
+				)
+				.addStringOption(body =>
+					body
+						.setName('title')
+						.setDescription("The suggestion's title")
 						.setRequired(true)
 				)
 		),
 
-	async run({ client, interaction, db }: ISlashArgs) {
+	async run({ client, interaction }: ISlashArgs) {
 		switch (interaction.options.getSubcommand()) {
 			case 'set':
-				const channel = interaction.options.getChannel(
-					'channel'
-				) as TextChannel | null;
-				db.set(`suggestions_${interaction.guild?.id}`, `s${channel?.id}`);
+				const channel = interaction.options.getChannel('channel') as TextChannel | null;
+        await prisma.suggestionsChannel.upsert({
+					where: { guild: interaction.guildId! },
+					update: { id: channel?.id! },
+					create: { guild: interaction.guildId!, id: channel?.id! }
+				})
 				channel?.send('**Suggestions Channel**');
-				await interaction.reply(
-					`**The suggestions channel has been set to <#${channel?.id}>**`
-				);
+				await interaction.reply(`**The suggestions channel has been set to <#${channel?.id}>**`);
 				break;
 
 			case 'new':
         await interaction.reply("**Suggestion submitted**")
-				const message = interaction.options.getString('message');
+				const title = interaction.options.getString('title');
+				const body = interaction.options.getString('body');
 				const embed = new MessageEmbed()
-					.setTitle(`A new suggestion was submitted by ${interaction.user.tag}`)
-					.setDescription(message ?? ':x: | **No message provided**')
-					.setColor('#2F3136');
-				const suggestionsChannel = client.channels.cache.get(
-					db.get(`suggestions_${interaction.guild?.id}`).slice(1)
-				) as TextChannel;
-				suggestionsChannel?.send({ embeds: [embed] }).then(({ react }) => {
-					react('✅');
-					react('❌');
-				});
+					.setTitle(`**${title}**`)
+					.setDescription(body!)
+					.setColor('#2F3136')
+					.setAuthor({ name: interaction.user.tag, iconURL: interaction.user.avatarURL()! });
+				const suggestions = await prisma.suggestionsChannel.findUnique({
+					where: { guild: interaction.guildId! },
+					select: { id: true }
+				})
+				const suggestionsChannel = client.channels.cache.get(suggestions?.id!) as TextChannel;
+				const msg = await suggestionsChannel?.send({ embeds: [embed] })
+				msg.react('✅');
+				msg.react('❌');
+        await interaction.reply("**Suggestion submitted**")
 				break;
 		}
 	},

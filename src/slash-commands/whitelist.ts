@@ -1,7 +1,7 @@
 import type { ISlashArgs } from '..';
-import type { GuildMember } from 'discord.js';
 import { SlashCommandBuilder } from '@discordjs/builders';
 import { MessageEmbed } from 'discord.js';
+import { prisma } from '../database';
 
 export default {
 	command: new SlashCommandBuilder()
@@ -33,76 +33,63 @@ export default {
 				.setDescription('List all users on the whitelist')
 		),
 
-	async run({ interaction, db }: ISlashArgs) {
+	async run({ interaction }: ISlashArgs) {
+		const whitelist = await prisma.whitelist.findUnique({
+			where: { guild: interaction.guildId! },
+			select: { users: true }
+		})
+		const user = interaction.options.getUser("user");
 		switch (interaction.options.getSubcommand()) {
 			case 'add':
-				if (interaction.guild?.ownerId === interaction.user.id) {
-					const user = interaction.options.getUser('user');
-					const whitelist = db.get(`whitelist_${interaction.guild.id}`);
-					if (
-						whitelist?.find(
-							(x: { user: string | undefined }) => x.user === user?.id
-						)
-					) {
-						await interaction.reply(
-							':x: | **The User is already whitelisted**'
-						);
-						break;
-					}
-					db.push(`whitelist_${interaction.guild.id}`, { user: user?.id });
-					await interaction.reply(`**The user has been whitelisted!**`);
-					break;
-				} else {
-					await interaction.reply(
-						':x: | **Only The owner of the Server can whitelist people**'
-					);
+				if (interaction.user.id !== interaction.guildId) {
+					await interaction.reply(':x: | **Only The owner of the Server can whitelist people**');
 					break;
 				}
+				if (!user) {
+					await interaction.reply(':x: | **Mention The User**');
+					break;
+				}
+				if (whitelist?.users.some(id => id === user.id)) {
+					await interaction.reply(':x: | **The User is already whitelisted**');
+					break;
+				}
+				await prisma.whitelist.upsert({
+					where: { guild: interaction.guild?.id! },
+					update: { users: {
+						push: user.id
+					}},
+					create: { guild: interaction.guildId!, users: [user.id]}
+				})
+				await interaction.reply(`**The user has been whitelisted!**`);
+				break;
 
 			case 'remove':
-				if (interaction.user.id === interaction.guild?.ownerId) {
-					const user = interaction.options.getUser('user');
-					const whitelist: GuildMember[] = db.get(
-						`whitelist_${interaction.guild.id}`
-					);
-					if (whitelist) {
-						const whitelistedUser = whitelist.find(x => x.user.id === user?.id);
-						if (whitelistedUser) {
-							await interaction.reply(':x: | **The user is not whitelisted!**');
-							break;
-						}
-						const index = whitelist.indexOf(
-							whitelistedUser || ({} as GuildMember)
-						);
-						delete whitelist[index];
-						const fix = whitelist.filter(x => !!x);
-						db.set(`whitelist_${interaction.guild.id}`, fix);
-						await interaction.reply('**The user has been unwhitelisted!**');
-						break;
-					}
-					await interaction.reply(':x: | **The user is not whitelisted!**');
-				} else {
-					await interaction.reply(
-						':x: | **Only The owner of the Server can unwhitelist people**'
-					);
+				if (interaction.user.id !== interaction.guild?.id) {
+					await interaction.reply(':x: | **Only The owner of the Server can unwhitelist people**');
 					break;
 				}
+				if (!user) {
+					await interaction.reply(':x: | **Mention The User**');
+					break;
+				}
+				if (!whitelist?.users?.find(id => id === user?.id)) {
+					await interaction.reply(':x: | **The user is not whitelisted!**');
+					break;
+				}
+				await prisma.whitelist.update({
+					where: { guild: interaction.guildId! },
+					data: { users:  whitelist.users.filter(id => id !== user?.id) }
+				})
+				await interaction.reply('**The user has been unwhitelisted!**');
+				break;
 
 			case 'show':
 				const embed = new MessageEmbed()
 					.setTitle('**The list of whitelisted users**')
-					.setAuthor({
-						name: interaction.user.tag,
-						iconURL: interaction.user.displayAvatarURL({ dynamic: true }),
-					})
-					.setFooter({
-						text: interaction.guild?.name || '',
-						iconURL: interaction.guild?.iconURL() ?? '',
-					})
-					.setThumbnail(interaction.guild?.iconURL() ?? '');
-				const whitelisted: string[] = db
-					.get(`whitelist_${interaction.guild?.id}`)
-					?.map((x: GuildMember) => `<@${x.user}>`);
+					.setAuthor({ name: interaction.user.tag, iconURL: interaction.user.displayAvatarURL({ dynamic: true }) })
+					.setFooter({ text: interaction.guild?.name!, iconURL: interaction.guild?.iconURL()! })
+					.setThumbnail(interaction.guild?.iconURL()!);
+				const whitelisted = whitelist?.users?.map(id => `<@${id}>`);
 				if (whitelisted?.length) {
 					embed.addField('**Users**', `${whitelisted.join('\n')}`);
 					embed.setColor('GREEN');

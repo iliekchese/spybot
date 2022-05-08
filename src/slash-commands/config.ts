@@ -1,19 +1,8 @@
 import type { ISlashArgs } from '..';
-import type { CommandInteraction, TextChannel } from 'discord.js';
+import type { TextChannel } from 'discord.js';
 import { SlashCommandBuilder } from '@discordjs/builders';
-import { MessageEmbed } from 'discord.js';
-
-const handleIsNegative = async (
-	interaction: CommandInteraction,
-	limit: number
-) => {
-	if (limit < 1) {
-		await interaction.reply(
-			':x: | **The limit cannot be zero or negative number**'
-		);
-		return;
-	}
-};
+import { MessageEmbed, Permissions } from 'discord.js';
+import { prisma } from '../database';
 
 export default {
 	command: new SlashCommandBuilder()
@@ -26,60 +15,18 @@ export default {
 		)
 		.addSubcommand(subcommand =>
 			subcommand
-				.setName('channelcreatelimit')
-				.setDescription('Set the channel create limit!')
-				.addNumberOption(limit =>
-					limit.setName('limit').setDescription('The limit').setRequired(true)
-				)
-		)
-		.addSubcommand(subcommand =>
-			subcommand
-				.setName('channeldeletelimit')
-				.setDescription('Set the channel delete limit!')
-				.addNumberOption(limit =>
-					limit.setName('limit').setDescription('The limit').setRequired(true)
-				)
-		)
-		.addSubcommand(subcommand =>
-			subcommand
-				.setName('rolecreatelimit')
-				.setDescription('Set the role create limit!')
-				.addNumberOption(limit =>
-					limit.setName('limit').setDescription('The limit').setRequired(true)
-				)
-		)
-		.addSubcommand(subcommand =>
-			subcommand
-				.setName('roledeletelimit')
-				.setDescription('Set the role delete limit!')
-				.addNumberOption(limit =>
-					limit.setName('limit').setDescription('The limit').setRequired(true)
-				)
-		)
-		.addSubcommand(subcommand =>
-			subcommand
-				.setName('banlimit')
-				.setDescription('Set the ban limit!')
-				.addNumberOption(limit =>
-					limit.setName('limit').setDescription('The limit').setRequired(true)
-				)
-		)
-		.addSubcommand(subcommand =>
-			subcommand
-				.setName('kicklimit')
-				.setDescription('Set the kick limit!')
-				.addNumberOption(limit =>
-					limit.setName('limit').setDescription('The limit').setRequired(true)
-				)
-		)
-		.addSubcommand(subcommand =>
-			subcommand
 				.setName('punishment')
 				.setDescription('Set the punishment!')
 				.addStringOption(pun =>
 					pun
 						.setName('punishment')
 						.setDescription('The punishment')
+						.addChoices(
+							{ name: "ban", value: "ban" },
+							{ name: "kick", value: "kick" },
+							{ name: "demote", value: "demote" },
+							{ name: "quarantine", value: "quarantine" }
+						)
 						.setRequired(true)
 				)
 		)
@@ -98,26 +45,18 @@ export default {
 			subcommand.setName('help').setDescription('Config Preview')
 		),
 
-	async run({ client, interaction, db }: ISlashArgs) {
+	async run({ interaction }: ISlashArgs) {
+		const logs = await prisma.logsChannel.findUnique({
+			where: { guild: interaction.guildId! },
+			select: { id: true }
+		});
 		switch (interaction.options.getSubcommand()) {
 			case 'show':
 				const disabled = ':x: Disabled';
-				const rcl: number =
-					db.get(`rolecreate_${interaction.guild?.id}`) || disabled;
-				const rdl: number =
-					db.get(`roledelete_${interaction.guild?.id}`) || disabled;
-				const ccl: number =
-					db.get(`channelcreate_${interaction.guild?.id}`) || disabled;
-				const cdl: number =
-					db.get(`channeldelete_${interaction.guild?.id}`) || disabled;
-				const bl: number =
-					db.get(`banlimit_${interaction.guild?.id}`) || disabled;
-				const kl: number =
-					db.get(`kicklimit_${interaction.guild?.id}`) || disabled;
-				const logs = db.get(`logs_${interaction.guild?.id}`)?.slice(1) || disabled;
-				const punish = db.get(`punish_${interaction.guild?.id}`) || disabled;
-				const logsChannel =
-					client.channels.cache.get(logs)?.toString() || disabled;
+				const punish = await prisma.punish.findUnique({
+					where: { guild: interaction.guildId! },
+					select: { option: true }
+				})
 				const show = new MessageEmbed()
 					.setTitle('**Anti-Raid | Config**')
 					.setAuthor({
@@ -129,93 +68,58 @@ export default {
 						text: interaction.guild?.name || '',
 						iconURL: interaction.guild?.iconURL() ?? '',
 					})
-					.addField('Channel Create Limit', ccl.toString())
-					.addField('Channel Delete Limit', cdl.toString())
-					.addField('Role Create Limit', rcl.toString())
-					.addField('Role Delete Limit', rdl.toString())
-					.addField('Ban Limits', bl.toString())
-					.addField('Kick Limits', kl.toString())
-					.addField('Logs', logsChannel.toString())
-					.addField('Punishment', punish.toString())
+					.addField('Logs', logs?.id ? `<#${logs.id}>` : disabled)
+					.addField('Punishment', punish?.option ?? disabled)
 					.setColor('GREEN');
 				await interaction.reply({ embeds: [show] });
 				break;
 
-			case 'channelcreatelimit':
-				const ccLimit = interaction.options.getNumber('limit') ?? 1;
-				handleIsNegative(interaction, ccLimit);
-				db.set(`channelcreate_${interaction.guild?.id}`, ccLimit);
-				await interaction.reply(
-					`**The channel Create limit has been set to ${ccLimit} **`
-				);
-				break;
-
-			case 'channeldeletelimit':
-				const cdLimit = interaction.options.getNumber('limit') ?? 1;
-				handleIsNegative(interaction, cdLimit);
-				db.set(`channeldelete_${interaction.guild?.id}`, cdLimit);
-				await interaction.reply(
-					`**The channel Delete limit has been set to ${cdLimit} **`
-				);
-				break;
-
-			case 'rolecreatelimit':
-				const rcLimit = interaction.options.getNumber('limit') ?? 1;
-				handleIsNegative(interaction, rcLimit);
-				db.set(`rolecreate_${interaction.guild?.id}`, rcLimit);
-				await interaction.reply(
-					`**The role Create limit has been set to ${rcLimit} **`
-				);
-				break;
-
-			case 'roledeletelimit':
-				const rdLimit = interaction.options.getNumber('limit') ?? 1;
-				handleIsNegative(interaction, rdLimit);
-				db.set(`roledelete_${interaction.guild?.id}`, rdLimit);
-				await interaction.reply(
-					`**The role Delete limit has been set to ${rdLimit} **`
-				);
-				break;
-
-			case 'banlimit':
-				const banLimit = interaction.options.getNumber('limit') ?? 1;
-				handleIsNegative(interaction, banLimit);
-				db.set(`banlimit_${interaction.guild?.id}`, banLimit);
-				await interaction.reply(
-					`**The ban limit has been set to ${banLimit} **`
-				);
-				break;
-
-			case 'kicklimit':
-				const kickLimit = interaction.options.getNumber('limit') ?? 1;
-				handleIsNegative(interaction, kickLimit);
-				db.set(`kicklimit_${interaction.guild?.id}`, kickLimit);
-				await interaction.reply(
-					`**The kick limit has been set to ${kickLimit} **`
-				);
-				break;
-
 			case 'punishment':
-				const pun = interaction.options.getString('punishment');
-				if (!(pun === 'kick' || pun === 'ban' || pun === 'demote')) {
-					await interaction.reply(
-						':x: | **The punishment can only be kick, ban or demote**'
-					);
+				const punishment = interaction.options.getString("punishment")
+				if (!interaction.memberPermissions?.has(Permissions.FLAGS.ADMINISTRATOR)) {
+					await interaction.reply("You don't have permission to do this!")
 					break;
 				}
-				db.set(`punish_${interaction.guild?.id}`, pun.toLowerCase());
-				await interaction.reply(`**The punishment has been set to ${pun} **`);
+				if (!punishment) {
+					await interaction.reply(':x: | **Provide The punishment**');
+					break;
+				}
+				if (!(punishment === 'ban' || punishment === 'kick' || punishment === 'demote' || punishment === 'quarantine')) {
+					await interaction.reply(':x: | **The punishment can only be kick, ban, quarantine or demote**');
+					break;
+				}
+				await prisma.punish.upsert({
+					where: { guild: interaction.guildId! },
+					update: { option: punishment },
+					create: {
+						guild: interaction.guildId!,
+						option: punishment
+					}
+				})
+
+				await interaction.reply('**The punishment has been set to ' + punishment + '**');
 				break;
 
 			case 'logs':
-				const channel = interaction.options.getChannel(
-					'channel'
-				) as TextChannel;
-				db.set(`logs_${interaction.guild?.id}`, `${channel?.id}`);
-				channel?.send('**Anti Raid logs Channel**');
-				await interaction.reply(
-					`**The logs channel has been set to <#${channel.id}> **`
-				);
+				if (!interaction.memberPermissions?.has(Permissions.FLAGS.ADMINISTRATOR)) {
+					await interaction.reply("You don't have permission to do this!")
+					break;
+				}
+				const channel = interaction.options.getChannel("channel") as TextChannel | null;
+				if (channel?.guildId !== interaction.guildId!) {
+					await interaction.reply(':x: | **That channel is not from this server**');
+					break;
+				}
+				await prisma.logsChannel.upsert({
+					where: { guild: interaction.guildId! },
+					update: { id: channel.id },
+					create: {
+						guild: interaction.guildId!,
+						id: channel.id
+					}
+				})
+				channel.send('**Anti Raid logs Channel**');
+				await interaction.reply('**The logs channel has been set to ' + channel + '**');
 				break;
 
 			case 'help':

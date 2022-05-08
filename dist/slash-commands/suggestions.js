@@ -38,6 +38,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var discord_js_1 = require("discord.js");
 var builders_1 = require("@discordjs/builders");
+var database_1 = require("../database");
 exports.default = {
     command: new builders_1.SlashCommandBuilder()
         .setName('suggestions')
@@ -57,51 +58,73 @@ exports.default = {
         return subcommand
             .setName('new')
             .setDescription('Add new suggestion')
-            .addStringOption(function (message) {
-            return message
-                .setName('message')
-                .setDescription("The suggestion's body")
+            .addStringOption(function (title) {
+            return title
+                .setName('title')
+                .setDescription("The suggestion's title")
+                .setRequired(true);
+        })
+            .addStringOption(function (body) {
+            return body
+                .setName('title')
+                .setDescription("The suggestion's title")
                 .setRequired(true);
         });
     }),
     run: function (_a) {
-        var _b, _c;
-        var client = _a.client, interaction = _a.interaction, db = _a.db;
+        var client = _a.client, interaction = _a.interaction;
         return __awaiter(this, void 0, void 0, function () {
-            var _d, channel, message, embed, suggestionsChannel;
-            return __generator(this, function (_e) {
-                switch (_e.label) {
+            var _b, channel, title, body, embed, suggestions, suggestionsChannel, msg;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
                     case 0:
-                        _d = interaction.options.getSubcommand();
-                        switch (_d) {
+                        _b = interaction.options.getSubcommand();
+                        switch (_b) {
                             case 'set': return [3, 1];
-                            case 'new': return [3, 3];
+                            case 'new': return [3, 4];
                         }
-                        return [3, 5];
+                        return [3, 9];
                     case 1:
                         channel = interaction.options.getChannel('channel');
-                        db.set("suggestions_".concat((_b = interaction.guild) === null || _b === void 0 ? void 0 : _b.id), "s".concat(channel === null || channel === void 0 ? void 0 : channel.id));
+                        return [4, database_1.prisma.suggestionsChannel.upsert({
+                                where: { guild: interaction.guildId },
+                                update: { id: channel === null || channel === void 0 ? void 0 : channel.id },
+                                create: { guild: interaction.guildId, id: channel === null || channel === void 0 ? void 0 : channel.id }
+                            })];
+                    case 2:
+                        _c.sent();
                         channel === null || channel === void 0 ? void 0 : channel.send('**Suggestions Channel**');
                         return [4, interaction.reply("**The suggestions channel has been set to <#".concat(channel === null || channel === void 0 ? void 0 : channel.id, ">**"))];
-                    case 2:
-                        _e.sent();
-                        return [3, 5];
-                    case 3: return [4, interaction.reply("**Suggestion submitted**")];
-                    case 4:
-                        _e.sent();
-                        message = interaction.options.getString('message');
+                    case 3:
+                        _c.sent();
+                        return [3, 9];
+                    case 4: return [4, interaction.reply("**Suggestion submitted**")];
+                    case 5:
+                        _c.sent();
+                        title = interaction.options.getString('title');
+                        body = interaction.options.getString('body');
                         embed = new discord_js_1.MessageEmbed()
-                            .setTitle("A new suggestion was submitted by ".concat(interaction.user.tag))
-                            .setDescription(message !== null && message !== void 0 ? message : ':x: | **No message provided**')
-                            .setColor('#2F3136');
-                        suggestionsChannel = client.channels.cache.get(db.get("suggestions_".concat((_c = interaction.guild) === null || _c === void 0 ? void 0 : _c.id)).slice(1));
-                        suggestionsChannel === null || suggestionsChannel === void 0 ? void 0 : suggestionsChannel.send({ embeds: [embed] }).then(function (_a) {
-                            var react = _a.react;
-                            react('✅');
-                            react('❌');
-                        });
-                        return [3, 5];
-                    case 5: return [2];
+                            .setTitle("**".concat(title, "**"))
+                            .setDescription(body)
+                            .setColor('#2F3136')
+                            .setAuthor({ name: interaction.user.tag, iconURL: interaction.user.avatarURL() });
+                        return [4, database_1.prisma.suggestionsChannel.findUnique({
+                                where: { guild: interaction.guildId },
+                                select: { id: true }
+                            })];
+                    case 6:
+                        suggestions = _c.sent();
+                        suggestionsChannel = client.channels.cache.get(suggestions === null || suggestions === void 0 ? void 0 : suggestions.id);
+                        return [4, (suggestionsChannel === null || suggestionsChannel === void 0 ? void 0 : suggestionsChannel.send({ embeds: [embed] }))];
+                    case 7:
+                        msg = _c.sent();
+                        msg.react('✅');
+                        msg.react('❌');
+                        return [4, interaction.reply("**Suggestion submitted**")];
+                    case 8:
+                        _c.sent();
+                        return [3, 9];
+                    case 9: return [2];
                 }
             });
         });
