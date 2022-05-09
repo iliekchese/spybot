@@ -1,4 +1,4 @@
-import type { CommandArgs } from '../..';
+import type { CommandArgs } from '../../types';
 import type { TextChannel } from 'discord.js';
 import { MessageEmbed } from 'discord.js';
 import { prisma } from '../../database';

@@ -12,7 +12,7 @@ model Warn {
   reason    String
   createdAt DateTime  @default(now())
   user      WarnsUser @relation(fields: [userId], references: [user])
-  userId    String
+  userId    String    @unique
 }
 
 model WarnsUser {

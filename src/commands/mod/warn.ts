@@ -31,11 +31,11 @@ export default {
 					);
 					break;
 				}
-				if (!args[2]) {
+				const reason = args.slice(2).join(' ');
+				if (reason) {
 					message.channel.send('You must specify a reason!');
 					break;
 				}
-				const reason = args.slice(2).join(' ');
 				const { warns } = await prisma.warnsUser.create({
 					data: {
 						guild: message.guildId!,
@@ -112,10 +112,14 @@ export default {
 				}
 				const { user } = message.mentions.members?.first()! || message.member!;
 				if (!args[2]) {
-					await prisma.warns.upsert({
+					await prisma.warnsUser.upsert({
 						where: { guild: message.guildId!, user: user.id },
-						update: { warns: [] },
-						create: { guild: message.guildId!, user: user.id, warns: [] },
+						update: { warns: { set: [] } },
+						create: {
+							guild: message.guildId!,
+							user: user.id,
+							warns: { create: [] },
+						},
 					});
 					message.channel.send(`Removed warnings from ${user}!`);
 					break;
@@ -127,7 +131,7 @@ export default {
 				await prisma.warnsUser.upsert({
 					where: { guild: message.guildId!, user: user.id },
 					update: {
-						warns: { delete: { user: user.id } },
+						warns: { delete: { userId: user.id } },
 					},
 					create: {
 						guild: message.guildId!,
