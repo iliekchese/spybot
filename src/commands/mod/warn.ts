@@ -1,7 +1,6 @@
 import type { TextChannel } from 'discord.js';
-import type { CommandArgs } from '../..';
+import type { CommandArgs } from '../../types';
 import { MessageEmbed, Permissions } from 'discord.js';
-import { nanoid } from 'nanoid';
 import { prisma } from '../../database';
 
 export default {
@@ -37,11 +36,11 @@ export default {
 					break;
 				}
 				const reason = args.slice(2).join(' ');
-				const { warns } = await prisma.warns.create({
+				const { warns } = await prisma.warnsUser.create({
 					data: {
 						guild: message.guildId!,
 						user: member.user.id,
-						warns: { id: nanoid(), reason },
+						warns: { create: { reason } },
 					},
 					select: { warns: true },
 				});
@@ -125,10 +124,16 @@ export default {
 					message.channel.send(`Warning with id \`${args[2]}\` doesn't exist!`);
 					break;
 				}
-				await prisma.warns.upsert({
+				await prisma.warnsUser.upsert({
 					where: { guild: message.guildId!, user: user.id },
-					update: { warns: warns.filter(w => w.id !== args[2]) },
-					create: { guild: message.guildId!, user: user.id, warns: [] },
+					update: {
+						warns: { delete: { user: user.id } },
+					},
+					create: {
+						guild: message.guildId!,
+						user: user.id,
+						warns: { create: [] },
+					},
 				});
 				message.channel.send(
 					`Removed warning from ${user} with id \`${args[2]}\`!`

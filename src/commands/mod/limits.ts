@@ -1,4 +1,4 @@
-import type { CommandArgs } from '../..';
+import type { CommandArgs } from '../../types';
 import { prisma } from '../../database';
 import { Permissions } from 'discord.js';
 

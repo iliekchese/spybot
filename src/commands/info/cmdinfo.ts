@@ -1,4 +1,4 @@
-import type { CommandArgs } from '../..';
+import type { CommandArgs } from '../../types';
 import { MessageEmbed, MessageActionRow, MessageButton } from 'discord.js';
 
 export default {
