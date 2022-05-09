@@ -1,4 +1,4 @@
-import type { ISlashArgs } from '..';
+import type { SlashArgs } from '..';
 import { MessageEmbed, TextChannel } from 'discord.js';
 import { SlashCommandBuilder } from '@discordjs/builders';
 import { prisma } from '../database';
@@ -36,37 +36,46 @@ export default {
 				)
 		),
 
-	async run({ client, interaction }: ISlashArgs) {
+	async run({ client, interaction }: SlashArgs) {
 		switch (interaction.options.getSubcommand()) {
 			case 'set':
-				const channel = interaction.options.getChannel('channel') as TextChannel | null;
-        await prisma.suggestionsChannel.upsert({
+				const channel = interaction.options.getChannel(
+					'channel'
+				) as TextChannel | null;
+				await prisma.suggestionsChannel.upsert({
 					where: { guild: interaction.guildId! },
 					update: { id: channel?.id! },
-					create: { guild: interaction.guildId!, id: channel?.id! }
-				})
+					create: { guild: interaction.guildId!, id: channel?.id! },
+				});
 				channel?.send('**Suggestions Channel**');
-				await interaction.reply(`**The suggestions channel has been set to <#${channel?.id}>**`);
+				await interaction.reply(
+					`**The suggestions channel has been set to <#${channel?.id}>**`
+				);
 				break;
 
 			case 'new':
-        await interaction.reply("**Suggestion submitted**")
+				await interaction.reply('**Suggestion submitted**');
 				const title = interaction.options.getString('title');
 				const body = interaction.options.getString('body');
 				const embed = new MessageEmbed()
 					.setTitle(`**${title}**`)
 					.setDescription(body!)
 					.setColor('#2F3136')
-					.setAuthor({ name: interaction.user.tag, iconURL: interaction.user.avatarURL()! });
+					.setAuthor({
+						name: interaction.user.tag,
+						iconURL: interaction.user.avatarURL()!,
+					});
 				const suggestions = await prisma.suggestionsChannel.findUnique({
 					where: { guild: interaction.guildId! },
-					select: { id: true }
-				})
-				const suggestionsChannel = client.channels.cache.get(suggestions?.id!) as TextChannel;
-				const msg = await suggestionsChannel?.send({ embeds: [embed] })
+					select: { id: true },
+				});
+				const suggestionsChannel = client.channels.cache.get(
+					suggestions?.id!
+				) as TextChannel;
+				const msg = await suggestionsChannel?.send({ embeds: [embed] });
 				msg.react('✅');
 				msg.react('❌');
-        await interaction.reply("**Suggestion submitted**")
+				await interaction.reply('**Suggestion submitted**');
 				break;
 		}
 	},

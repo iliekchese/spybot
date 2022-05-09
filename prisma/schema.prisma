@@ -1,6 +1,6 @@
 datasource db {
-	provider = "mongodb"
-	url = 		 env("MONGO_LOGIN")
+  provider = "mongodb"
+  url      = env("MONGO_LOGIN")
 }
 
 generator client {
@@ -8,51 +8,46 @@ generator client {
 }
 
 type Warn {
-	id 		 		String @map("_id") @db.ObjectId
-	reason 		String
-	createdAt DateTime @default(now())
+  id        String   @map("_id") @db.ObjectId
+  reason    String
+  createdAt DateTime @default(now())
 }
 
 model Warns {
-	guild String @id @map("_id") @db.ObjectId
-	user  String @unique @db.ObjectId
-	warns Warn[]
+  guild String @id @map("_id") @db.ObjectId
+  user  String @unique @db.ObjectId
+  warns Warn[]
 }
 
 model Limit {
-	guild String @id @map("_id") @db.ObjectId
-	type 	String @unique @db.ObjectId
-	limit Int
+  guild String @id @map("_id") @db.ObjectId
+  type  String @unique @db.ObjectId
+  limit Int
 }
 
 model Whitelist {
-	guild String @id @map("_id") @db.ObjectId
-	users String[]
+  guild String   @id @map("_id") @db.ObjectId
+  users String[]
 }
 
 model LogsChannel {
-	guild String @id 		 @map("_id") @db.ObjectId
-	id 		String @unique @db.ObjectId
+  guild String @id @map("_id") @db.ObjectId
+  id    String @unique @db.ObjectId
 }
 
 model SuggestionsChannel {
-	guild String @id     @map("_id") @db.ObjectId
-	id 		String @unique @db.ObjectId
+  guild String @id @map("_id") @db.ObjectId
+  id    String @unique @db.ObjectId
 }
 
 model Punish {
-	guild 	String @id @map("_id") @db.ObjectId
-	option 	String
+  guild  String @id @map("_id") @db.ObjectId
+  option String
 }
 
 model Suggestion {
-	id 			 String  @id @map("_id") @db.ObjectId
-	title 	 String
-	body  	 String
-	approved Boolean @default(false)
+  id       String  @id @map("_id") @db.ObjectId
+  title    String
+  body     String
+  approved Boolean @default(false)
 }
-
-
-
-
-

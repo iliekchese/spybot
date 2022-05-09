@@ -1,9 +1,9 @@
-import type { ICommandArgs } from '../..';
+import type { CommandArgs } from '../..';
 import { MessageEmbed, MessageActionRow, MessageButton } from 'discord.js';
 
 export default {
 	name: 'help',
-	run({ message }: ICommandArgs) {
+	run({ message }: CommandArgs) {
 		const helpEmbed = new MessageEmbed()
 			.setTitle('<:spybot:939656950231236618>  Help Guide')
 			.setDescription(
@@ -32,7 +32,7 @@ export default {
 				.setLabel('Support Server')
 				.setStyle('LINK')
 		);
-  
+
 		message.channel.send({ embeds: [helpEmbed], components: [row] });
- },
+	},
 };

@@ -8,37 +8,32 @@ import type { SlashCommandBuilder } from '@discordjs/builders';
 
 declare module 'discord.js' {
 	export interface Client {
-		commands: Collection<string, ICommand>;
-		slashCommands: ISlash[];
+		commands: Collection<string, Command>;
+		slashCommands: Slash[];
 	}
 }
 
-interface Data {
-	[`${string}_${string}_warns`]: string;
-	[`warnlimit_${string}`]: number
-}
-
-export interface IHandler {
+export interface Handler {
 	client: Client;
 	db: Database;
 }
 
-export interface ISlash {
+export interface Slash {
 	command: SlashCommandBuilder;
-	run(args: ISlashArgs): Promise<void>;
+	run(args: SlashArgs): Promise<void>;
 }
 
-export interface ICommand {
+export interface Command {
 	name: string;
-	run(args: ICommandArgs): void | Promise<void>;
+	run(args: CommandArgs): void | Promise<void>;
 }
 
-export interface ISlashArgs {
+export interface SlashArgs {
 	client: Client;
 	interaction: CommandInteraction;
 }
 
-export interface ICommandArgs {
+export interface CommandArgs {
 	client: Client;
 	message: Message;
 	args: string[];

@@ -1,9 +1,9 @@
-import type { ICommandArgs } from '../..';
+import type { CommandArgs } from '../..';
 import { MessageEmbed, MessageActionRow, MessageButton } from 'discord.js';
 
 export default {
 	name: 'vote',
-	run({ message }: ICommandArgs) {
+	run({ message }: CommandArgs) {
 		const voteEmbed = new MessageEmbed()
 			.setTitle('<:spybot:939656950231236618>  Vote')
 			.setDescription(
@@ -21,11 +21,10 @@ export default {
 				.setURL('https://discordbotlist.com/bots/spy-bot')
 				.setLabel('Discord Bot List')
 				.setStyle('LINK'),
-      new MessageButton()
+			new MessageButton()
 				.setURL('https://top.gg/bot/939629038178295828')
 				.setLabel('Top.gg')
-				.setStyle('LINK'),
-
+				.setStyle('LINK')
 		);
 
 		message.channel.send({ embeds: [voteEmbed], components: [row] });

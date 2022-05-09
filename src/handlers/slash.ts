@@ -1,13 +1,13 @@
-import type { IHandler, ISlash } from '..';
+import type { Handler, Slash } from '..';
 import { readdir } from 'node:fs/promises';
-import { Loxt } from "loxt"
+import { Loxt } from 'loxt';
 
-export const handler = async ({ client }: IHandler) => {
+export const handler = async ({ client }: Handler) => {
 	const loxt = new Loxt();
 	(await readdir('./slash-commands/'))
 		.filter(file => file.endsWith('.js'))
 		.forEach(async file => {
-			const { default: pull }: { default: ISlash } = await import(
+			const { default: pull }: { default: Slash } = await import(
 				`../slash-commands/${file}`
 			);
 			client.slashCommands.push(pull);

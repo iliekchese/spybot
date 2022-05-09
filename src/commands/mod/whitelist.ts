@@ -1,19 +1,21 @@
-import type { ICommandArgs } from '../..';
+import type { CommandArgs } from '../..';
 import { MessageEmbed } from 'discord.js';
 import { prisma } from '../../database';
 
 export default {
 	name: 'whitelist',
-	async run({ message, args }: ICommandArgs) {
+	async run({ message, args }: CommandArgs) {
 		const whitelist = await prisma.whitelist.findUnique({
 			where: { guild: message.guild?.id! },
-			select: { users: true }
-		})
+			select: { users: true },
+		});
 		const user = message.mentions.users.first();
 		switch (args[0]) {
 			case 'add':
 				if (message.author.id !== message.guildId) {
-					message.channel.send(':x: | **Only The owner of the Server can whitelist people**');
+					message.channel.send(
+						':x: | **Only The owner of the Server can whitelist people**'
+					);
 					break;
 				}
 				if (!user) {
@@ -27,14 +29,16 @@ export default {
 				await prisma.whitelist.upsert({
 					where: { guild: message.guildId! },
 					update: { users: { push: user.id } },
-					create: { guild: message.guildId!, users: [user.id] }
-				})
+					create: { guild: message.guildId!, users: [user.id] },
+				});
 				message.channel.send(`**The user has been whitelisted!**`);
 				break;
-			
+
 			case 'remove':
 				if (message.author.id !== message.guild?.id) {
-					message.channel.send(':x: | **Only The owner of the Server can unwhitelist people**');
+					message.channel.send(
+						':x: | **Only The owner of the Server can unwhitelist people**'
+					);
 					break;
 				}
 				if (!user) {
@@ -47,16 +51,22 @@ export default {
 				}
 				await prisma.whitelist.update({
 					where: { guild: message.guildId! },
-					data: { users: whitelist.users.filter(id => id !== user?.id) }
-				})
+					data: { users: whitelist.users.filter(id => id !== user?.id) },
+				});
 				message.channel.send('**The user has been unwhitelisted!**');
 				break;
 
 			case 'show':
 				const embed = new MessageEmbed()
 					.setTitle('**The list of whitelisted users**')
-					.setAuthor({ name: message.author.tag, iconURL: message.author.displayAvatarURL({ dynamic: true }) })
-					.setFooter({ text: message.guild?.name!, iconURL: message.guild?.iconURL()! })
+					.setAuthor({
+						name: message.author.tag,
+						iconURL: message.author.displayAvatarURL({ dynamic: true }),
+					})
+					.setFooter({
+						text: message.guild?.name!,
+						iconURL: message.guild?.iconURL()!,
+					})
 					.setThumbnail(message.guild?.iconURL()!);
 				const whitelisted = whitelist?.users?.map(id => `<@${id}>`);
 				if (whitelisted?.length) {

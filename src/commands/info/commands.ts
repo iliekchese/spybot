@@ -1,15 +1,24 @@
-import type { ICommandArgs } from '../..';
+import type { CommandArgs } from '../..';
 import { MessageEmbed } from 'discord.js';
 
 export default {
 	name: 'commands',
-	run({ message }: ICommandArgs) {
+	run({ message }: CommandArgs) {
 		const commandsEmbed = new MessageEmbed()
 			.setTitle('<:spybot:939656950231236618> Commands')
-      .setDescription('<:arrow:951862606958821506> All bot commands, Prefix .')
-      .addField('Config Commands', '**```.config channelcreatelimit, .config channeldeletelimit, .config rolecreatelimit, .config roledeletelimit, .config kicklimit, .config banlimit, .config punishment, .config logs, .whitelist add, .whitelist remove, .whitelist show, .clearuser, .config help, .setup```**')
-      .addField('Information Commands', '**```.help, .credits, .vote, .commands, .info```**')
-      .addField('Moderation', '**```.kick, .ban, .warns add, .warns show, .warns remove```**')
+			.setDescription('<:arrow:951862606958821506> All bot commands, Prefix .')
+			.addField(
+				'Config Commands',
+				'**```.config channelcreatelimit, .config channeldeletelimit, .config rolecreatelimit, .config roledeletelimit, .config kicklimit, .config banlimit, .config punishment, .config logs, .whitelist add, .whitelist remove, .whitelist show, .clearuser, .config help, .setup```**'
+			)
+			.addField(
+				'Information Commands',
+				'**```.help, .credits, .vote, .commands, .info```**'
+			)
+			.addField(
+				'Moderation',
+				'**```.kick, .ban, .warns add, .warns show, .warns remove```**'
+			)
 			.setColor('#2F3136')
 			.setFooter({
 				text: 'Spy Bot',

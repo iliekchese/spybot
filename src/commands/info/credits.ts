@@ -1,9 +1,9 @@
-import type { ICommandArgs } from '../..';
+import type { CommandArgs } from '../..';
 import { MessageEmbed } from 'discord.js';
 
 export default {
 	name: 'credits',
-	run({ message }: ICommandArgs) {
+	run({ message }: CommandArgs) {
 		const creditsEmbed = new MessageEmbed()
 			.setTitle('Credits')
 			.setThumbnail(

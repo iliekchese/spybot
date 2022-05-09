@@ -1,4 +1,4 @@
-import type { ISlashArgs } from '..';
+import type { SlashArgs } from '..';
 import type { TextChannel } from 'discord.js';
 import { SlashCommandBuilder } from '@discordjs/builders';
 import { MessageEmbed, Permissions } from 'discord.js';
@@ -22,10 +22,10 @@ export default {
 						.setName('punishment')
 						.setDescription('The punishment')
 						.addChoices(
-							{ name: "ban", value: "ban" },
-							{ name: "kick", value: "kick" },
-							{ name: "demote", value: "demote" },
-							{ name: "quarantine", value: "quarantine" }
+							{ name: 'ban', value: 'ban' },
+							{ name: 'kick', value: 'kick' },
+							{ name: 'demote', value: 'demote' },
+							{ name: 'quarantine', value: 'quarantine' }
 						)
 						.setRequired(true)
 				)
@@ -45,18 +45,18 @@ export default {
 			subcommand.setName('help').setDescription('Config Preview')
 		),
 
-	async run({ interaction }: ISlashArgs) {
+	async run({ interaction }: SlashArgs) {
 		const logs = await prisma.logsChannel.findUnique({
 			where: { guild: interaction.guildId! },
-			select: { id: true }
+			select: { id: true },
 		});
 		switch (interaction.options.getSubcommand()) {
 			case 'show':
 				const disabled = ':x: Disabled';
 				const punish = await prisma.punish.findUnique({
 					where: { guild: interaction.guildId! },
-					select: { option: true }
-				})
+					select: { option: true },
+				});
 				const show = new MessageEmbed()
 					.setTitle('**Anti-Raid | Config**')
 					.setAuthor({
@@ -75,17 +75,28 @@ export default {
 				break;
 
 			case 'punishment':
-				const punishment = interaction.options.getString("punishment")
-				if (!interaction.memberPermissions?.has(Permissions.FLAGS.ADMINISTRATOR)) {
-					await interaction.reply("You don't have permission to do this!")
+				const punishment = interaction.options.getString('punishment');
+				if (
+					!interaction.memberPermissions?.has(Permissions.FLAGS.ADMINISTRATOR)
+				) {
+					await interaction.reply("You don't have permission to do this!");
 					break;
 				}
 				if (!punishment) {
 					await interaction.reply(':x: | **Provide The punishment**');
 					break;
 				}
-				if (!(punishment === 'ban' || punishment === 'kick' || punishment === 'demote' || punishment === 'quarantine')) {
-					await interaction.reply(':x: | **The punishment can only be kick, ban, quarantine or demote**');
+				if (
+					!(
+						punishment === 'ban' ||
+						punishment === 'kick' ||
+						punishment === 'demote' ||
+						punishment === 'quarantine'
+					)
+				) {
+					await interaction.reply(
+						':x: | **The punishment can only be kick, ban, quarantine or demote**'
+					);
 					break;
 				}
 				await prisma.punish.upsert({
@@ -93,21 +104,29 @@ export default {
 					update: { option: punishment },
 					create: {
 						guild: interaction.guildId!,
-						option: punishment
-					}
-				})
+						option: punishment,
+					},
+				});
 
-				await interaction.reply('**The punishment has been set to ' + punishment + '**');
+				await interaction.reply(
+					'**The punishment has been set to ' + punishment + '**'
+				);
 				break;
 
 			case 'logs':
-				if (!interaction.memberPermissions?.has(Permissions.FLAGS.ADMINISTRATOR)) {
-					await interaction.reply("You don't have permission to do this!")
+				if (
+					!interaction.memberPermissions?.has(Permissions.FLAGS.ADMINISTRATOR)
+				) {
+					await interaction.reply("You don't have permission to do this!");
 					break;
 				}
-				const channel = interaction.options.getChannel("channel") as TextChannel | null;
+				const channel = interaction.options.getChannel(
+					'channel'
+				) as TextChannel | null;
 				if (channel?.guildId !== interaction.guildId!) {
-					await interaction.reply(':x: | **That channel is not from this server**');
+					await interaction.reply(
+						':x: | **That channel is not from this server**'
+					);
 					break;
 				}
 				await prisma.logsChannel.upsert({
@@ -115,11 +134,13 @@ export default {
 					update: { id: channel.id },
 					create: {
 						guild: interaction.guildId!,
-						id: channel.id
-					}
-				})
+						id: channel.id,
+					},
+				});
 				channel.send('**Anti Raid logs Channel**');
-				await interaction.reply('**The logs channel has been set to ' + channel + '**');
+				await interaction.reply(
+					'**The logs channel has been set to ' + channel + '**'
+				);
 				break;
 
 			case 'help':

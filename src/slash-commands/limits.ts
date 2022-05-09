@@ -1,12 +1,12 @@
-import type { ISlashArgs } from '..';
+import type { SlashArgs } from '..';
 import { Permissions } from 'discord.js';
 import { SlashCommandBuilder } from '@discordjs/builders';
 import { prisma } from '../database';
 
 export default {
 	command: new SlashCommandBuilder()
-		.setName("limits")
-		.setDescription("Manages limits for server")
+		.setName('limits')
+		.setDescription('Manages limits for server')
 		.addSubcommand(subcommand =>
 			subcommand
 				.setName('channelcreate')
@@ -56,22 +56,22 @@ export default {
 				)
 		),
 
-	async run({ interaction }: ISlashArgs) {
-		const type = interaction.options.getSubcommand()
-		const limit = interaction.options.getInteger("limit")
+	async run({ interaction }: SlashArgs) {
+		const type = interaction.options.getSubcommand();
+		const limit = interaction.options.getInteger('limit');
 		if (!interaction.memberPermissions?.has(Permissions.FLAGS.ADMINISTRATOR)) {
-			await interaction.reply("You don't have permission to do this!")
+			await interaction.reply("You don't have permission to do this!");
 			return;
 		}
-		
-		const isLimit = 
-			type === "channelcreate" || 
-			type === "channeldelete" || 
-			type === "rolecreate" ||
-			type === "roledelete" || 
-			type === "kick" || 
-			type === "ban" ||
-			type === "warn"
+
+		const isLimit =
+			type === 'channelcreate' ||
+			type === 'channeldelete' ||
+			type === 'rolecreate' ||
+			type === 'roledelete' ||
+			type === 'kick' ||
+			type === 'ban' ||
+			type === 'warn';
 
 		if (!isLimit) {
 			await interaction.reply(`
@@ -81,7 +81,7 @@ export default {
 				rolecreate, roledelete, 
 				kick, ban,
 				warn**
-			`)
+			`);
 			return;
 		}
 		await prisma.limit.upsert({
@@ -90,9 +90,9 @@ export default {
 			create: {
 				guild: interaction.guildId!,
 				type,
-				limit: limit!
-			}
-		})
-		await interaction.reply(`${limit} has been updated!`)
-	}
-}
+				limit: limit!,
+			},
+		});
+		await interaction.reply(`${limit} has been updated!`);
+	},
+};
