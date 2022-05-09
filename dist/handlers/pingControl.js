@@ -43,22 +43,22 @@ var handler = function (_a) {
     var client = _a.client;
     return __awaiter(void 0, void 0, void 0, function () {
         return __generator(this, function (_b) {
-            client.on("messageCreate", function (msg) { return __awaiter(void 0, void 0, void 0, function () {
+            client.on('messageCreate', function (msg) { return __awaiter(void 0, void 0, void 0, function () {
                 var member_1, whitelist, role, quarantineEmbed, logs, pinglogEmbed, logsChannel;
                 var _a, _b, _c;
                 return __generator(this, function (_d) {
                     switch (_d.label) {
                         case 0:
-                            if (!(msg.content === "@everyone" || msg.content === "@here")) return [3, 4];
+                            if (!(msg.content === '@everyone' || msg.content === '@here')) return [3, 4];
                             member_1 = msg.member;
                             return [4, database_1.prisma.whitelist.findUnique({
-                                    where: { guild: (_a = msg.guild) === null || _a === void 0 ? void 0 : _a.id }
+                                    where: { guild: (_a = msg.guild) === null || _a === void 0 ? void 0 : _a.id },
                                 })];
                         case 1:
                             whitelist = _d.sent();
                             if (whitelist === null || whitelist === void 0 ? void 0 : whitelist.users.some(function (id) { return id === (member_1 === null || member_1 === void 0 ? void 0 : member_1.user.id); }))
                                 return [2];
-                            role = member_1 === null || member_1 === void 0 ? void 0 : member_1.guild.roles.cache.find(function (role) { return role.name === "Quarantine"; });
+                            role = member_1 === null || member_1 === void 0 ? void 0 : member_1.guild.roles.cache.find(function (role) { return role.name === 'Quarantine'; });
                             member_1 === null || member_1 === void 0 ? void 0 : member_1.roles.cache.filter(function (r) { return r.name !== '@everyone'; }).forEach(function (r) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
                                 switch (_a.label) {
                                     case 0: return [4, (member_1 === null || member_1 === void 0 ? void 0 : member_1.roles.remove(r.id))];
@@ -71,12 +71,15 @@ var handler = function (_a) {
                             _d.sent();
                             quarantineEmbed = new discord_js_1.MessageEmbed()
                                 .setTitle('Quarantine')
-                                .setAuthor({ name: member_1 === null || member_1 === void 0 ? void 0 : member_1.user.tag, iconURL: member_1 === null || member_1 === void 0 ? void 0 : member_1.user.avatarURL() })
+                                .setAuthor({
+                                name: member_1 === null || member_1 === void 0 ? void 0 : member_1.user.tag,
+                                iconURL: member_1 === null || member_1 === void 0 ? void 0 : member_1.user.avatarURL(),
+                            })
                                 .setDescription("".concat(member_1 === null || member_1 === void 0 ? void 0 : member_1.user, " Was succesfully quarantined. \n For attempting to mention ").concat(msg.content))
                                 .setColor('#2F3136');
                             msg.channel.send({ embeds: [quarantineEmbed] });
                             return [4, database_1.prisma.logsChannel.findUnique({
-                                    where: { guild: (_b = msg.guild) === null || _b === void 0 ? void 0 : _b.id }
+                                    where: { guild: (_b = msg.guild) === null || _b === void 0 ? void 0 : _b.id },
                                 })];
                         case 3:
                             logs = _d.sent();

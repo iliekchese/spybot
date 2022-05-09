@@ -1,5 +1,5 @@
 import type { GuildMember, TextChannel } from 'discord.js';
-import type { Handler } from '..';
+import type { Handler } from '../types';
 import { MessageEmbed } from 'discord.js';
 
 export const handler = ({ client, db }: Handler) => {

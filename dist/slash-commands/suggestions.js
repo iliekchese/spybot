@@ -89,7 +89,7 @@ exports.default = {
                         return [4, database_1.prisma.suggestionsChannel.upsert({
                                 where: { guild: interaction.guildId },
                                 update: { id: channel === null || channel === void 0 ? void 0 : channel.id },
-                                create: { guild: interaction.guildId, id: channel === null || channel === void 0 ? void 0 : channel.id }
+                                create: { guild: interaction.guildId, id: channel === null || channel === void 0 ? void 0 : channel.id },
                             })];
                     case 2:
                         _c.sent();
@@ -98,7 +98,7 @@ exports.default = {
                     case 3:
                         _c.sent();
                         return [3, 9];
-                    case 4: return [4, interaction.reply("**Suggestion submitted**")];
+                    case 4: return [4, interaction.reply('**Suggestion submitted**')];
                     case 5:
                         _c.sent();
                         title = interaction.options.getString('title');
@@ -107,10 +107,13 @@ exports.default = {
                             .setTitle("**".concat(title, "**"))
                             .setDescription(body)
                             .setColor('#2F3136')
-                            .setAuthor({ name: interaction.user.tag, iconURL: interaction.user.avatarURL() });
+                            .setAuthor({
+                            name: interaction.user.tag,
+                            iconURL: interaction.user.avatarURL(),
+                        });
                         return [4, database_1.prisma.suggestionsChannel.findUnique({
                                 where: { guild: interaction.guildId },
-                                select: { id: true }
+                                select: { id: true },
                             })];
                     case 6:
                         suggestions = _c.sent();
@@ -120,7 +123,7 @@ exports.default = {
                         msg = _c.sent();
                         msg.react('✅');
                         msg.react('❌');
-                        return [4, interaction.reply("**Suggestion submitted**")];
+                        return [4, interaction.reply('**Suggestion submitted**')];
                     case 8:
                         _c.sent();
                         return [3, 9];

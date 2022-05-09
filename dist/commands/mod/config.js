@@ -49,7 +49,7 @@ exports.default = {
                 switch (_o.label) {
                     case 0: return [4, database_1.prisma.logsChannel.findUnique({
                             where: { guild: message.guildId },
-                            select: { id: true }
+                            select: { id: true },
                         })];
                     case 1:
                         logs = _o.sent();
@@ -64,7 +64,7 @@ exports.default = {
                         disabled = ':x: Disabled';
                         return [4, database_1.prisma.punish.findUnique({
                                 where: { guild: message.guildId },
-                                select: { option: true }
+                                select: { option: true },
                             })];
                     case 3:
                         punish = _o.sent();
@@ -93,7 +93,10 @@ exports.default = {
                             message.channel.send(':x: | **Provide The punishment**');
                             return [3, 9];
                         }
-                        if (!(args[1] === 'ban' || args[1] === 'kick' || args[1] === 'demote' || args[1] === 'quarantine')) {
+                        if (!(args[1] === 'ban' ||
+                            args[1] === 'kick' ||
+                            args[1] === 'demote' ||
+                            args[1] === 'quarantine')) {
                             message.channel.send(':x: | **The punishment can only be kick, ban, quarantine or demote**');
                             return [3, 9];
                         }
@@ -102,8 +105,8 @@ exports.default = {
                                 update: { option: args[1] },
                                 create: {
                                     guild: message.guildId,
-                                    option: args[1]
-                                }
+                                    option: args[1],
+                                },
                             })];
                     case 5:
                         _o.sent();
@@ -128,8 +131,8 @@ exports.default = {
                                 update: { id: channel_1.id },
                                 create: {
                                     guild: message.guildId,
-                                    id: channel_1.id
-                                }
+                                    id: channel_1.id,
+                                },
                             })];
                     case 7:
                         _o.sent();

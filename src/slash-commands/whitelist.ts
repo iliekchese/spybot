@@ -1,4 +1,4 @@
-import type { SlashArgs } from '..';
+import type { SlashArgs } from '../types';
 import { SlashCommandBuilder } from '@discordjs/builders';
 import { MessageEmbed } from 'discord.js';
 import { prisma } from '../database';

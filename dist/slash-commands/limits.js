@@ -41,8 +41,8 @@ var builders_1 = require("@discordjs/builders");
 var database_1 = require("../database");
 exports.default = {
     command: new builders_1.SlashCommandBuilder()
-        .setName("limits")
-        .setDescription("Manages limits for server")
+        .setName('limits')
+        .setDescription('Manages limits for server')
         .addSubcommand(function (subcommand) {
         return subcommand
             .setName('channelcreate')
@@ -100,20 +100,20 @@ exports.default = {
                 switch (_c.label) {
                     case 0:
                         type = interaction.options.getSubcommand();
-                        limit = interaction.options.getInteger("limit");
+                        limit = interaction.options.getInteger('limit');
                         if (!!((_b = interaction.memberPermissions) === null || _b === void 0 ? void 0 : _b.has(discord_js_1.Permissions.FLAGS.ADMINISTRATOR))) return [3, 2];
                         return [4, interaction.reply("You don't have permission to do this!")];
                     case 1:
                         _c.sent();
                         return [2];
                     case 2:
-                        isLimit = type === "channelcreate" ||
-                            type === "channeldelete" ||
-                            type === "rolecreate" ||
-                            type === "roledelete" ||
-                            type === "kick" ||
-                            type === "ban" ||
-                            type === "warn";
+                        isLimit = type === 'channelcreate' ||
+                            type === 'channeldelete' ||
+                            type === 'rolecreate' ||
+                            type === 'roledelete' ||
+                            type === 'kick' ||
+                            type === 'ban' ||
+                            type === 'warn';
                         if (!!isLimit) return [3, 4];
                         return [4, interaction.reply("\n\t\t\t\tNot a valid limit, valid limits are:\n\n\t\t\t\t**channelcreate, channeldelete,\n\t\t\t\trolecreate, roledelete, \n\t\t\t\tkick, ban,\n\t\t\t\twarn**\n\t\t\t")];
                     case 3:
@@ -125,8 +125,8 @@ exports.default = {
                             create: {
                                 guild: interaction.guildId,
                                 type: type,
-                                limit: limit
-                            }
+                                limit: limit,
+                            },
                         })];
                     case 5:
                         _c.sent();
@@ -137,5 +137,5 @@ exports.default = {
                 }
             });
         });
-    }
+    },
 };

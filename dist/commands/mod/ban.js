@@ -60,23 +60,23 @@ exports.default = {
             .setLabel('Cancel')
             .setStyle('DANGER'));
         message.channel.send({ embeds: [banEmbed], components: [row] });
-        client.on("interactionCreate", function (interaction) { return __awaiter(_this, void 0, void 0, function () {
+        client.on('interactionCreate', function (interaction) { return __awaiter(_this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         if (!interaction.isButton())
                             return [2];
-                        if (!(interaction.customId === "banAllowed")) return [3, 2];
+                        if (!(interaction.customId === 'banAllowed')) return [3, 2];
                         member === null || member === void 0 ? void 0 : member.ban({
-                            reason: args[1]
+                            reason: args[1],
                         });
                         return [4, interaction.reply("".concat(member === null || member === void 0 ? void 0 : member.user, " was succesfully banned!"))];
                     case 1:
                         _a.sent();
                         return [3, 4];
                     case 2:
-                        if (!(interaction.customId === "banNotAllowed")) return [3, 4];
-                        return [4, interaction.reply("Operation canceled.")];
+                        if (!(interaction.customId === 'banNotAllowed')) return [3, 4];
+                        return [4, interaction.reply('Operation canceled.')];
                     case 3:
                         _a.sent();
                         _a.label = 4;

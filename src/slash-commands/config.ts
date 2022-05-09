@@ -1,4 +1,4 @@
-import type { SlashArgs } from '..';
+import type { SlashArgs } from '../types';
 import type { TextChannel } from 'discord.js';
 import { SlashCommandBuilder } from '@discordjs/builders';
 import { MessageEmbed, Permissions } from 'discord.js';

@@ -1,4 +1,4 @@
-import type { Handler } from '..';
+import type { Handler } from '../types';
 import type { TextChannel } from 'discord.js';
 import { MessageEmbed } from 'discord.js';
 import { prisma } from '../database';

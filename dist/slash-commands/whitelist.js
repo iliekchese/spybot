@@ -77,11 +77,11 @@ exports.default = {
                 switch (_k.label) {
                     case 0: return [4, database_1.prisma.whitelist.findUnique({
                             where: { guild: interaction.guildId },
-                            select: { users: true }
+                            select: { users: true },
                         })];
                     case 1:
                         whitelist = _k.sent();
-                        user = interaction.options.getUser("user");
+                        user = interaction.options.getUser('user');
                         _j = interaction.options.getSubcommand();
                         switch (_j) {
                             case 'add': return [3, 2];
@@ -109,10 +109,12 @@ exports.default = {
                         return [3, 22];
                     case 8: return [4, database_1.prisma.whitelist.upsert({
                             where: { guild: (_b = interaction.guild) === null || _b === void 0 ? void 0 : _b.id },
-                            update: { users: {
-                                    push: user.id
-                                } },
-                            create: { guild: interaction.guildId, users: [user.id] }
+                            update: {
+                                users: {
+                                    push: user.id,
+                                },
+                            },
+                            create: { guild: interaction.guildId, users: [user.id] },
                         })];
                     case 9:
                         _k.sent();
@@ -140,7 +142,7 @@ exports.default = {
                         return [3, 22];
                     case 17: return [4, database_1.prisma.whitelist.update({
                             where: { guild: interaction.guildId },
-                            data: { users: whitelist.users.filter(function (id) { return id !== (user === null || user === void 0 ? void 0 : user.id); }) }
+                            data: { users: whitelist.users.filter(function (id) { return id !== (user === null || user === void 0 ? void 0 : user.id); }) },
                         })];
                     case 18:
                         _k.sent();
@@ -151,8 +153,14 @@ exports.default = {
                     case 20:
                         embed = new discord_js_1.MessageEmbed()
                             .setTitle('**The list of whitelisted users**')
-                            .setAuthor({ name: interaction.user.tag, iconURL: interaction.user.displayAvatarURL({ dynamic: true }) })
-                            .setFooter({ text: (_e = interaction.guild) === null || _e === void 0 ? void 0 : _e.name, iconURL: (_f = interaction.guild) === null || _f === void 0 ? void 0 : _f.iconURL() })
+                            .setAuthor({
+                            name: interaction.user.tag,
+                            iconURL: interaction.user.displayAvatarURL({ dynamic: true }),
+                        })
+                            .setFooter({
+                            text: (_e = interaction.guild) === null || _e === void 0 ? void 0 : _e.name,
+                            iconURL: (_f = interaction.guild) === null || _f === void 0 ? void 0 : _f.iconURL(),
+                        })
                             .setThumbnail((_g = interaction.guild) === null || _g === void 0 ? void 0 : _g.iconURL());
                         whitelisted = (_h = whitelist === null || whitelist === void 0 ? void 0 : whitelist.users) === null || _h === void 0 ? void 0 : _h.map(function (id) { return "<@".concat(id, ">"); });
                         if (whitelisted === null || whitelisted === void 0 ? void 0 : whitelisted.length) {

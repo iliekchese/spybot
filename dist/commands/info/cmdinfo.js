@@ -19,7 +19,10 @@ exports.default = {
                     .setURL('https://eldiplayz.gitbook.io/spy-bot-docs/basic-setups/limits/channel-create-limit')
                     .setLabel('Docs')
                     .setStyle('LINK'));
-                message.channel.send({ embeds: [channelcreatelimitEmbed], components: [limit1] });
+                message.channel.send({
+                    embeds: [channelcreatelimitEmbed],
+                    components: [limit1],
+                });
                 break;
             case 'channeldeletelimit':
                 var channeldeletelimitEmbed = new discord_js_1.MessageEmbed()
@@ -34,7 +37,10 @@ exports.default = {
                     .setURL('https://eldiplayz.gitbook.io/spy-bot-docs/basic-setups/limits/channel-delete-limit')
                     .setLabel('Docs')
                     .setStyle('LINK'));
-                message.channel.send({ embeds: [channeldeletelimitEmbed], components: [limit2] });
+                message.channel.send({
+                    embeds: [channeldeletelimitEmbed],
+                    components: [limit2],
+                });
                 break;
             case 'rolecreatelimit':
                 var rolecreatelimitEmbed = new discord_js_1.MessageEmbed()
@@ -49,7 +55,10 @@ exports.default = {
                     .setURL('https://eldiplayz.gitbook.io/spy-bot-docs/basic-setups/limits/role-create-limit')
                     .setLabel('Docs')
                     .setStyle('LINK'));
-                message.channel.send({ embeds: [rolecreatelimitEmbed], components: [limit3] });
+                message.channel.send({
+                    embeds: [rolecreatelimitEmbed],
+                    components: [limit3],
+                });
                 break;
             case 'roledeletelimit':
                 var roledeletelimitEmbed = new discord_js_1.MessageEmbed()
@@ -64,7 +73,10 @@ exports.default = {
                     .setURL('https://eldiplayz.gitbook.io/spy-bot-docs/basic-setups/limits/role-delete-limit')
                     .setLabel('Docs')
                     .setStyle('LINK'));
-                message.channel.send({ embeds: [roledeletelimitEmbed], components: [limit4] });
+                message.channel.send({
+                    embeds: [roledeletelimitEmbed],
+                    components: [limit4],
+                });
                 break;
             case 'kicklimit':
                 var kicklimitEmbed = new discord_js_1.MessageEmbed()
@@ -79,7 +91,10 @@ exports.default = {
                     .setURL('https://eldiplayz.gitbook.io/spy-bot-docs/basic-setups/limits/kick-limit')
                     .setLabel('Docs')
                     .setStyle('LINK'));
-                message.channel.send({ embeds: [kicklimitEmbed], components: [limit5] });
+                message.channel.send({
+                    embeds: [kicklimitEmbed],
+                    components: [limit5],
+                });
                 break;
             case 'banlimit':
                 var banlimitEmbed = new discord_js_1.MessageEmbed()

@@ -56,7 +56,7 @@ exports.default = {
             return pun
                 .setName('punishment')
                 .setDescription('The punishment')
-                .addChoices({ name: "ban", value: "ban" }, { name: "kick", value: "kick" }, { name: "demote", value: "demote" }, { name: "quarantine", value: "quarantine" })
+                .addChoices({ name: 'ban', value: 'ban' }, { name: 'kick', value: 'kick' }, { name: 'demote', value: 'demote' }, { name: 'quarantine', value: 'quarantine' })
                 .setRequired(true);
         });
     })
@@ -83,7 +83,7 @@ exports.default = {
                 switch (_m.label) {
                     case 0: return [4, database_1.prisma.logsChannel.findUnique({
                             where: { guild: interaction.guildId },
-                            select: { id: true }
+                            select: { id: true },
                         })];
                     case 1:
                         logs = _m.sent();
@@ -99,7 +99,7 @@ exports.default = {
                         disabled = ':x: Disabled';
                         return [4, database_1.prisma.punish.findUnique({
                                 where: { guild: interaction.guildId },
-                                select: { option: true }
+                                select: { option: true },
                             })];
                     case 3:
                         punish = _m.sent();
@@ -122,7 +122,7 @@ exports.default = {
                         _m.sent();
                         return [3, 23];
                     case 5:
-                        punishment = interaction.options.getString("punishment");
+                        punishment = interaction.options.getString('punishment');
                         if (!!((_f = interaction.memberPermissions) === null || _f === void 0 ? void 0 : _f.has(discord_js_1.Permissions.FLAGS.ADMINISTRATOR))) return [3, 7];
                         return [4, interaction.reply("You don't have permission to do this!")];
                     case 6:
@@ -135,7 +135,10 @@ exports.default = {
                         _m.sent();
                         return [3, 23];
                     case 9:
-                        if (!!(punishment === 'ban' || punishment === 'kick' || punishment === 'demote' || punishment === 'quarantine')) return [3, 11];
+                        if (!!(punishment === 'ban' ||
+                            punishment === 'kick' ||
+                            punishment === 'demote' ||
+                            punishment === 'quarantine')) return [3, 11];
                         return [4, interaction.reply(':x: | **The punishment can only be kick, ban, quarantine or demote**')];
                     case 10:
                         _m.sent();
@@ -145,8 +148,8 @@ exports.default = {
                             update: { option: punishment },
                             create: {
                                 guild: interaction.guildId,
-                                option: punishment
-                            }
+                                option: punishment,
+                            },
                         })];
                     case 12:
                         _m.sent();
@@ -161,7 +164,7 @@ exports.default = {
                         _m.sent();
                         return [3, 23];
                     case 16:
-                        channel = interaction.options.getChannel("channel");
+                        channel = interaction.options.getChannel('channel');
                         if (!((channel === null || channel === void 0 ? void 0 : channel.guildId) !== interaction.guildId)) return [3, 18];
                         return [4, interaction.reply(':x: | **That channel is not from this server**')];
                     case 17:
@@ -172,8 +175,8 @@ exports.default = {
                             update: { id: channel.id },
                             create: {
                                 guild: interaction.guildId,
-                                id: channel.id
-                            }
+                                id: channel.id,
+                            },
                         })];
                     case 19:
                         _m.sent();

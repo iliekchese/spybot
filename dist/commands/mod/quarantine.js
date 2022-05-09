@@ -38,7 +38,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var discord_js_1 = require("discord.js");
 exports.default = {
-    name: "quarantine",
+    name: 'quarantine',
     run: function (_a) {
         var _b, _c, _d, _e;
         var message = _a.message, args = _a.args;
@@ -51,7 +51,7 @@ exports.default = {
                     return [2];
                 }
                 member = (_c = message.mentions.members) === null || _c === void 0 ? void 0 : _c.first();
-                role = member === null || member === void 0 ? void 0 : member.guild.roles.cache.find(function (role) { return role.name === "Quarantine"; });
+                role = member === null || member === void 0 ? void 0 : member.guild.roles.cache.find(function (role) { return role.name === 'Quarantine'; });
                 switch (args[0]) {
                     case 'add':
                         quarantineEmbed = new discord_js_1.MessageEmbed()
@@ -89,5 +89,5 @@ exports.default = {
                 return [2];
             });
         });
-    }
+    },
 };

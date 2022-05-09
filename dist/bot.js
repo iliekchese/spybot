@@ -63,22 +63,43 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var discord_js_1 = require("discord.js");
-var v9_1 = require("discord-api-types/v9");
+var v10_1 = require("discord-api-types/v10");
 var rest_1 = require("@discordjs/rest");
 var fastify_1 = __importDefault(require("fastify"));
 var promises_1 = require("node:fs/promises");
 var loxt_1 = require("loxt");
+var TOKEN = process.env.TOKEN;
 var loxt = new loxt_1.Loxt();
-process.on('uncaughtException', function (err) { return loxt.error(err); });
-(0, promises_1.readdir)('./handlers/').then(function (handlers) {
-    return handlers
-        .filter(function (file) { return file.endsWith('.js'); })
-        .forEach(function (file) { return Promise.resolve().then(function () { return __importStar(require("./handlers/".concat(file))); }).then(function (_a) {
-        var handler = _a.handler;
-        return handler({ client: client });
-    }); });
+var rest = new rest_1.REST({ version: '10' }).setToken(TOKEN);
+process.on('uncaughtException', function (_a) {
+    var message = _a.message;
+    return loxt.error(message);
 });
-var rest = new rest_1.REST({ version: '9' }).setToken(process.env.TOKEN || '');
+(function () { return __awaiter(void 0, void 0, void 0, function () {
+    var handlers;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, (0, promises_1.readdir)('./handlers/')];
+            case 1:
+                handlers = _a.sent();
+                handlers
+                    .filter(function (file) { return file.endsWith('.js'); })
+                    .forEach(function (file) { return __awaiter(void 0, void 0, void 0, function () {
+                    var handler;
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0: return [4, Promise.resolve().then(function () { return __importStar(require("./handlers/".concat(file))); })];
+                            case 1:
+                                handler = _a.sent();
+                                handler({ client: client });
+                                return [2];
+                        }
+                    });
+                }); });
+                return [2];
+        }
+    });
+}); })();
 loxt.start('Loading');
 var client = new discord_js_1.Client({
     intents: [discord_js_1.Intents.FLAGS.GUILDS, discord_js_1.Intents.FLAGS.GUILD_MESSAGES],
@@ -86,34 +107,21 @@ var client = new discord_js_1.Client({
 client.commands = new discord_js_1.Collection();
 client.slashCommands = [];
 loxt.info('made by eldi mindcrafter#0001 & AngelNext#9162');
+rest
+    .put(v10_1.Routes.applicationCommands('939629038178295828'), {
+    body: client.slashCommands.map(function (c) { return c.command.toJSON(); }),
+})
+    .then(function () { return loxt.ready('application commands'); })
+    .catch(function (err) { return loxt.error(err); });
 client.once('ready', function () { return __awaiter(void 0, void 0, void 0, function () {
-    var error_1;
     var _a, _b;
     return __generator(this, function (_c) {
-        switch (_c.label) {
-            case 0:
-                _c.trys.push([0, 2, , 3]);
-                return [4, rest.put(v9_1.Routes.applicationCommands('939629038178295828'), {
-                        body: client.slashCommands.map(function (c) { return c.command.toJSON(); }),
-                    })];
-            case 1:
-                _c.sent();
-                loxt.ready('application commands');
-                return [3, 3];
-            case 2:
-                error_1 = _c.sent();
-                if (error_1 instanceof Error) {
-                    loxt.error(error_1);
-                }
-                return [3, 3];
-            case 3:
-                loxt.info("Ready on client (".concat((_a = client.user) === null || _a === void 0 ? void 0 : _a.tag, ")"));
-                loxt.info("watching ".concat(client.guilds.cache.size, " Servers, ").concat(client.channels.cache.size, " channels & ").concat(client.users.cache.size, " users"));
-                (_b = client.user) === null || _b === void 0 ? void 0 : _b.setActivity(' for Raiders | .help', {
-                    type: 'WATCHING',
-                });
-                return [2];
-        }
+        loxt.info("Ready on client (".concat((_a = client.user) === null || _a === void 0 ? void 0 : _a.tag, ")"));
+        loxt.info("watching ".concat(client.guilds.cache.size, " Servers, ").concat(client.channels.cache.size, " channels & ").concat(client.users.cache.size, " users"));
+        (_b = client.user) === null || _b === void 0 ? void 0 : _b.setActivity(' for Raiders | .help', {
+            type: 'WATCHING',
+        });
+        return [2];
     });
 }); });
 client.on('interactionCreate', function (interaction) { return __awaiter(void 0, void 0, void 0, function () {
@@ -127,16 +135,16 @@ client.on('interactionCreate', function (interaction) { return __awaiter(void 0,
     });
 }); });
 client.on('messageCreate', function (message) { return __awaiter(void 0, void 0, void 0, function () {
-    var prefix, content, author, args, cmd, command;
+    var PREFIX, content, author, args, cmd, command;
     var _a;
     return __generator(this, function (_b) {
-        prefix = '.';
+        PREFIX = '.';
         content = message.content, author = message.author;
         if (author.bot)
             return [2];
-        if (!content.startsWith(prefix))
+        if (!content.startsWith(PREFIX))
             return [2];
-        args = content.slice(prefix.length).trim().split(/ +/);
+        args = content.slice(PREFIX.length).trim().split(/ +/);
         cmd = (_a = args.shift()) === null || _a === void 0 ? void 0 : _a.toLowerCase();
         command = client.commands.get(cmd);
         command === null || command === void 0 ? void 0 : command.run({ client: client, message: message, args: args });
@@ -158,7 +166,7 @@ client.on('messageCreate', function (message) { return __awaiter(void 0, void 0,
                 return [4, server.listen(3000, '0.0.0.0')];
             case 2:
                 _a.sent();
-                return [4, client.login(process.env.TOKEN)];
+                return [4, client.login(TOKEN)];
             case 3:
                 _a.sent();
                 return [3, 5];

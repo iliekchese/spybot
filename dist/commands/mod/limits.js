@@ -39,7 +39,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var database_1 = require("../../database");
 var discord_js_1 = require("discord.js");
 exports.default = {
-    name: "limits",
+    name: 'limits',
     run: function (_a) {
         var _b;
         var message = _a.message, args = _a.args;
@@ -67,13 +67,13 @@ exports.default = {
                             message.channel.send(':x: | **The limit has to be a number**');
                             return [2];
                         }
-                        isLimit = type === "channelcreate" ||
-                            type === "channeldelete" ||
-                            type === "rolecreate" ||
-                            type === "roledelete" ||
-                            type === "kick" ||
-                            type === "ban" ||
-                            type === "warn";
+                        isLimit = type === 'channelcreate' ||
+                            type === 'channeldelete' ||
+                            type === 'rolecreate' ||
+                            type === 'roledelete' ||
+                            type === 'kick' ||
+                            type === 'ban' ||
+                            type === 'warn';
                         if (!isLimit) {
                             message.channel.send("\n\t\t\t\tNot a valid limit, valid limits are:\n\n\t\t\t\t**channelcreate, channeldelete,\n\t\t\t\trolecreate, roledelete, \n\t\t\t\tkick, ban,\n\t\t\t\twarn**\n\t\t\t");
                             return [2];
@@ -84,8 +84,8 @@ exports.default = {
                                 create: {
                                     guild: message.guildId,
                                     type: type,
-                                    limit: Number(limit)
-                                }
+                                    limit: Number(limit),
+                                },
                             })];
                     case 1:
                         _c.sent();
@@ -94,5 +94,5 @@ exports.default = {
                 }
             });
         });
-    }
+    },
 };

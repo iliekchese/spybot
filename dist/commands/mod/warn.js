@@ -40,7 +40,7 @@ var discord_js_1 = require("discord.js");
 var nanoid_1 = require("nanoid");
 var database_1 = require("../../database");
 exports.default = {
-    name: "warns",
+    name: 'warns',
     run: function (_a) {
         var _b, _c, _d, _e, _f, _g, _h;
         var message = _a.message, args = _a.args;
@@ -64,37 +64,37 @@ exports.default = {
                         }
                         member_1 = (_c = message.mentions.members) === null || _c === void 0 ? void 0 : _c.first();
                         if (!member_1) {
-                            message.channel.send("You must specify a member!");
+                            message.channel.send('You must specify a member!');
                             return [3, 19];
                         }
                         return [4, database_1.prisma.limit.findUnique({
-                                where: { guild: message.guildId, type: "warn" },
-                                select: { limit: true }
+                                where: { guild: message.guildId, type: 'warn' },
+                                select: { limit: true },
                             })];
                     case 2:
                         wl = _l.sent();
                         return [4, database_1.prisma.punish.findUnique({
                                 where: { guild: message.guildId },
-                                select: { option: true }
+                                select: { option: true },
                             })];
                     case 3:
                         punish = _l.sent();
                         if (!(wl === null || wl === void 0 ? void 0 : wl.limit)) {
-                            message.channel.send("There is no warn limit set: `.limits warn <limit>`");
+                            message.channel.send('There is no warn limit set: `.limits warn <limit>`');
                             return [3, 19];
                         }
                         if (!args[2]) {
-                            message.channel.send("You must specify a reason!");
+                            message.channel.send('You must specify a reason!');
                             return [3, 19];
                         }
-                        reason = args.slice(2).join(" ");
+                        reason = args.slice(2).join(' ');
                         return [4, database_1.prisma.warns.create({
                                 data: {
                                     guild: message.guildId,
                                     user: member_1.user.id,
-                                    warns: { id: (0, nanoid_1.nanoid)(), reason: reason }
+                                    warns: { id: (0, nanoid_1.nanoid)(), reason: reason },
                                 },
-                                select: { warns: true }
+                                select: { warns: true },
                             })];
                     case 4:
                         warns = (_l.sent()).warns;
@@ -124,7 +124,7 @@ exports.default = {
                         }); }); });
                         return [3, 11];
                     case 10:
-                        quarantineRole = member_1 === null || member_1 === void 0 ? void 0 : member_1.guild.roles.cache.find(function (role) { return role.name === "Quarantine"; });
+                        quarantineRole = member_1 === null || member_1 === void 0 ? void 0 : member_1.guild.roles.cache.find(function (role) { return role.name === 'Quarantine'; });
                         member_1 === null || member_1 === void 0 ? void 0 : member_1.roles.cache.filter(function (r) { return r.name !== '@everyone'; }).forEach(function (r) { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
                             switch (_a.label) {
                                 case 0: return [4, (member_1 === null || member_1 === void 0 ? void 0 : member_1.roles.remove(r.id))];
@@ -136,13 +136,13 @@ exports.default = {
                     case 11: return [3, 19];
                     case 12: return [4, database_1.prisma.logsChannel.findUnique({
                             where: { guild: message.guildId },
-                            select: { id: true }
+                            select: { id: true },
                         })];
                     case 13:
                         logs = _l.sent();
                         warnlogEmbed = new discord_js_1.MessageEmbed()
                             .setTitle("**Member Warned**: ".concat(member_1 === null || member_1 === void 0 ? void 0 : member_1.user.tag))
-                            .setDescription("**Reason**: ".concat(args.slice(2).join(" "), " \n\n **Reporter**: ").concat(message.author))
+                            .setDescription("**Reason**: ".concat(args.slice(2).join(' '), " \n\n **Reporter**: ").concat(message.author))
                             .setColor('#2F3136')
                             .setThumbnail(member_1 === null || member_1 === void 0 ? void 0 : member_1.user.avatarURL());
                         logsChannel = (_d = message.guild) === null || _d === void 0 ? void 0 : _d.channels.cache.get(logs === null || logs === void 0 ? void 0 : logs.id);
@@ -167,7 +167,7 @@ exports.default = {
                         return [4, database_1.prisma.warns.upsert({
                                 where: { guild: message.guildId, user: user.id },
                                 update: { warns: [] },
-                                create: { guild: message.guildId, user: user.id, warns: [] }
+                                create: { guild: message.guildId, user: user.id, warns: [] },
                             })];
                     case 15:
                         _l.sent();
@@ -181,7 +181,7 @@ exports.default = {
                         return [4, database_1.prisma.warns.upsert({
                                 where: { guild: message.guildId, user: user.id },
                                 update: { warns: warns.filter(function (w) { return w.id !== args[2]; }) },
-                                create: { guild: message.guildId, user: user.id, warns: [] }
+                                create: { guild: message.guildId, user: user.id, warns: [] },
                             })];
                     case 17:
                         _l.sent();
@@ -206,5 +206,5 @@ exports.default = {
                 }
             });
         });
-    }
+    },
 };

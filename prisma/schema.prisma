@@ -7,46 +7,50 @@ generator client {
   provider = "prisma-client-js"
 }
 
-type Warn {
-  id        String   @map("_id") @db.ObjectId
+model Warn {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
   reason    String
-  createdAt DateTime @default(now())
+  createdAt DateTime  @default(now())
+  user      WarnsUser @relation(fields: [userId], references: [user])
+  userId    String
 }
 
-model Warns {
-  guild String @id @map("_id") @db.ObjectId
-  user  String @unique @db.ObjectId
+model WarnsUser {
+  id    String @id @default(auto()) @map("_id") @db.ObjectId
+  guild String @unique
+  user  String @unique
   warns Warn[]
 }
 
 model Limit {
-  guild String @id @map("_id") @db.ObjectId
-  type  String @unique @db.ObjectId
+  id    String @id @default(auto()) @map("_id") @db.ObjectId
+  guild String @unique
+  type  String @unique
   limit Int
 }
 
 model Whitelist {
-  guild String   @id @map("_id") @db.ObjectId
+  guild String   @id @map("_id")
   users String[]
 }
 
 model LogsChannel {
-  guild String @id @map("_id") @db.ObjectId
-  id    String @unique @db.ObjectId
+  guild String @id @map("_id")
+  id    String
 }
 
 model SuggestionsChannel {
-  guild String @id @map("_id") @db.ObjectId
-  id    String @unique @db.ObjectId
+  guild String @id @map("_id")
+  id    String
 }
 
 model Punish {
-  guild  String @id @map("_id") @db.ObjectId
+  guild  String @id @map("_id")
   option String
 }
 
 model Suggestion {
-  id       String  @id @map("_id") @db.ObjectId
+  id       String  @id @map("_id")
   title    String
   body     String
   approved Boolean @default(false)

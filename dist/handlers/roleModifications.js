@@ -98,7 +98,9 @@ var handler = function (_a) {
                 case 4:
                     _d.sent();
                     return [3, 9];
-                case 5: return [4, (member === null || member === void 0 ? void 0 : member.ban({ reason: "You have been banned for creating too many roles." }))];
+                case 5: return [4, (member === null || member === void 0 ? void 0 : member.ban({
+                        reason: "You have been banned for creating too many roles.",
+                    }))];
                 case 6:
                     _d.sent();
                     return [3, 9];
@@ -111,7 +113,7 @@ var handler = function (_a) {
                     }); }); });
                     return [3, 9];
                 case 8:
-                    quarantineRole = member === null || member === void 0 ? void 0 : member.guild.roles.cache.find(function (role) { return role.name === "Quarantine"; });
+                    quarantineRole = member === null || member === void 0 ? void 0 : member.guild.roles.cache.find(function (role) { return role.name === 'Quarantine'; });
                     member === null || member === void 0 ? void 0 : member.roles.cache.filter(function (r) { return r.name !== '@everyone'; }).forEach(function (r) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
                         switch (_a.label) {
                             case 0: return [4, (member === null || member === void 0 ? void 0 : member.roles.remove(r.id))];
@@ -195,7 +197,9 @@ var handler = function (_a) {
                 case 4:
                     _d.sent();
                     return [3, 9];
-                case 5: return [4, (member === null || member === void 0 ? void 0 : member.ban({ reason: "You have been banned for creating too many roles." }))];
+                case 5: return [4, (member === null || member === void 0 ? void 0 : member.ban({
+                        reason: "You have been banned for creating too many roles.",
+                    }))];
                 case 6:
                     _d.sent();
                     return [3, 9];
@@ -208,7 +212,7 @@ var handler = function (_a) {
                     }); }); });
                     return [3, 9];
                 case 8:
-                    quarantineRole = member === null || member === void 0 ? void 0 : member.guild.roles.cache.find(function (role) { return role.name === "Quarantine"; });
+                    quarantineRole = member === null || member === void 0 ? void 0 : member.guild.roles.cache.find(function (role) { return role.name === 'Quarantine'; });
                     member === null || member === void 0 ? void 0 : member.roles.cache.filter(function (r) { return r.name !== '@everyone'; }).forEach(function (r) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
                         switch (_a.label) {
                             case 0: return [4, (member === null || member === void 0 ? void 0 : member.roles.remove(r.id))];

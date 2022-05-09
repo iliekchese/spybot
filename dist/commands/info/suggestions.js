@@ -65,7 +65,7 @@ exports.default = {
                             return [3, 5];
                         }
                         return [4, database_1.prisma.suggestionsChannel.create({
-                                data: { guild: (_c = message.guild) === null || _c === void 0 ? void 0 : _c.id, id: channel.id }
+                                data: { guild: (_c = message.guild) === null || _c === void 0 ? void 0 : _c.id, id: channel.id },
                             })];
                     case 2:
                         _f.sent();
@@ -79,19 +79,19 @@ exports.default = {
                             .setDescription(args.slice(1).join(' '))
                             .setColor('#2F3136');
                         return [4, database_1.prisma.suggestionsChannel.findUnique({
-                                where: { guild: (_d = message.guild) === null || _d === void 0 ? void 0 : _d.id }
+                                where: { guild: (_d = message.guild) === null || _d === void 0 ? void 0 : _d.id },
                             })];
                     case 4:
                         suggestions = _f.sent();
                         if (!suggestions) {
-                            message.channel.send(":x: | **There is no suggestions channel set:** `.suggestions set <channel>`");
+                            message.channel.send(':x: | **There is no suggestions channel set:** `.suggestions set <channel>`');
                             return [3, 5];
                         }
                         suggestionsChannel = client.channels.cache.get(suggestions === null || suggestions === void 0 ? void 0 : suggestions.id);
                         suggestionsChannel === null || suggestionsChannel === void 0 ? void 0 : suggestionsChannel.send({ embeds: [embed] }).then(function (msg) {
                             msg.react('✅');
                             msg.react('❌');
-                            message.channel.send("**Suggestion submitted**");
+                            message.channel.send('**Suggestion submitted**');
                         });
                         _f.label = 5;
                     case 5: return [2];

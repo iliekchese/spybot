@@ -49,7 +49,7 @@ exports.default = {
                 switch (_k.label) {
                     case 0: return [4, database_1.prisma.whitelist.findUnique({
                             where: { guild: (_b = message.guild) === null || _b === void 0 ? void 0 : _b.id },
-                            select: { users: true }
+                            select: { users: true },
                         })];
                     case 1:
                         whitelist = _k.sent();
@@ -77,7 +77,7 @@ exports.default = {
                         return [4, database_1.prisma.whitelist.upsert({
                                 where: { guild: message.guildId },
                                 update: { users: { push: user.id } },
-                                create: { guild: message.guildId, users: [user.id] }
+                                create: { guild: message.guildId, users: [user.id] },
                             })];
                     case 3:
                         _k.sent();
@@ -98,7 +98,7 @@ exports.default = {
                         }
                         return [4, database_1.prisma.whitelist.update({
                                 where: { guild: message.guildId },
-                                data: { users: whitelist.users.filter(function (id) { return id !== (user === null || user === void 0 ? void 0 : user.id); }) }
+                                data: { users: whitelist.users.filter(function (id) { return id !== (user === null || user === void 0 ? void 0 : user.id); }) },
                             })];
                     case 5:
                         _k.sent();
@@ -107,8 +107,14 @@ exports.default = {
                     case 6:
                         embed = new discord_js_1.MessageEmbed()
                             .setTitle('**The list of whitelisted users**')
-                            .setAuthor({ name: message.author.tag, iconURL: message.author.displayAvatarURL({ dynamic: true }) })
-                            .setFooter({ text: (_e = message.guild) === null || _e === void 0 ? void 0 : _e.name, iconURL: (_f = message.guild) === null || _f === void 0 ? void 0 : _f.iconURL() })
+                            .setAuthor({
+                            name: message.author.tag,
+                            iconURL: message.author.displayAvatarURL({ dynamic: true }),
+                        })
+                            .setFooter({
+                            text: (_e = message.guild) === null || _e === void 0 ? void 0 : _e.name,
+                            iconURL: (_f = message.guild) === null || _f === void 0 ? void 0 : _f.iconURL(),
+                        })
                             .setThumbnail((_g = message.guild) === null || _g === void 0 ? void 0 : _g.iconURL());
                         whitelisted = (_h = whitelist === null || whitelist === void 0 ? void 0 : whitelist.users) === null || _h === void 0 ? void 0 : _h.map(function (id) { return "<@".concat(id, ">"); });
                         if (whitelisted === null || whitelisted === void 0 ? void 0 : whitelisted.length) {

@@ -1,4 +1,4 @@
-import type { Handler, Slash } from '..';
+import type { Handler, Slash } from '../types';
 import { readdir } from 'node:fs/promises';
 import { Loxt } from 'loxt';
 

@@ -45,7 +45,9 @@ exports.default = {
         return __awaiter(this, void 0, void 0, function () {
             var member, infoEmbed, row;
             return __generator(this, function (_d) {
-                member = ((_b = message.mentions.members) === null || _b === void 0 ? void 0 : _b.first()) || ((_c = message.guild) === null || _c === void 0 ? void 0 : _c.members.cache.get(args[0])) || message.member;
+                member = ((_b = message.mentions.members) === null || _b === void 0 ? void 0 : _b.first()) ||
+                    ((_c = message.guild) === null || _c === void 0 ? void 0 : _c.members.cache.get(args[0])) ||
+                    message.member;
                 infoEmbed = new discord_js_1.MessageEmbed()
                     .setTitle("Who is ".concat(member.user.tag, "?"))
                     .addField("Username", "".concat(member.user.tag))
@@ -54,9 +56,9 @@ exports.default = {
                     .addField("Joined", "<t:".concat(Math.floor(member.joinedTimestamp / 1000) + 3600, ":R>"))
                     .addField("Bot", member.user.bot.toString())
                     .addField("Roles", member.roles.cache
-                    .filter(function (role) { return role.name !== "@everyone"; })
+                    .filter(function (role) { return role.name !== '@everyone'; })
                     .map(function (role) { return "<@&".concat(role.id, ">"); })
-                    .join(member.roles.cache.size >= 10 ? " | " : "\n"))
+                    .join(member.roles.cache.size >= 10 ? ' | ' : '\n'))
                     .setThumbnail(member.user.avatarURL())
                     .setColor('#2F3136')
                     .setFooter({

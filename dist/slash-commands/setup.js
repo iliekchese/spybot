@@ -51,9 +51,7 @@ exports.default = {
             return __generator(this, function (_f) {
                 switch (_f.label) {
                     case 0:
-                        setupEmbed = new discord_js_1.MessageEmbed()
-                            .setColor('#2F3136')
-                            .setFooter({
+                        setupEmbed = new discord_js_1.MessageEmbed().setColor('#2F3136').setFooter({
                             text: 'Spy Bot',
                             iconURL: 'https://cdn.discordapp.com/avatars/939629038178295828/861602a3003bf4b82e3397aaf1285ed2.webp?size=80)',
                         });
@@ -62,16 +60,18 @@ exports.default = {
                         _f.trys.push([1, 3, 4, 6]);
                         (_b = interaction.guild) === null || _b === void 0 ? void 0 : _b.channels.create('spy-bot-logs', {
                             type: 'GUILD_TEXT',
-                            permissionOverwrites: [{
+                            permissionOverwrites: [
+                                {
                                     id: interaction.guild.id,
                                     deny: ['SEND_MESSAGES', 'VIEW_CHANNEL'],
-                                }],
+                                },
+                            ],
                         });
                         return [4, ((_c = interaction.guild) === null || _c === void 0 ? void 0 : _c.roles.create({
                                 color: 'RED',
                                 name: 'Quarantine',
                                 position: ((_d = interaction.guild) === null || _d === void 0 ? void 0 : _d.roles.cache.size) - 1,
-                                reason: 'Server setup'
+                                reason: 'Server setup',
                             }))];
                     case 2:
                         muteRole_1 = _f.sent();
@@ -86,7 +86,7 @@ exports.default = {
                                                 SPEAK: false,
                                                 CONNECT: false,
                                                 ADMINISTRATOR: false,
-                                                VIEW_CHANNEL: false
+                                                VIEW_CHANNEL: false,
                                             })];
                                     case 1:
                                         _a.sent();
