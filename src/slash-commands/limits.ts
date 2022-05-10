@@ -54,6 +54,14 @@ export default {
 				.addIntegerOption(limit =>
 					limit.setName('limit').setDescription('The limit').setRequired(true)
 				)
+		)
+		.addSubcommand(subcommand =>
+			subcommand
+				.setName('warn')
+				.setDescription('Set the warn limit!')
+				.addIntegerOption(limit =>
+					limit.setName('limit').setDescription('The limit').setRequired(true)
+				)
 		),
 
 	async run({ interaction }: SlashArgs) {
@@ -85,7 +93,7 @@ export default {
 			return;
 		}
 		await prisma.limit.upsert({
-			where: { guild: interaction.guildId!, type },
+			where: { guild_type: { guild: interaction.guildId!, type } },
 			update: { limit: limit! },
 			create: {
 				guild: interaction.guildId!,

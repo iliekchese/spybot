@@ -1,10 +1,31 @@
-import type { CommandArgs } from '../../types';
-import { prisma } from '../../database';
-import { Permissions } from 'discord.js';
+import type { CommandArgs } from '../types';
+import { prisma } from '../database';
+import { MessageEmbed, Permissions } from 'discord.js';
 
 export default {
 	name: 'limits',
 	async run({ message, args }: CommandArgs) {
+		if (args[0] === 'show') {
+			const limits = await prisma.limit.findMany();
+			const limitsEmbed = new MessageEmbed()
+				.setTitle('**Spy Bot | Limits**')
+				.setDescription("If a limit is not here it means that it's not set")
+				.setAuthor({
+					name: message.author.tag,
+					iconURL: message.author.displayAvatarURL({ dynamic: true }),
+				})
+				.setThumbnail(message.author.displayAvatarURL({ dynamic: true }))
+				.setFooter({
+					text: message.guild?.name!,
+					iconURL: message.guild?.iconURL()!,
+				})
+				.setColor('GREEN');
+			limits.forEach(({ type, limit }) => {
+				limitsEmbed.addField(type, limit.toString(), true);
+			});
+			message.channel.send({ embeds: [limitsEmbed] });
+			return;
+		}
 		const [type, limit] = args;
 		if (!message.member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
 			message.channel.send("You don't have permission to do this!");
@@ -16,9 +37,7 @@ export default {
 		}
 		try {
 			if (Number(args[1]) < 1) {
-				message.channel.send(
-					':x: | **The limit cannot be zero or negative number**'
-				);
+				message.channel.send(':x: | **The limit cannot be zero or negative number**');
 				return;
 			}
 		} catch (_) {
@@ -47,7 +66,7 @@ export default {
 			return;
 		}
 		await prisma.limit.upsert({
-			where: { guild: message.guildId!, type },
+			where: { guild_type: { guild: message.guildId!, type } },
 			update: { limit: Number(limit) },
 			create: {
 				guild: message.guildId!,
@@ -55,6 +74,6 @@ export default {
 				limit: Number(limit),
 			},
 		});
-		message.channel.send(`${limit} has been updated!`);
+		message.channel.send(`**${type}** has been updated to ${limit}!`);
 	},
 };

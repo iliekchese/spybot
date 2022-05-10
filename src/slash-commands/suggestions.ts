@@ -12,10 +12,7 @@ export default {
 				.setName('set')
 				.setDescription('Sets the suggestions channel')
 				.addChannelOption(channel =>
-					channel
-						.setName('channel')
-						.setDescription('The channel')
-						.setRequired(true)
+					channel.setName('channel').setDescription('The channel').setRequired(true)
 				)
 		)
 		.addSubcommand(subcommand =>
@@ -23,34 +20,24 @@ export default {
 				.setName('new')
 				.setDescription('Add new suggestion')
 				.addStringOption(title =>
-					title
-						.setName('title')
-						.setDescription("The suggestion's title")
-						.setRequired(true)
+					title.setName('title').setDescription("The suggestion's title").setRequired(true)
 				)
 				.addStringOption(body =>
-					body
-						.setName('title')
-						.setDescription("The suggestion's title")
-						.setRequired(true)
+					body.setName('title').setDescription("The suggestion's title").setRequired(true)
 				)
 		),
 
 	async run({ client, interaction }: SlashArgs) {
 		switch (interaction.options.getSubcommand()) {
 			case 'set':
-				const channel = interaction.options.getChannel(
-					'channel'
-				) as TextChannel | null;
+				const channel = interaction.options.getChannel('channel') as TextChannel | null;
 				await prisma.suggestionsChannel.upsert({
 					where: { guild: interaction.guildId! },
-					update: { id: channel?.id! },
-					create: { guild: interaction.guildId!, id: channel?.id! },
+					update: { channel: channel?.id! },
+					create: { guild: interaction.guildId!, channel: channel?.id! },
 				});
 				channel?.send('**Suggestions Channel**');
-				await interaction.reply(
-					`**The suggestions channel has been set to <#${channel?.id}>**`
-				);
+				await interaction.reply(`**The suggestions channel has been set to <#${channel?.id}>**`);
 				break;
 
 			case 'new':
@@ -67,11 +54,15 @@ export default {
 					});
 				const suggestions = await prisma.suggestionsChannel.findUnique({
 					where: { guild: interaction.guildId! },
-					select: { id: true },
+					select: { channel: true },
 				});
-				const suggestionsChannel = client.channels.cache.get(
-					suggestions?.id!
-				) as TextChannel;
+				if (!suggestions) {
+					await interaction.reply(
+						':x: | **There is no suggestions channel set:** `.suggestions set <channel>`'
+					);
+					break;
+				}
+				const suggestionsChannel = client.channels.cache.get(suggestions.channel!) as TextChannel;
 				const msg = await suggestionsChannel?.send({ embeds: [embed] });
 				msg.react('✅');
 				msg.react('❌');

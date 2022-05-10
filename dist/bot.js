@@ -76,13 +76,11 @@ process.on('uncaughtException', function (_a) {
     return loxt.error(message);
 });
 (function () { return __awaiter(void 0, void 0, void 0, function () {
-    var handlers;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4, (0, promises_1.readdir)('./handlers/')];
             case 1:
-                handlers = _a.sent();
-                handlers
+                (_a.sent())
                     .filter(function (file) { return file.endsWith('.js'); })
                     .forEach(function (file) { return __awaiter(void 0, void 0, void 0, function () {
                     var handler;
@@ -90,7 +88,7 @@ process.on('uncaughtException', function (_a) {
                         switch (_a.label) {
                             case 0: return [4, Promise.resolve().then(function () { return __importStar(require("./handlers/".concat(file))); })];
                             case 1:
-                                handler = _a.sent();
+                                handler = (_a.sent()).handler;
                                 handler({ client: client });
                                 return [2];
                         }
@@ -109,7 +107,7 @@ client.slashCommands = [];
 loxt.info('made by eldi mindcrafter#0001 & AngelNext#9162');
 rest
     .put(v10_1.Routes.applicationCommands('939629038178295828'), {
-    body: client.slashCommands.map(function (c) { return c.command.toJSON(); }),
+    body: client.slashCommands.map(function (c) { return c.command; }),
 })
     .then(function () { return loxt.ready('application commands'); })
     .catch(function (err) { return loxt.error(err); });

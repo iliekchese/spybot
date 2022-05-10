@@ -90,6 +90,14 @@ exports.default = {
             .addIntegerOption(function (limit) {
             return limit.setName('limit').setDescription('The limit').setRequired(true);
         });
+    })
+        .addSubcommand(function (subcommand) {
+        return subcommand
+            .setName('warn')
+            .setDescription('Set the warn limit!')
+            .addIntegerOption(function (limit) {
+            return limit.setName('limit').setDescription('The limit').setRequired(true);
+        });
     }),
     run: function (_a) {
         var _b;
@@ -120,7 +128,7 @@ exports.default = {
                         _c.sent();
                         return [2];
                     case 4: return [4, database_1.prisma.limit.upsert({
-                            where: { guild: interaction.guildId, type: type },
+                            where: { guild_type: { guild: interaction.guildId, type: type } },
                             update: { limit: limit },
                             create: {
                                 guild: interaction.guildId,

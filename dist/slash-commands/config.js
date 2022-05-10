@@ -44,9 +44,7 @@ exports.default = {
         .setName('config')
         .setDescription('Displays config')
         .addSubcommand(function (subcommand) {
-        return subcommand
-            .setName('show')
-            .setDescription('Info about the server permissions');
+        return subcommand.setName('show').setDescription('Info about the server permissions');
     })
         .addSubcommand(function (subcommand) {
         return subcommand
@@ -65,15 +63,10 @@ exports.default = {
             .setName('logs')
             .setDescription('Configure logs channel!')
             .addChannelOption(function (channel) {
-            return channel
-                .setName('channel')
-                .setDescription('The channel')
-                .setRequired(true);
+            return channel.setName('channel').setDescription('The channel').setRequired(true);
         });
     })
-        .addSubcommand(function (subcommand) {
-        return subcommand.setName('help').setDescription('Config Preview');
-    }),
+        .addSubcommand(function (subcommand) { return subcommand.setName('help').setDescription('Config Preview'); }),
     run: function (_a) {
         var _b, _c, _d, _e, _f, _g, _h, _j, _k;
         var interaction = _a.interaction;
@@ -83,7 +76,7 @@ exports.default = {
                 switch (_m.label) {
                     case 0: return [4, database_1.prisma.logsChannel.findUnique({
                             where: { guild: interaction.guildId },
-                            select: { id: true },
+                            select: { channel: true },
                         })];
                     case 1:
                         logs = _m.sent();
@@ -114,7 +107,7 @@ exports.default = {
                             text: ((_b = interaction.guild) === null || _b === void 0 ? void 0 : _b.name) || '',
                             iconURL: (_d = (_c = interaction.guild) === null || _c === void 0 ? void 0 : _c.iconURL()) !== null && _d !== void 0 ? _d : '',
                         })
-                            .addField('Logs', (logs === null || logs === void 0 ? void 0 : logs.id) ? "<#".concat(logs.id, ">") : disabled)
+                            .addField('Logs', (logs === null || logs === void 0 ? void 0 : logs.channel) ? "<#".concat(logs.channel, ">") : disabled)
                             .addField('Punishment', (_e = punish === null || punish === void 0 ? void 0 : punish.option) !== null && _e !== void 0 ? _e : disabled)
                             .setColor('GREEN');
                         return [4, interaction.reply({ embeds: [show] })];
@@ -172,10 +165,10 @@ exports.default = {
                         return [3, 23];
                     case 18: return [4, database_1.prisma.logsChannel.upsert({
                             where: { guild: interaction.guildId },
-                            update: { id: channel.id },
+                            update: { channel: channel.id },
                             create: {
                                 guild: interaction.guildId,
-                                id: channel.id,
+                                channel: channel.id,
                             },
                         })];
                     case 19:

@@ -9,9 +9,7 @@ export default {
 		.setName('config')
 		.setDescription('Displays config')
 		.addSubcommand(subcommand =>
-			subcommand
-				.setName('show')
-				.setDescription('Info about the server permissions')
+			subcommand.setName('show').setDescription('Info about the server permissions')
 		)
 		.addSubcommand(subcommand =>
 			subcommand
@@ -35,20 +33,15 @@ export default {
 				.setName('logs')
 				.setDescription('Configure logs channel!')
 				.addChannelOption(channel =>
-					channel
-						.setName('channel')
-						.setDescription('The channel')
-						.setRequired(true)
+					channel.setName('channel').setDescription('The channel').setRequired(true)
 				)
 		)
-		.addSubcommand(subcommand =>
-			subcommand.setName('help').setDescription('Config Preview')
-		),
+		.addSubcommand(subcommand => subcommand.setName('help').setDescription('Config Preview')),
 
 	async run({ interaction }: SlashArgs) {
 		const logs = await prisma.logsChannel.findUnique({
 			where: { guild: interaction.guildId! },
-			select: { id: true },
+			select: { channel: true },
 		});
 		switch (interaction.options.getSubcommand()) {
 			case 'show':
@@ -68,7 +61,7 @@ export default {
 						text: interaction.guild?.name || '',
 						iconURL: interaction.guild?.iconURL() ?? '',
 					})
-					.addField('Logs', logs?.id ? `<#${logs.id}>` : disabled)
+					.addField('Logs', logs?.channel ? `<#${logs.channel}>` : disabled)
 					.addField('Punishment', punish?.option ?? disabled)
 					.setColor('GREEN');
 				await interaction.reply({ embeds: [show] });
@@ -76,9 +69,7 @@ export default {
 
 			case 'punishment':
 				const punishment = interaction.options.getString('punishment');
-				if (
-					!interaction.memberPermissions?.has(Permissions.FLAGS.ADMINISTRATOR)
-				) {
+				if (!interaction.memberPermissions?.has(Permissions.FLAGS.ADMINISTRATOR)) {
 					await interaction.reply("You don't have permission to do this!");
 					break;
 				}
@@ -108,39 +99,29 @@ export default {
 					},
 				});
 
-				await interaction.reply(
-					'**The punishment has been set to ' + punishment + '**'
-				);
+				await interaction.reply('**The punishment has been set to ' + punishment + '**');
 				break;
 
 			case 'logs':
-				if (
-					!interaction.memberPermissions?.has(Permissions.FLAGS.ADMINISTRATOR)
-				) {
+				if (!interaction.memberPermissions?.has(Permissions.FLAGS.ADMINISTRATOR)) {
 					await interaction.reply("You don't have permission to do this!");
 					break;
 				}
-				const channel = interaction.options.getChannel(
-					'channel'
-				) as TextChannel | null;
+				const channel = interaction.options.getChannel('channel') as TextChannel | null;
 				if (channel?.guildId !== interaction.guildId!) {
-					await interaction.reply(
-						':x: | **That channel is not from this server**'
-					);
+					await interaction.reply(':x: | **That channel is not from this server**');
 					break;
 				}
 				await prisma.logsChannel.upsert({
 					where: { guild: interaction.guildId! },
-					update: { id: channel.id },
+					update: { channel: channel.id },
 					create: {
 						guild: interaction.guildId!,
-						id: channel.id,
+						channel: channel.id,
 					},
 				});
 				channel.send('**Anti Raid logs Channel**');
-				await interaction.reply(
-					'**The logs channel has been set to ' + channel + '**'
-				);
+				await interaction.reply('**The logs channel has been set to ' + channel + '**');
 				break;
 
 			case 'help':

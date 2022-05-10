@@ -1,4 +1,4 @@
-import type { CommandArgs } from '../../types';
+import type { CommandArgs } from '../types';
 import { MessageEmbed, Permissions } from 'discord.js';
 
 export default {

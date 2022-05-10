@@ -1,14 +1,14 @@
-import type { CommandArgs } from '../../types';
+import type { CommandArgs } from '../types';
 import type { TextChannel } from 'discord.js';
 import { MessageEmbed, Permissions } from 'discord.js';
-import { prisma } from '../../database';
+import { prisma } from '../database';
 
 export default {
 	name: 'config',
 	async run({ message, args }: CommandArgs) {
 		const logs = await prisma.logsChannel.findUnique({
 			where: { guild: message.guildId! },
-			select: { id: true },
+			select: { channel: true },
 		});
 		switch (args[0]?.toLowerCase()) {
 			case 'show':
@@ -18,7 +18,7 @@ export default {
 					select: { option: true },
 				});
 				const show = new MessageEmbed()
-					.setTitle('**Anti-Raid | Config**')
+					.setTitle('**Spy Bot | Config**')
 					.setAuthor({
 						name: message.author.tag,
 						iconURL: message.author.displayAvatarURL({ dynamic: true }),
@@ -28,8 +28,8 @@ export default {
 						text: message.guild?.name!,
 						iconURL: message.guild?.iconURL()!,
 					})
-					.addField('Logs', logs?.id ? `<#${logs.id}>` : disabled)
-					.addField('Punishment', punish?.option ?? disabled)
+					.addField('Logs: ', logs?.channel ? `<#${logs.channel}>` : disabled, false)
+					.addField('Punishment: ', punish?.option ?? disabled, false)
 					.setColor('GREEN');
 				message.channel.send({ embeds: [show] });
 				break;
@@ -65,9 +65,7 @@ export default {
 					},
 				});
 
-				message.channel.send(
-					'**The punishment has been set to ' + args[1] + '**'
-				);
+				message.channel.send('**The punishment has been set to ' + args[1] + '**');
 				break;
 
 			case 'logs':
@@ -81,23 +79,19 @@ export default {
 					break;
 				}
 				if (channel.guild.id !== message.guild?.id) {
-					message.channel.send(
-						':x: | **That channel is not from this server**'
-					);
+					message.channel.send(':x: | **That channel is not from this server**');
 					break;
 				}
 				await prisma.logsChannel.upsert({
 					where: { guild: message.guildId! },
-					update: { id: channel.id },
+					update: { channel: channel.id },
 					create: {
 						guild: message.guildId!,
-						id: channel.id,
+						channel: channel.id,
 					},
 				});
 				channel.send('**Anti Raid logs Channel**');
-				message.channel.send(
-					'**The logs channel has been set to ' + args[1] + '**'
-				);
+				message.channel.send('**The logs channel has been set to ' + args[1] + '**');
 				break;
 
 			default:
@@ -124,7 +118,7 @@ export default {
 				message.channel.send({ embeds: [helpEmbed] });
 				break;
 		}
-		const channel = await message.guild?.channels.fetch(logs?.id!);
+		const channel = await message.guild?.channels.fetch(logs?.channel!);
 		if (!channel) {
 			message.reply(
 				"\nThe logs channel isn't set, consider to set with `.config logs <logs_channel>`!"

@@ -1,11 +1,13 @@
 import type { TextChannel } from 'discord.js';
-import type { CommandArgs } from '../../types';
+import type { CommandArgs } from '../types';
 import { MessageEmbed, Permissions } from 'discord.js';
-import { prisma } from '../../database';
+import { prisma } from '../database';
 
 export default {
 	name: 'warns',
 	async run({ message, args }: CommandArgs) {
+		const reason = args.slice(2).join(' ');
+		const warns = await prisma.warn.findMany();
 		switch (args[0]) {
 			case 'add':
 				if (!message.member?.permissions.has(Permissions.FLAGS.KICK_MEMBERS)) {
@@ -18,7 +20,7 @@ export default {
 					break;
 				}
 				const wl = await prisma.limit.findUnique({
-					where: { guild: message.guildId!, type: 'warn' },
+					where: { guild_type: { guild: message.guildId!, type: 'warn' } },
 					select: { limit: true },
 				});
 				const punish = await prisma.punish.findUnique({
@@ -26,23 +28,19 @@ export default {
 					select: { option: true },
 				});
 				if (!wl?.limit) {
-					message.channel.send(
-						'There is no warn limit set: `.limits warn <limit>`'
-					);
+					message.channel.send('There is no warn limit set: `.limits warn <limit>`');
 					break;
 				}
-				const reason = args.slice(2).join(' ');
-				if (reason) {
+				if (!reason) {
 					message.channel.send('You must specify a reason!');
 					break;
 				}
-				const { warns } = await prisma.warnsUser.create({
+				await prisma.warn.create({
 					data: {
+						reason,
 						guild: message.guildId!,
-						user: member.user.id,
-						warns: { create: { reason } },
+						user: member.id,
 					},
-					select: { warns: true },
 				});
 				if (warns.length % wl.limit === 0) {
 					switch (punish?.option) {
@@ -78,16 +76,10 @@ export default {
 				});
 				const warnlogEmbed = new MessageEmbed()
 					.setTitle(`**Member Warned**: ${member?.user.tag}`)
-					.setDescription(
-						`**Reason**: ${args.slice(2).join(' ')} \n\n **Reporter**: ${
-							message.author
-						}`
-					)
+					.setDescription(`**Reason**: ${reason} \n\n **Reporter**: ${message.author}`)
 					.setColor('#2F3136')
 					.setThumbnail(member?.user.avatarURL()!);
-				const logsChannel = message.guild?.channels.cache.get(
-					logs?.id!
-				) as TextChannel;
+				const logsChannel = message.guild?.channels.cache.get(logs?.id!) as TextChannel;
 				logsChannel.send({ embeds: [warnlogEmbed] });
 
 				const warnEmbed = new MessageEmbed()
@@ -112,36 +104,20 @@ export default {
 				}
 				const { user } = message.mentions.members?.first()! || message.member!;
 				if (!args[2]) {
-					await prisma.warnsUser.upsert({
-						where: { guild: message.guildId!, user: user.id },
-						update: { warns: { set: [] } },
-						create: {
-							guild: message.guildId!,
-							user: user.id,
-							warns: { create: [] },
-						},
+					await prisma.warn.delete({
+						where: { guild_user: { guild: message.guildId!, user: user.id } },
 					});
 					message.channel.send(`Removed warnings from ${user}!`);
 					break;
 				}
-				if (warns.findIndex(w => w.id === args[2]) === -1) {
+				if (!warns.some(w => w.id === args[2])) {
 					message.channel.send(`Warning with id \`${args[2]}\` doesn't exist!`);
 					break;
 				}
-				await prisma.warnsUser.upsert({
-					where: { guild: message.guildId!, user: user.id },
-					update: {
-						warns: { delete: { userId: user.id } },
-					},
-					create: {
-						guild: message.guildId!,
-						user: user.id,
-						warns: { create: [] },
-					},
+				await prisma.warn.delete({
+					where: { guild_user: { guild: message.guildId!, user: user.id } },
 				});
-				message.channel.send(
-					`Removed warning from ${user} with id \`${args[2]}\`!`
-				);
+				message.channel.send(`Removed warning from ${user} with id \`${args[2]}\`!`);
 				break;
 
 			case 'show':

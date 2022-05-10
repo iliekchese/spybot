@@ -48,10 +48,7 @@ exports.default = {
             .setName('set')
             .setDescription('Sets the suggestions channel')
             .addChannelOption(function (channel) {
-            return channel
-                .setName('channel')
-                .setDescription('The channel')
-                .setRequired(true);
+            return channel.setName('channel').setDescription('The channel').setRequired(true);
         });
     })
         .addSubcommand(function (subcommand) {
@@ -59,16 +56,10 @@ exports.default = {
             .setName('new')
             .setDescription('Add new suggestion')
             .addStringOption(function (title) {
-            return title
-                .setName('title')
-                .setDescription("The suggestion's title")
-                .setRequired(true);
+            return title.setName('title').setDescription("The suggestion's title").setRequired(true);
         })
             .addStringOption(function (body) {
-            return body
-                .setName('title')
-                .setDescription("The suggestion's title")
-                .setRequired(true);
+            return body.setName('title').setDescription("The suggestion's title").setRequired(true);
         });
     }),
     run: function (_a) {
@@ -83,13 +74,13 @@ exports.default = {
                             case 'set': return [3, 1];
                             case 'new': return [3, 4];
                         }
-                        return [3, 9];
+                        return [3, 11];
                     case 1:
                         channel = interaction.options.getChannel('channel');
                         return [4, database_1.prisma.suggestionsChannel.upsert({
                                 where: { guild: interaction.guildId },
-                                update: { id: channel === null || channel === void 0 ? void 0 : channel.id },
-                                create: { guild: interaction.guildId, id: channel === null || channel === void 0 ? void 0 : channel.id },
+                                update: { channel: channel === null || channel === void 0 ? void 0 : channel.id },
+                                create: { guild: interaction.guildId, channel: channel === null || channel === void 0 ? void 0 : channel.id },
                             })];
                     case 2:
                         _c.sent();
@@ -97,7 +88,7 @@ exports.default = {
                         return [4, interaction.reply("**The suggestions channel has been set to <#".concat(channel === null || channel === void 0 ? void 0 : channel.id, ">**"))];
                     case 3:
                         _c.sent();
-                        return [3, 9];
+                        return [3, 11];
                     case 4: return [4, interaction.reply('**Suggestion submitted**')];
                     case 5:
                         _c.sent();
@@ -113,21 +104,27 @@ exports.default = {
                         });
                         return [4, database_1.prisma.suggestionsChannel.findUnique({
                                 where: { guild: interaction.guildId },
-                                select: { id: true },
+                                select: { channel: true },
                             })];
                     case 6:
                         suggestions = _c.sent();
-                        suggestionsChannel = client.channels.cache.get(suggestions === null || suggestions === void 0 ? void 0 : suggestions.id);
-                        return [4, (suggestionsChannel === null || suggestionsChannel === void 0 ? void 0 : suggestionsChannel.send({ embeds: [embed] }))];
+                        if (!!suggestions) return [3, 8];
+                        return [4, interaction.reply(':x: | **There is no suggestions channel set:** `.suggestions set <channel>`')];
                     case 7:
+                        _c.sent();
+                        return [3, 11];
+                    case 8:
+                        suggestionsChannel = client.channels.cache.get(suggestions.channel);
+                        return [4, (suggestionsChannel === null || suggestionsChannel === void 0 ? void 0 : suggestionsChannel.send({ embeds: [embed] }))];
+                    case 9:
                         msg = _c.sent();
                         msg.react('✅');
                         msg.react('❌');
                         return [4, interaction.reply('**Suggestion submitted**')];
-                    case 8:
+                    case 10:
                         _c.sent();
-                        return [3, 9];
-                    case 9: return [2];
+                        return [3, 11];
+                    case 11: return [2];
                 }
             });
         });

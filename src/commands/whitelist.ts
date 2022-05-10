@@ -1,21 +1,19 @@
-import type { CommandArgs } from '../../types';
+import type { CommandArgs } from '../types';
 import { MessageEmbed } from 'discord.js';
-import { prisma } from '../../database';
+import { prisma } from '../database';
 
 export default {
 	name: 'whitelist',
 	async run({ message, args }: CommandArgs) {
 		const whitelist = await prisma.whitelist.findUnique({
-			where: { guild: message.guild?.id! },
+			where: { guild: message.guildId! },
 			select: { users: true },
 		});
 		const user = message.mentions.users.first();
 		switch (args[0]) {
 			case 'add':
 				if (message.author.id !== message.guildId) {
-					message.channel.send(
-						':x: | **Only The owner of the Server can whitelist people**'
-					);
+					message.channel.send(':x: | **Only The owner of the Server can whitelist people**');
 					break;
 				}
 				if (!user) {
@@ -36,16 +34,14 @@ export default {
 
 			case 'remove':
 				if (message.author.id !== message.guild?.id) {
-					message.channel.send(
-						':x: | **Only The owner of the Server can unwhitelist people**'
-					);
+					message.channel.send(':x: | **Only The owner of the Server can unwhitelist people**');
 					break;
 				}
 				if (!user) {
 					message.channel.send(':x: | **Mention The User**');
 					break;
 				}
-				if (!whitelist?.users?.find(id => id === user?.id)) {
+				if (!whitelist?.users.some(id => id === user?.id)) {
 					message.channel.send(':x: | **The user is not whitelisted!**');
 					break;
 				}
@@ -68,7 +64,7 @@ export default {
 						iconURL: message.guild?.iconURL()!,
 					})
 					.setThumbnail(message.guild?.iconURL()!);
-				const whitelisted = whitelist?.users?.map(id => `<@${id}>`);
+				const whitelisted = whitelist?.users.map(id => `<@${id}>`);
 				if (whitelisted?.length) {
 					embed.addField('**Users**', `${whitelisted.join('\n')}`);
 					embed.setColor('GREEN');

@@ -12,11 +12,10 @@ const rest = new REST({ version: '10' }).setToken(TOKEN);
 process.on('uncaughtException', ({ message }) => loxt.error(message));
 
 (async () => {
-	const handlers = await readdir('./handlers/');
-	handlers
+	(await readdir('./handlers/'))
 		.filter(file => file.endsWith('.js'))
 		.forEach(async file => {
-			const handler = await import(`./handlers/${file}`);
+			const { handler } = await import(`./handlers/${file}`);
 			handler({ client });
 		});
 })();
@@ -31,14 +30,15 @@ client.commands = new Collection();
 client.slashCommands = [];
 loxt.info('made by eldi mindcrafter#0001 & AngelNext#9162');
 
+// ------- LOAD COMMANDS -----
 rest
 	.put(Routes.applicationCommands('939629038178295828'), {
-		body: client.slashCommands.map(c => c.command.toJSON()),
+		body: client.slashCommands.map(c => c.command),
 	})
 	.then(() => loxt.ready('application commands'))
 	.catch(err => loxt.error(err));
 
-// ------- LOAD COMMANDS -----
+// ------- READY BOT -----
 client.once('ready', async () => {
 	loxt.info(`Ready on client (${client.user?.tag})`);
 	loxt.info(
@@ -52,9 +52,7 @@ client.once('ready', async () => {
 // ------- MAKE COMMANDS INTERACT -----
 client.on('interactionCreate', async interaction => {
 	if (!interaction.isCommand()) return;
-	const command = client.slashCommands.find(
-		c => c.command.name === interaction.commandName
-	);
+	const command = client.slashCommands.find(c => c.command.name === interaction.commandName);
 	command?.run({ client, interaction });
 });
 

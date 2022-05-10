@@ -1,7 +1,7 @@
-import type { CommandArgs } from '../../types';
+import type { CommandArgs } from '../types';
 import type { TextChannel } from 'discord.js';
 import { MessageEmbed } from 'discord.js';
-import { prisma } from '../../database';
+import { prisma } from '../database';
 
 export default {
 	name: 'suggestions',
@@ -14,18 +14,14 @@ export default {
 					break;
 				}
 				if (channel.guild.id !== message.guild?.id) {
-					message.channel.send(
-						':x: | **That channel is not from this server**'
-					);
+					message.channel.send(':x: | **That channel is not from this server**');
 					break;
 				}
 				await prisma.suggestionsChannel.create({
-					data: { guild: message.guild?.id!, id: channel.id },
+					data: { guild: message.guild?.id!, channel: channel.id },
 				});
 				channel.send('**Suggestions Channel**');
-				message.channel.send(
-					`**The suggestions channel has been set to ${args[1]}**`
-				);
+				message.channel.send(`**The suggestions channel has been set to ${args[1]}**`);
 				break;
 
 			case 'new':
@@ -35,7 +31,8 @@ export default {
 					.setDescription(args.slice(1).join(' '))
 					.setColor('#2F3136');
 				const suggestions = await prisma.suggestionsChannel.findUnique({
-					where: { guild: message.guild?.id! },
+					where: { guild: message.guildId! },
+					select: { channel: true },
 				});
 				if (!suggestions) {
 					message.channel.send(
@@ -43,9 +40,7 @@ export default {
 					);
 					break;
 				}
-				const suggestionsChannel = client.channels.cache.get(
-					suggestions?.id!
-				) as TextChannel;
+				const suggestionsChannel = client.channels.cache.get(suggestions?.channel!) as TextChannel;
 				suggestionsChannel?.send({ embeds: [embed] }).then(msg => {
 					msg.react('✅');
 					msg.react('❌');

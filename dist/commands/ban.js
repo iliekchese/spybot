@@ -1,27 +1,4 @@
 "use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -59,37 +36,53 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.handler = void 0;
-var promises_1 = require("node:fs/promises");
-var loxt_1 = require("loxt");
-var handler = function (_a) {
-    var client = _a.client;
-    return __awaiter(void 0, void 0, void 0, function () {
-        var loxt;
-        return __generator(this, function (_b) {
-            switch (_b.label) {
-                case 0:
-                    loxt = new loxt_1.Loxt();
-                    return [4, (0, promises_1.readdir)('./commands/')];
-                case 1:
-                    (_b.sent())
-                        .filter(function (file) { return file.endsWith('.js'); })
-                        .forEach(function (file) { return __awaiter(void 0, void 0, void 0, function () {
-                        var pull;
-                        return __generator(this, function (_a) {
-                            switch (_a.label) {
-                                case 0: return [4, Promise.resolve().then(function () { return __importStar(require("../commands/".concat(file))); })];
-                                case 1:
-                                    pull = (_a.sent()).default;
-                                    client.commands.set(pull.name, pull);
-                                    return [2];
-                            }
-                        });
-                    }); });
-                    loxt.info('Commands Loaded!');
-                    return [2];
-            }
+var discord_js_1 = require("discord.js");
+exports.default = {
+    name: 'ban',
+    run: function (_a) {
+        var _this = this;
+        var _b;
+        var message = _a.message, args = _a.args, client = _a.client;
+        var member = (_b = message.mentions.members) === null || _b === void 0 ? void 0 : _b.first();
+        var banEmbed = new discord_js_1.MessageEmbed()
+            .setTitle("Are you sure you want to ban ".concat(member === null || member === void 0 ? void 0 : member.user.tag, "?"))
+            .setDescription('Please click below if you would like to continue.')
+            .setColor('#2F3136')
+            .setFooter({
+            text: 'Spy Bot',
+            iconURL: 'https://cdn.discordapp.com/avatars/939629038178295828/861602a3003bf4b82e3397aaf1285ed2.webp?size=80)',
         });
-    });
+        var row = new discord_js_1.MessageActionRow().addComponents(new discord_js_1.MessageButton()
+            .setCustomId('banAllowed')
+            .setLabel('Continue')
+            .setStyle('SUCCESS'), new discord_js_1.MessageButton()
+            .setCustomId('banNotAllowed')
+            .setLabel('Cancel')
+            .setStyle('DANGER'));
+        message.channel.send({ embeds: [banEmbed], components: [row] });
+        client.on('interactionCreate', function (interaction) { return __awaiter(_this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        if (!interaction.isButton())
+                            return [2];
+                        if (!(interaction.customId === 'banAllowed')) return [3, 2];
+                        member === null || member === void 0 ? void 0 : member.ban({
+                            reason: args[1],
+                        });
+                        return [4, interaction.reply("".concat(member === null || member === void 0 ? void 0 : member.user, " was succesfully banned!"))];
+                    case 1:
+                        _a.sent();
+                        return [3, 4];
+                    case 2:
+                        if (!(interaction.customId === 'banNotAllowed')) return [3, 4];
+                        return [4, interaction.reply('Operation canceled.')];
+                    case 3:
+                        _a.sent();
+                        _a.label = 4;
+                    case 4: return [2];
+                }
+            });
+        }); });
+    },
 };
-exports.handler = handler;
