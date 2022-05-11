@@ -1,5 +1,5 @@
 import type { CommandArgs } from '../types';
-import { MessageEmbed } from 'discord.js';
+import { MessageEmbed, Permissions } from 'discord.js';
 import { prisma } from '../database';
 
 export default {
@@ -12,8 +12,8 @@ export default {
 		const user = message.mentions.users.first();
 		switch (args[0]) {
 			case 'add':
-				if (message.author.id !== message.guildId) {
-					message.channel.send(':x: | **Only The owner of the Server can whitelist people**');
+				if (!message.member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
+					message.channel.send("You don't have permission to do this!");
 					break;
 				}
 				if (!user) {
@@ -33,8 +33,8 @@ export default {
 				break;
 
 			case 'remove':
-				if (message.author.id !== message.guild?.id) {
-					message.channel.send(':x: | **Only The owner of the Server can unwhitelist people**');
+				if (!message.member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
+					message.channel.send("You don't have permission to do this!");
 					break;
 				}
 				if (!user) {

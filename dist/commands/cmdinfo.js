@@ -13,7 +13,7 @@ exports.default = {
                     .setColor('#2F3136')
                     .setFooter({
                     text: 'Spy Bot',
-                    iconURL: 'https://cdn.discordapp.com/avatars/939629038178295828/861602a3003bf4b82e3397aaf1285ed2.webp?size=80)',
+                    iconURL: 'https://cdn.discordapp.com/avatars/939629038178295828/79c386588754ef3775b8ffd4654669f3.webp?size=80)',
                 });
                 var limit1 = new discord_js_1.MessageActionRow().addComponents(new discord_js_1.MessageButton()
                     .setURL('https://eldiplayz.gitbook.io/spy-bot-docs/basic-setups/limits/channel-create-limit')
@@ -31,7 +31,7 @@ exports.default = {
                     .setColor('#2F3136')
                     .setFooter({
                     text: 'Spy Bot',
-                    iconURL: 'https://cdn.discordapp.com/avatars/939629038178295828/861602a3003bf4b82e3397aaf1285ed2.webp?size=80)',
+                    iconURL: 'https://cdn.discordapp.com/avatars/939629038178295828/79c386588754ef3775b8ffd4654669f3.webp?size=80)',
                 });
                 var limit2 = new discord_js_1.MessageActionRow().addComponents(new discord_js_1.MessageButton()
                     .setURL('https://eldiplayz.gitbook.io/spy-bot-docs/basic-setups/limits/channel-delete-limit')
@@ -49,7 +49,7 @@ exports.default = {
                     .setColor('#2F3136')
                     .setFooter({
                     text: 'Spy Bot',
-                    iconURL: 'https://cdn.discordapp.com/avatars/939629038178295828/861602a3003bf4b82e3397aaf1285ed2.webp?size=80)',
+                    iconURL: 'https://cdn.discordapp.com/avatars/939629038178295828/79c386588754ef3775b8ffd4654669f3.webp?size=80)',
                 });
                 var limit3 = new discord_js_1.MessageActionRow().addComponents(new discord_js_1.MessageButton()
                     .setURL('https://eldiplayz.gitbook.io/spy-bot-docs/basic-setups/limits/role-create-limit')
@@ -67,7 +67,7 @@ exports.default = {
                     .setColor('#2F3136')
                     .setFooter({
                     text: 'Spy Bot',
-                    iconURL: 'https://cdn.discordapp.com/avatars/939629038178295828/861602a3003bf4b82e3397aaf1285ed2.webp?size=80)',
+                    iconURL: 'https://cdn.discordapp.com/avatars/939629038178295828/79c386588754ef3775b8ffd4654669f3.webp?size=80)',
                 });
                 var limit4 = new discord_js_1.MessageActionRow().addComponents(new discord_js_1.MessageButton()
                     .setURL('https://eldiplayz.gitbook.io/spy-bot-docs/basic-setups/limits/role-delete-limit')
@@ -85,7 +85,7 @@ exports.default = {
                     .setColor('#2F3136')
                     .setFooter({
                     text: 'Spy Bot',
-                    iconURL: 'https://cdn.discordapp.com/avatars/939629038178295828/861602a3003bf4b82e3397aaf1285ed2.webp?size=80)',
+                    iconURL: 'https://cdn.discordapp.com/avatars/939629038178295828/79c386588754ef3775b8ffd4654669f3.webp?size=80)',
                 });
                 var limit5 = new discord_js_1.MessageActionRow().addComponents(new discord_js_1.MessageButton()
                     .setURL('https://eldiplayz.gitbook.io/spy-bot-docs/basic-setups/limits/kick-limit')
@@ -103,7 +103,7 @@ exports.default = {
                     .setColor('#2F3136')
                     .setFooter({
                     text: 'Spy Bot',
-                    iconURL: 'https://cdn.discordapp.com/avatars/939629038178295828/861602a3003bf4b82e3397aaf1285ed2.webp?size=80)',
+                    iconURL: 'https://cdn.discordapp.com/avatars/939629038178295828/79c386588754ef3775b8ffd4654669f3.webp?size=80)',
                 });
                 var limit6 = new discord_js_1.MessageActionRow().addComponents(new discord_js_1.MessageButton()
                     .setURL('https://eldiplayz.gitbook.io/spy-bot-docs/basic-setups/limits/ban-limit')
@@ -118,7 +118,7 @@ exports.default = {
                     .setColor('#2F3136')
                     .setFooter({
                     text: 'Spy Bot',
-                    iconURL: 'https://cdn.discordapp.com/avatars/939629038178295828/861602a3003bf4b82e3397aaf1285ed2.webp?size=80)',
+                    iconURL: 'https://cdn.discordapp.com/avatars/939629038178295828/79c386588754ef3775b8ffd4654669f3.webp?size=80)',
                 });
                 var limit7 = new discord_js_1.MessageActionRow().addComponents(new discord_js_1.MessageButton()
                     .setURL('https://eldiplayz.gitbook.io/spy-bot-docs/basic-setups/limits/ban-limit')

@@ -42,7 +42,8 @@ export default {
 						user: member.id,
 					},
 				});
-				if (warns.length % wl.limit === 0) {
+				const warnings = (await prisma.warn.findMany()).length;
+				if (warnings % wl.limit === 0) {
 					switch (punish?.option) {
 						case 'kick':
 							await member?.kick(reason);
@@ -68,18 +69,17 @@ export default {
 							member?.roles.add(quarantineRole!);
 							break;
 					}
-					break;
 				}
 				const logs = await prisma.logsChannel.findUnique({
 					where: { guild: message.guildId! },
-					select: { id: true },
+					select: { channel: true },
 				});
 				const warnlogEmbed = new MessageEmbed()
 					.setTitle(`**Member Warned**: ${member?.user.tag}`)
 					.setDescription(`**Reason**: ${reason} \n\n **Reporter**: ${message.author}`)
 					.setColor('#2F3136')
 					.setThumbnail(member?.user.avatarURL()!);
-				const logsChannel = message.guild?.channels.cache.get(logs?.id!) as TextChannel;
+				const logsChannel = message.guild?.channels.cache.get(logs?.channel!) as TextChannel;
 				logsChannel.send({ embeds: [warnlogEmbed] });
 
 				const warnEmbed = new MessageEmbed()
@@ -90,7 +90,7 @@ export default {
 				const dmEmbed = new MessageEmbed()
 					.setTitle('Warning')
 					.setDescription(
-						`You were warned in **${message.guild?.name}** \n You currently have: **${warns.length}** Warnings`
+						`You were warned in **${message.guild?.name}** \n You currently have: **${warnings}** Warnings`
 					)
 					.setColor('#2F3136');
 

@@ -44,7 +44,7 @@ exports.default = {
         var _b, _c, _d, _e, _f, _g, _h;
         var message = _a.message, args = _a.args;
         return __awaiter(this, void 0, void 0, function () {
-            var reason, warns, _j, member_1, wl, punish, _k, quarantineRole, logs, warnlogEmbed, logsChannel, warnEmbed, dmEmbed, user, showMember, warningsEmbed_1;
+            var reason, warns, _j, member_1, wl, punish, warnings, _k, quarantineRole, logs, warnlogEmbed, logsChannel, warnEmbed, dmEmbed, user, showMember, warningsEmbed_1;
             var _this = this;
             return __generator(this, function (_l) {
                 switch (_l.label) {
@@ -99,32 +99,35 @@ exports.default = {
                             })];
                     case 5:
                         _l.sent();
-                        if (!(warns.length % wl.limit === 0)) return [3, 13];
+                        return [4, database_1.prisma.warn.findMany()];
+                    case 6:
+                        warnings = (_l.sent()).length;
+                        if (!(warnings % wl.limit === 0)) return [3, 13];
                         _k = punish === null || punish === void 0 ? void 0 : punish.option;
                         switch (_k) {
-                            case 'kick': return [3, 6];
-                            case 'ban': return [3, 8];
-                            case 'demote': return [3, 10];
-                            case 'quarantine': return [3, 11];
+                            case 'kick': return [3, 7];
+                            case 'ban': return [3, 9];
+                            case 'demote': return [3, 11];
+                            case 'quarantine': return [3, 12];
                         }
-                        return [3, 12];
-                    case 6: return [4, (member_1 === null || member_1 === void 0 ? void 0 : member_1.kick(reason))];
-                    case 7:
+                        return [3, 13];
+                    case 7: return [4, (member_1 === null || member_1 === void 0 ? void 0 : member_1.kick(reason))];
+                    case 8:
                         _l.sent();
-                        return [3, 12];
-                    case 8: return [4, (member_1 === null || member_1 === void 0 ? void 0 : member_1.ban({ reason: reason }))];
-                    case 9:
-                        _l.sent();
-                        return [3, 12];
+                        return [3, 13];
+                    case 9: return [4, (member_1 === null || member_1 === void 0 ? void 0 : member_1.ban({ reason: reason }))];
                     case 10:
+                        _l.sent();
+                        return [3, 13];
+                    case 11:
                         member_1 === null || member_1 === void 0 ? void 0 : member_1.roles.cache.filter(function (r) { return r.name !== '@everyone'; }).forEach(function (r) { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
                             switch (_a.label) {
                                 case 0: return [4, (member_1 === null || member_1 === void 0 ? void 0 : member_1.roles.remove(r.id))];
                                 case 1: return [2, _a.sent()];
                             }
                         }); }); });
-                        return [3, 12];
-                    case 11:
+                        return [3, 13];
+                    case 12:
                         quarantineRole = member_1 === null || member_1 === void 0 ? void 0 : member_1.guild.roles.cache.find(function (role) { return role.name === 'Quarantine'; });
                         member_1 === null || member_1 === void 0 ? void 0 : member_1.roles.cache.filter(function (r) { return r.name !== '@everyone'; }).forEach(function (r) { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
                             switch (_a.label) {
@@ -133,11 +136,10 @@ exports.default = {
                             }
                         }); }); });
                         member_1 === null || member_1 === void 0 ? void 0 : member_1.roles.add(quarantineRole);
-                        return [3, 12];
-                    case 12: return [3, 20];
+                        return [3, 13];
                     case 13: return [4, database_1.prisma.logsChannel.findUnique({
                             where: { guild: message.guildId },
-                            select: { id: true },
+                            select: { channel: true },
                         })];
                     case 14:
                         logs = _l.sent();
@@ -146,7 +148,7 @@ exports.default = {
                             .setDescription("**Reason**: ".concat(reason, " \n\n **Reporter**: ").concat(message.author))
                             .setColor('#2F3136')
                             .setThumbnail(member_1 === null || member_1 === void 0 ? void 0 : member_1.user.avatarURL());
-                        logsChannel = (_d = message.guild) === null || _d === void 0 ? void 0 : _d.channels.cache.get(logs === null || logs === void 0 ? void 0 : logs.id);
+                        logsChannel = (_d = message.guild) === null || _d === void 0 ? void 0 : _d.channels.cache.get(logs === null || logs === void 0 ? void 0 : logs.channel);
                         logsChannel.send({ embeds: [warnlogEmbed] });
                         warnEmbed = new discord_js_1.MessageEmbed()
                             .setDescription("".concat(member_1 === null || member_1 === void 0 ? void 0 : member_1.user, " was warned for ").concat(reason))
@@ -154,7 +156,7 @@ exports.default = {
                         message.channel.send({ embeds: [warnEmbed] });
                         dmEmbed = new discord_js_1.MessageEmbed()
                             .setTitle('Warning')
-                            .setDescription("You were warned in **".concat((_e = message.guild) === null || _e === void 0 ? void 0 : _e.name, "** \n You currently have: **").concat(warns.length, "** Warnings"))
+                            .setDescription("You were warned in **".concat((_e = message.guild) === null || _e === void 0 ? void 0 : _e.name, "** \n You currently have: **").concat(warnings, "** Warnings"))
                             .setColor('#2F3136');
                         member_1.user.send({ embeds: [dmEmbed] });
                         return [3, 20];

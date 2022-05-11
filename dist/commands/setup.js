@@ -50,7 +50,7 @@ exports.default = {
                     case 0:
                         setupEmbed = new discord_js_1.MessageEmbed().setColor('#2F3136').setFooter({
                             text: 'Spy Bot',
-                            iconURL: 'https://cdn.discordapp.com/avatars/939629038178295828/861602a3003bf4b82e3397aaf1285ed2.webp?size=80)',
+                            iconURL: 'https://cdn.discordapp.com/avatars/939629038178295828/79c386588754ef3775b8ffd4654669f3.webp?size=80)',
                         });
                         _f.label = 1;
                     case 1:

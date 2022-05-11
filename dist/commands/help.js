@@ -11,7 +11,7 @@ exports.default = {
             .setColor('#2F3136')
             .setFooter({
             text: 'Spy Bot',
-            iconURL: 'https://cdn.discordapp.com/avatars/939629038178295828/861602a3003bf4b82e3397aaf1285ed2.webp?size=80)',
+            iconURL: 'https://cdn.discordapp.com/avatars/939629038178295828/79c386588754ef3775b8ffd4654669f3.webp?size=80)',
         });
         var row = new discord_js_1.MessageActionRow().addComponents(new discord_js_1.MessageButton()
             .setURL('https://discord.com/api/oauth2/authorize?client_id=939629038178295828&permissions=8&scope=bot%20applications.commands')

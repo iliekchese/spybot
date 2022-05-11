@@ -41,29 +41,29 @@ var database_1 = require("../database");
 exports.default = {
     name: 'whitelist',
     run: function (_a) {
-        var _b, _c, _d, _e;
+        var _b, _c, _d, _e, _f;
         var message = _a.message, args = _a.args;
         return __awaiter(this, void 0, void 0, function () {
-            var whitelist, user, _f, embed, whitelisted;
-            return __generator(this, function (_g) {
-                switch (_g.label) {
+            var whitelist, user, _g, embed, whitelisted;
+            return __generator(this, function (_h) {
+                switch (_h.label) {
                     case 0: return [4, database_1.prisma.whitelist.findUnique({
                             where: { guild: message.guildId },
                             select: { users: true },
                         })];
                     case 1:
-                        whitelist = _g.sent();
+                        whitelist = _h.sent();
                         user = message.mentions.users.first();
-                        _f = args[0];
-                        switch (_f) {
+                        _g = args[0];
+                        switch (_g) {
                             case 'add': return [3, 2];
                             case 'remove': return [3, 4];
                             case 'show': return [3, 6];
                         }
                         return [3, 7];
                     case 2:
-                        if (message.author.id !== message.guildId) {
-                            message.channel.send(':x: | **Only The owner of the Server can whitelist people**');
+                        if (!((_b = message.member) === null || _b === void 0 ? void 0 : _b.permissions.has(discord_js_1.Permissions.FLAGS.ADMINISTRATOR))) {
+                            message.channel.send("You don't have permission to do this!");
                             return [3, 7];
                         }
                         if (!user) {
@@ -80,12 +80,12 @@ exports.default = {
                                 create: { guild: message.guildId, users: [user.id] },
                             })];
                     case 3:
-                        _g.sent();
+                        _h.sent();
                         message.channel.send("**The user has been whitelisted!**");
                         return [3, 7];
                     case 4:
-                        if (message.author.id !== ((_b = message.guild) === null || _b === void 0 ? void 0 : _b.id)) {
-                            message.channel.send(':x: | **Only The owner of the Server can unwhitelist people**');
+                        if (!((_c = message.member) === null || _c === void 0 ? void 0 : _c.permissions.has(discord_js_1.Permissions.FLAGS.ADMINISTRATOR))) {
+                            message.channel.send("You don't have permission to do this!");
                             return [3, 7];
                         }
                         if (!user) {
@@ -101,7 +101,7 @@ exports.default = {
                                 data: { users: whitelist.users.filter(function (id) { return id !== (user === null || user === void 0 ? void 0 : user.id); }) },
                             })];
                     case 5:
-                        _g.sent();
+                        _h.sent();
                         message.channel.send('**The user has been unwhitelisted!**');
                         return [3, 7];
                     case 6:
@@ -112,10 +112,10 @@ exports.default = {
                             iconURL: message.author.displayAvatarURL({ dynamic: true }),
                         })
                             .setFooter({
-                            text: (_c = message.guild) === null || _c === void 0 ? void 0 : _c.name,
-                            iconURL: (_d = message.guild) === null || _d === void 0 ? void 0 : _d.iconURL(),
+                            text: (_d = message.guild) === null || _d === void 0 ? void 0 : _d.name,
+                            iconURL: (_e = message.guild) === null || _e === void 0 ? void 0 : _e.iconURL(),
                         })
-                            .setThumbnail((_e = message.guild) === null || _e === void 0 ? void 0 : _e.iconURL());
+                            .setThumbnail((_f = message.guild) === null || _f === void 0 ? void 0 : _f.iconURL());
                         whitelisted = whitelist === null || whitelist === void 0 ? void 0 : whitelist.users.map(function (id) { return "<@".concat(id, ">"); });
                         if (whitelisted === null || whitelisted === void 0 ? void 0 : whitelisted.length) {
                             embed.addField('**Users**', "".concat(whitelisted.join('\n')));

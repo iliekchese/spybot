@@ -15,7 +15,7 @@ export default {
 					.setFooter({
 						text: 'Spy Bot',
 						iconURL:
-							'https://cdn.discordapp.com/avatars/939629038178295828/861602a3003bf4b82e3397aaf1285ed2.webp?size=80)',
+							'https://cdn.discordapp.com/avatars/939629038178295828/79c386588754ef3775b8ffd4654669f3.webp?size=80)',
 					});
 				const limit1 = new MessageActionRow().addComponents(
 					new MessageButton()
@@ -41,7 +41,7 @@ export default {
 					.setFooter({
 						text: 'Spy Bot',
 						iconURL:
-							'https://cdn.discordapp.com/avatars/939629038178295828/861602a3003bf4b82e3397aaf1285ed2.webp?size=80)',
+							'https://cdn.discordapp.com/avatars/939629038178295828/79c386588754ef3775b8ffd4654669f3.webp?size=80)',
 					});
 				const limit2 = new MessageActionRow().addComponents(
 					new MessageButton()
@@ -67,7 +67,7 @@ export default {
 					.setFooter({
 						text: 'Spy Bot',
 						iconURL:
-							'https://cdn.discordapp.com/avatars/939629038178295828/861602a3003bf4b82e3397aaf1285ed2.webp?size=80)',
+							'https://cdn.discordapp.com/avatars/939629038178295828/79c386588754ef3775b8ffd4654669f3.webp?size=80)',
 					});
 				const limit3 = new MessageActionRow().addComponents(
 					new MessageButton()
@@ -93,7 +93,7 @@ export default {
 					.setFooter({
 						text: 'Spy Bot',
 						iconURL:
-							'https://cdn.discordapp.com/avatars/939629038178295828/861602a3003bf4b82e3397aaf1285ed2.webp?size=80)',
+							'https://cdn.discordapp.com/avatars/939629038178295828/79c386588754ef3775b8ffd4654669f3.webp?size=80)',
 					});
 				const limit4 = new MessageActionRow().addComponents(
 					new MessageButton()
@@ -119,7 +119,7 @@ export default {
 					.setFooter({
 						text: 'Spy Bot',
 						iconURL:
-							'https://cdn.discordapp.com/avatars/939629038178295828/861602a3003bf4b82e3397aaf1285ed2.webp?size=80)',
+							'https://cdn.discordapp.com/avatars/939629038178295828/79c386588754ef3775b8ffd4654669f3.webp?size=80)',
 					});
 				const limit5 = new MessageActionRow().addComponents(
 					new MessageButton()
@@ -145,7 +145,7 @@ export default {
 					.setFooter({
 						text: 'Spy Bot',
 						iconURL:
-							'https://cdn.discordapp.com/avatars/939629038178295828/861602a3003bf4b82e3397aaf1285ed2.webp?size=80)',
+							'https://cdn.discordapp.com/avatars/939629038178295828/79c386588754ef3775b8ffd4654669f3.webp?size=80)',
 					});
 				const limit6 = new MessageActionRow().addComponents(
 					new MessageButton()
@@ -168,7 +168,7 @@ export default {
 					.setFooter({
 						text: 'Spy Bot',
 						iconURL:
-							'https://cdn.discordapp.com/avatars/939629038178295828/861602a3003bf4b82e3397aaf1285ed2.webp?size=80)',
+							'https://cdn.discordapp.com/avatars/939629038178295828/79c386588754ef3775b8ffd4654669f3.webp?size=80)',
 					});
 				const limit7 = new MessageActionRow().addComponents(
 					new MessageButton()

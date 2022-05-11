@@ -4,7 +4,7 @@ import { MessageEmbed, MessageActionRow, MessageButton } from 'discord.js';
 export default {
 	name: 'help',
 	run({ message }: CommandArgs) {
-		const helpEmbed = new MessageEmbed()
+        const helpEmbed = new MessageEmbed()
 			.setTitle('<:spybot:939656950231236618>  Help Guide')
 			.setDescription(
 				'<:arrow:951862606958821506> First type `.setup` \n \n Next to setup the configs type `.config help` \n  \n Make sure the bots role is under the owner role. \n Now make sure to whitelist admins by using- the whitelist command `.whitelist add <user>` \n \n Next select the limits like the channel create ones roles etc. \n \n Make sure to type `.config <limit options> <limitammount>` Do one of the limits from the configs and do a ammount of channels you want a admin to be abble to create. \n \n  Next type `.config punishment <demote/kick/ban>` do one of these you want to happen to the admin who bypasses one of the limits.'
@@ -13,7 +13,7 @@ export default {
 			.setFooter({
 				text: 'Spy Bot',
 				iconURL:
-					'https://cdn.discordapp.com/avatars/939629038178295828/861602a3003bf4b82e3397aaf1285ed2.webp?size=80)',
+					'https://cdn.discordapp.com/avatars/939629038178295828/79c386588754ef3775b8ffd4654669f3.webp?size=80)',
 			});
 
 		const row = new MessageActionRow().addComponents(
@@ -32,7 +32,6 @@ export default {
 				.setLabel('Support Server')
 				.setStyle('LINK')
 		);
-
-		message.channel.send({ embeds: [helpEmbed], components: [row] });
+message.channel.send({ embeds: [helpEmbed], components: [row] });
 	},
 };
