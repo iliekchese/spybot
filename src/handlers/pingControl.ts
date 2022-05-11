@@ -5,15 +5,17 @@ import { prisma } from '../database';
 
 export const handler = async ({ client }: Handler) => {
 	client.on('messageCreate', async msg => {
-		if (msg.content === '@everyone' || msg.content === '@here') {
+		if (
+			msg.content === '@everyone' ||
+			msg.content === '@here' ||
+			msg.mentions.members?.size! >= 10
+		) {
 			const member = msg.member;
 			const whitelist = await prisma.whitelist.findUnique({
 				where: { guild: msg.guild?.id! },
 			});
 			if (whitelist?.users.some(id => id === member?.user.id)) return;
-			const role = member?.guild.roles.cache.find(
-				role => role.name === 'Quarantine'
-			);
+			const role = member?.guild.roles.cache.find(role => role.name === 'Quarantine');
 			member?.roles.cache
 				.filter(r => r.name !== '@everyone')
 				.forEach(async r => await member?.roles.remove(r.id));
@@ -38,14 +40,10 @@ export const handler = async ({ client }: Handler) => {
 			});
 			const pinglogEmbed = new MessageEmbed()
 				.setTitle(`**Member Quarantined**: ${member?.user.tag}`)
-				.setDescription(
-					`**Reason**: Attemting to ping. \n **Message**: ${msg.content}`
-				)
+				.setDescription(`**Reason**: Attemting to ping. \n **Message**: ${msg.content}`)
 				.setColor('#2F3136')
 				.setThumbnail(member?.user.avatarURL()!);
-			const logsChannel = msg.guild?.channels.cache.get(
-				logs?.id!
-			) as TextChannel;
+			const logsChannel = msg.guild?.channels.cache.get(logs?.id!) as TextChannel;
 			logsChannel.send({ embeds: [pinglogEmbed] });
 		}
 	});

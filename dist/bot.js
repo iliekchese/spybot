@@ -71,6 +71,9 @@ var loxt_1 = require("loxt");
 var TOKEN = process.env.TOKEN;
 var loxt = new loxt_1.Loxt();
 var rest = new rest_1.REST({ version: '10' }).setToken(TOKEN);
+var client = new discord_js_1.Client({
+    intents: [discord_js_1.Intents.FLAGS.GUILDS, discord_js_1.Intents.FLAGS.GUILD_MESSAGES],
+});
 process.on('uncaughtException', function (_a) {
     var message = _a.message;
     return loxt.error(message);
@@ -99,56 +102,42 @@ process.on('uncaughtException', function (_a) {
     });
 }); })();
 loxt.start('Loading');
-var client = new discord_js_1.Client({
-    intents: [discord_js_1.Intents.FLAGS.GUILDS, discord_js_1.Intents.FLAGS.GUILD_MESSAGES],
-});
 client.commands = new discord_js_1.Collection();
 client.slashCommands = [];
 loxt.info('made by eldi mindcrafter#0001 & AngelNext#9162');
-rest
-    .put(v10_1.Routes.applicationCommands('939629038178295828'), {
-    body: client.slashCommands.map(function (c) { return c.command; }),
-})
-    .then(function () { return loxt.ready('application commands'); })
-    .catch(function (err) { return loxt.error(err); });
-client.once('ready', function () { return __awaiter(void 0, void 0, void 0, function () {
+client.once('ready', function () {
     var _a, _b;
-    return __generator(this, function (_c) {
-        loxt.info("Ready on client (".concat((_a = client.user) === null || _a === void 0 ? void 0 : _a.tag, ")"));
-        loxt.info("watching ".concat(client.guilds.cache.size, " Servers, ").concat(client.channels.cache.size, " channels & ").concat(client.users.cache.size, " users"));
-        (_b = client.user) === null || _b === void 0 ? void 0 : _b.setActivity(' for Raiders | .help', {
-            type: 'WATCHING',
-        });
-        return [2];
+    rest
+        .put(v10_1.Routes.applicationCommands('939629038178295828'), {
+        body: client.slashCommands.map(function (c) { return c.command.toJSON(); }),
+    })
+        .then(function () { return loxt.ready('application commands'); })
+        .catch(function (err) { return loxt.error(err); });
+    loxt.info("Ready on client (".concat((_a = client.user) === null || _a === void 0 ? void 0 : _a.tag, ")"));
+    loxt.info("watching ".concat(client.guilds.cache.size, " Servers, ").concat(client.channels.cache.size, " channels & ").concat(client.users.cache.size, " users"));
+    (_b = client.user) === null || _b === void 0 ? void 0 : _b.setActivity(' for Raiders | .help', {
+        type: 'WATCHING',
     });
-}); });
-client.on('interactionCreate', function (interaction) { return __awaiter(void 0, void 0, void 0, function () {
-    var command;
-    return __generator(this, function (_a) {
-        if (!interaction.isCommand())
-            return [2];
-        command = client.slashCommands.find(function (c) { return c.command.name === interaction.commandName; });
-        command === null || command === void 0 ? void 0 : command.run({ client: client, interaction: interaction });
-        return [2];
-    });
-}); });
-client.on('messageCreate', function (message) { return __awaiter(void 0, void 0, void 0, function () {
-    var PREFIX, content, author, args, cmd, command;
+});
+client.on('interactionCreate', function (interaction) {
+    if (!interaction.isCommand())
+        return;
+    var command = client.slashCommands.find(function (c) { return c.command.name === interaction.commandName; });
+    command === null || command === void 0 ? void 0 : command.run({ client: client, interaction: interaction });
+});
+client.on('messageCreate', function (message) {
     var _a;
-    return __generator(this, function (_b) {
-        PREFIX = '.';
-        content = message.content, author = message.author;
-        if (author.bot)
-            return [2];
-        if (!content.startsWith(PREFIX))
-            return [2];
-        args = content.slice(PREFIX.length).trim().split(/ +/);
-        cmd = (_a = args.shift()) === null || _a === void 0 ? void 0 : _a.toLowerCase();
-        command = client.commands.get(cmd);
-        command === null || command === void 0 ? void 0 : command.run({ client: client, message: message, args: args });
-        return [2];
-    });
-}); });
+    var PREFIX = '.';
+    var content = message.content, author = message.author;
+    if (author.bot)
+        return;
+    if (!content.startsWith(PREFIX))
+        return;
+    var args = content.slice(PREFIX.length).trim().split(/ +/);
+    var cmd = (_a = args.shift()) === null || _a === void 0 ? void 0 : _a.toLowerCase();
+    var command = client.commands.get(cmd);
+    command === null || command === void 0 ? void 0 : command.run({ client: client, message: message, args: args });
+});
 (function () { return __awaiter(void 0, void 0, void 0, function () {
     var server, _1;
     return __generator(this, function (_a) {

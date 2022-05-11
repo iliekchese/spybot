@@ -1,9 +1,4 @@
-import type {
-	Collection,
-	CommandInteraction,
-	Client,
-	Message,
-} from 'discord.js';
+import type { Collection, CommandInteraction, Client, Message } from 'discord.js';
 import type { SlashCommandBuilder } from '@discordjs/builders';
 
 declare module 'discord.js' {

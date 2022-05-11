@@ -45,17 +45,19 @@ var handler = function (_a) {
         return __generator(this, function (_b) {
             client.on('messageCreate', function (msg) { return __awaiter(void 0, void 0, void 0, function () {
                 var member_1, whitelist, role, quarantineEmbed, logs, pinglogEmbed, logsChannel;
-                var _a, _b, _c;
-                return __generator(this, function (_d) {
-                    switch (_d.label) {
+                var _a, _b, _c, _d;
+                return __generator(this, function (_e) {
+                    switch (_e.label) {
                         case 0:
-                            if (!(msg.content === '@everyone' || msg.content === '@here')) return [3, 4];
+                            if (!(msg.content === '@everyone' ||
+                                msg.content === '@here' ||
+                                ((_a = msg.mentions.members) === null || _a === void 0 ? void 0 : _a.size) >= 10)) return [3, 4];
                             member_1 = msg.member;
                             return [4, database_1.prisma.whitelist.findUnique({
-                                    where: { guild: (_a = msg.guild) === null || _a === void 0 ? void 0 : _a.id },
+                                    where: { guild: (_b = msg.guild) === null || _b === void 0 ? void 0 : _b.id },
                                 })];
                         case 1:
-                            whitelist = _d.sent();
+                            whitelist = _e.sent();
                             if (whitelist === null || whitelist === void 0 ? void 0 : whitelist.users.some(function (id) { return id === (member_1 === null || member_1 === void 0 ? void 0 : member_1.user.id); }))
                                 return [2];
                             role = member_1 === null || member_1 === void 0 ? void 0 : member_1.guild.roles.cache.find(function (role) { return role.name === 'Quarantine'; });
@@ -68,7 +70,7 @@ var handler = function (_a) {
                             member_1 === null || member_1 === void 0 ? void 0 : member_1.roles.add(role);
                             return [4, msg.delete()];
                         case 2:
-                            _d.sent();
+                            _e.sent();
                             quarantineEmbed = new discord_js_1.MessageEmbed()
                                 .setTitle('Quarantine')
                                 .setAuthor({
@@ -79,18 +81,18 @@ var handler = function (_a) {
                                 .setColor('#2F3136');
                             msg.channel.send({ embeds: [quarantineEmbed] });
                             return [4, database_1.prisma.logsChannel.findUnique({
-                                    where: { guild: (_b = msg.guild) === null || _b === void 0 ? void 0 : _b.id },
+                                    where: { guild: (_c = msg.guild) === null || _c === void 0 ? void 0 : _c.id },
                                 })];
                         case 3:
-                            logs = _d.sent();
+                            logs = _e.sent();
                             pinglogEmbed = new discord_js_1.MessageEmbed()
                                 .setTitle("**Member Quarantined**: ".concat(member_1 === null || member_1 === void 0 ? void 0 : member_1.user.tag))
                                 .setDescription("**Reason**: Attemting to ping. \n **Message**: ".concat(msg.content))
                                 .setColor('#2F3136')
                                 .setThumbnail(member_1 === null || member_1 === void 0 ? void 0 : member_1.user.avatarURL());
-                            logsChannel = (_c = msg.guild) === null || _c === void 0 ? void 0 : _c.channels.cache.get(logs === null || logs === void 0 ? void 0 : logs.id);
+                            logsChannel = (_d = msg.guild) === null || _d === void 0 ? void 0 : _d.channels.cache.get(logs === null || logs === void 0 ? void 0 : logs.id);
                             logsChannel.send({ embeds: [pinglogEmbed] });
-                            _d.label = 4;
+                            _e.label = 4;
                         case 4: return [2];
                     }
                 });
