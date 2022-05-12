@@ -2,6 +2,7 @@ import type { TextChannel } from 'discord.js';
 import type { CommandArgs } from '../types';
 import { MessageEmbed, Permissions } from 'discord.js';
 import { prisma } from '../database';
+import { punish } from '../utils/punish'
 
 export default {
 	name: 'warns',
@@ -23,10 +24,6 @@ export default {
 					where: { guild_type: { guild: message.guildId!, type: 'warn' } },
 					select: { limit: true },
 				});
-				const punish = await prisma.punish.findUnique({
-					where: { guild: message.guildId! },
-					select: { option: true },
-				});
 				if (!wl?.limit) {
 					message.channel.send('There is no warn limit set: `.limits warn <limit>`');
 					break;
@@ -43,33 +40,7 @@ export default {
 					},
 				});
 				const warnings = (await prisma.warn.findMany()).length;
-				if (warnings % wl.limit === 0) {
-					switch (punish?.option) {
-						case 'kick':
-							await member?.kick(reason);
-							break;
-
-						case 'ban':
-							await member?.ban({ reason });
-							break;
-
-						case 'demote':
-							member?.roles.cache
-								.filter(r => r.name !== '@everyone')
-								.forEach(async r => await member?.roles.remove(r.id));
-							break;
-
-						case 'quarantine':
-							const quarantineRole = member?.guild.roles.cache.find(
-								role => role.name === 'Quarantine'
-							);
-							member?.roles.cache
-								.filter(r => r.name !== '@everyone')
-								.forEach(async r => await member?.roles.remove(r.id));
-							member?.roles.add(quarantineRole!);
-							break;
-					}
-				}
+				if (warnings % wl.limit === 0) await punish(member, reason, message.guildId!)
 				const logs = await prisma.logsChannel.findUnique({
 					where: { guild: message.guildId! },
 					select: { channel: true },
@@ -115,7 +86,7 @@ export default {
 					break;
 				}
 				await prisma.warn.delete({
-					where: { guild_user: { guild: message.guildId!, user: user.id } },
+					where: { id: args[2] },
 				});
 				message.channel.send(`Removed warning from ${user} with id \`${args[2]}\`!`);
 				break;
