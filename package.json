@@ -13,7 +13,7 @@
 	},
 	"scripts": {
 		"build": "tsc",
-		"start": "node dist/bot",
+		"start": "node .",
 		"build:start": "npm run build && npm run start"
 	},
 	"homepage": "https://angelnext.github.io/spybot-docs/",

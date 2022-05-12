@@ -19,28 +19,28 @@ const client = new Client({
 process.on('uncaughtException', ({ message }) => loxt.error(message));
 
 (async () => {
-	(await readdir(path.join(__dirname, `./handlers/`)))
+	(await readdir('./handlers/'))
 		.filter(file => file.endsWith('.js'))
 		.forEach(async file => {
-			const { handler } = await import(path.join(__dirname, `./handlers/${file}`));
+			const { handler } = await import(path.join(__dirname, `./dist/handlers/${file}`));
 			handler({ client });
 		});
 
-	(await readdir(path.join(__dirname, `./commands/`)))
+	(await readdir('./commands/'))
 		.filter(file => file.endsWith('.js'))
 		.forEach(async file => {
 			const { default: pull }: { default: Command } = await import(
-				path.join(__dirname, `./commands/${file}`)
+				path.join(__dirname, `./dist/commands/${file}`)
 			);
 			commands.set(pull.name, pull);
 		});
 	loxt.info('Commands Loaded!');
 
-	(await readdir(path.join(__dirname, `./slash-commands/`)))
+	(await readdir('./slash-commands/'))
 		.filter(file => file.endsWith('.js'))
 		.forEach(async file => {
 			const { default: pull }: { default: Slash } = await import(
-				path.join(__dirname, `./slash-commands/${file}`)
+				path.join(__dirname, `./dist/slash-commands/${file}`)
 			);
 			slashCommands.set(pull.command.name, pull);
 		});
@@ -71,6 +71,7 @@ client.once('ready', () => {
 
 // ------- MAKE COMMANDS INTERACT -----
 client.on('interactionCreate', interaction => {
+	if (interaction.user.bot) return;
 	if (!interaction.isCommand()) return;
 	const command = slashCommands.get(interaction.commandName);
 	command?.run({ client, interaction });

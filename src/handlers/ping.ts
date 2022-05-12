@@ -4,7 +4,7 @@ import { MessageEmbed } from 'discord.js';
 import { prisma } from '../database';
 import { punish } from '../utils';
 
-export const handler = async ({ client }: Handler) => {
+export const handler = ({ client }: Handler) => {
 	client.on('messageCreate', async msg => {
 		if (
 			msg.content.includes('@everyone') ||
