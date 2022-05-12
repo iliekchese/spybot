@@ -6,7 +6,7 @@ const punish = async (member: GuildMember, reason: string, guild: string): Promi
 		where: { guild },
 		select: { users: true },
 	});
-	if (whitelist?.users.some(id => id === member.user.id)) return 'whitelist';
+	if (whitelist?.users.some(id => id === member?.user.id)) return 'whitelist';
 	const punish = await prisma.punish.findUnique({
 		where: { guild },
 		select: { option: true },

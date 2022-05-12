@@ -36,53 +36,49 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var discord_js_1 = require("discord.js");
-exports.default = {
-    name: 'ban',
-    run: function (_a) {
-        var _this = this;
-        var _b;
-        var message = _a.message, args = _a.args, client = _a.client;
-        var member = (_b = message.mentions.members) === null || _b === void 0 ? void 0 : _b.first();
-        var banEmbed = new discord_js_1.MessageEmbed()
-            .setTitle("Are you sure you want to ban ".concat(member === null || member === void 0 ? void 0 : member.user.tag, "?"))
-            .setDescription('Please click below if you would like to continue.')
-            .setColor('#2F3136')
-            .setFooter({
-            text: 'Spy Bot',
-            iconURL: 'https://cdn.discordapp.com/avatars/939629038178295828/861602a3003bf4b82e3397aaf1285ed2.webp?size=80)',
+exports.handler = void 0;
+var utils_1 = require("../utils");
+var handler = function (_a) {
+    var client = _a.client;
+    client.on('roleCreate', function (role) { return __awaiter(void 0, void 0, void 0, function () {
+        var audits;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4, role.guild.fetchAuditLogs({
+                        type: 'ROLE_CREATE',
+                    })];
+                case 1:
+                    audits = _a.sent();
+                    (0, utils_1.createLog)({
+                        audits: audits,
+                        client: client,
+                        guild: role.guild,
+                        type: 'rolecreate',
+                        reason: 'Breaking Role Create Limit',
+                    });
+                    return [2];
+            }
         });
-        var row = new discord_js_1.MessageActionRow().addComponents(new discord_js_1.MessageButton()
-            .setCustomId('banAllowed')
-            .setLabel('Continue')
-            .setStyle('SUCCESS'), new discord_js_1.MessageButton()
-            .setCustomId('banNotAllowed')
-            .setLabel('Cancel')
-            .setStyle('DANGER'));
-        message.channel.send({ embeds: [banEmbed], components: [row] });
-        client.on('interactionCreate', function (interaction) { return __awaiter(_this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        if (!interaction.isButton())
-                            return [2];
-                        if (!(interaction.customId === 'banAllowed')) return [3, 2];
-                        member === null || member === void 0 ? void 0 : member.ban({
-                            reason: args[1],
-                        });
-                        return [4, interaction.reply("".concat(member === null || member === void 0 ? void 0 : member.user, " was succesfully banned!"))];
-                    case 1:
-                        _a.sent();
-                        return [3, 4];
-                    case 2:
-                        if (!(interaction.customId === 'banNotAllowed')) return [3, 4];
-                        return [4, interaction.reply('Operation canceled.')];
-                    case 3:
-                        _a.sent();
-                        _a.label = 4;
-                    case 4: return [2];
-                }
-            });
-        }); });
-    },
+    }); });
+    client.on('roleDelete', function (role) { return __awaiter(void 0, void 0, void 0, function () {
+        var audits;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4, role.guild.fetchAuditLogs({
+                        type: 'ROLE_DELETE',
+                    })];
+                case 1:
+                    audits = _a.sent();
+                    (0, utils_1.createLog)({
+                        audits: audits,
+                        client: client,
+                        guild: role.guild,
+                        type: 'roledelete',
+                        reason: 'Breaking Role Delete Limit',
+                    });
+                    return [2];
+            }
+        });
+    }); });
 };
+exports.handler = handler;

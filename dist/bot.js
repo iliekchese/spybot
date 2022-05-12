@@ -68,9 +68,12 @@ var rest_1 = require("@discordjs/rest");
 var fastify_1 = __importDefault(require("fastify"));
 var promises_1 = require("node:fs/promises");
 var loxt_1 = require("loxt");
+var node_path_1 = __importDefault(require("node:path"));
 var TOKEN = process.env.TOKEN;
 var loxt = new loxt_1.Loxt();
 var rest = new rest_1.REST({ version: '10' }).setToken(TOKEN);
+var commands = new discord_js_1.Collection();
+var slashCommands = new discord_js_1.Collection();
 var client = new discord_js_1.Client({
     intents: [discord_js_1.Intents.FLAGS.GUILDS, discord_js_1.Intents.FLAGS.GUILD_MESSAGES],
 });
@@ -81,7 +84,7 @@ process.on('uncaughtException', function (_a) {
 (function () { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4, (0, promises_1.readdir)('./handlers/')];
+            case 0: return [4, (0, promises_1.readdir)(node_path_1.default.join(__dirname, "./handlers/"))];
             case 1:
                 (_a.sent())
                     .filter(function (file) { return file.endsWith('.js'); })
@@ -89,7 +92,7 @@ process.on('uncaughtException', function (_a) {
                     var handler;
                     return __generator(this, function (_a) {
                         switch (_a.label) {
-                            case 0: return [4, Promise.resolve().then(function () { return __importStar(require("./handlers/".concat(file))); })];
+                            case 0: return [4, Promise.resolve().then(function () { return __importStar(require(node_path_1.default.join(__dirname, "./handlers/".concat(file)))); })];
                             case 1:
                                 handler = (_a.sent()).handler;
                                 handler({ client: client });
@@ -97,19 +100,51 @@ process.on('uncaughtException', function (_a) {
                         }
                     });
                 }); });
+                return [4, (0, promises_1.readdir)(node_path_1.default.join(__dirname, "./commands/"))];
+            case 2:
+                (_a.sent())
+                    .filter(function (file) { return file.endsWith('.js'); })
+                    .forEach(function (file) { return __awaiter(void 0, void 0, void 0, function () {
+                    var pull;
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0: return [4, Promise.resolve().then(function () { return __importStar(require(node_path_1.default.join(__dirname, "./commands/".concat(file)))); })];
+                            case 1:
+                                pull = (_a.sent()).default;
+                                commands.set(pull.name, pull);
+                                return [2];
+                        }
+                    });
+                }); });
+                loxt.info('Commands Loaded!');
+                return [4, (0, promises_1.readdir)(node_path_1.default.join(__dirname, "./slash-commands/"))];
+            case 3:
+                (_a.sent())
+                    .filter(function (file) { return file.endsWith('.js'); })
+                    .forEach(function (file) { return __awaiter(void 0, void 0, void 0, function () {
+                    var pull;
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0: return [4, Promise.resolve().then(function () { return __importStar(require(node_path_1.default.join(__dirname, "./slash-commands/".concat(file)))); })];
+                            case 1:
+                                pull = (_a.sent()).default;
+                                slashCommands.set(pull.command.name, pull);
+                                return [2];
+                        }
+                    });
+                }); });
+                loxt.info('Slash Commands Loaded!');
                 return [2];
         }
     });
 }); })();
 loxt.start('Loading');
-client.commands = new discord_js_1.Collection();
-client.slashCommands = [];
 loxt.info('made by eldi mindcrafter#0001 & AngelNext#9162');
 client.once('ready', function () {
     var _a, _b;
     rest
         .put(v10_1.Routes.applicationCommands('939629038178295828'), {
-        body: client.slashCommands.map(function (c) { return c.command.toJSON(); }),
+        body: slashCommands.map(function (c) { return c.command.toJSON(); }),
     })
         .then(function () { return loxt.ready('application commands'); })
         .catch(function (err) { return loxt.error(err); });
@@ -122,7 +157,7 @@ client.once('ready', function () {
 client.on('interactionCreate', function (interaction) {
     if (!interaction.isCommand())
         return;
-    var command = client.slashCommands.find(function (c) { return c.command.name === interaction.commandName; });
+    var command = slashCommands.get(interaction.commandName);
     command === null || command === void 0 ? void 0 : command.run({ client: client, interaction: interaction });
 });
 client.on('messageCreate', function (message) {
@@ -135,7 +170,7 @@ client.on('messageCreate', function (message) {
         return;
     var args = content.slice(PREFIX.length).trim().split(/ +/);
     var cmd = (_a = args.shift()) === null || _a === void 0 ? void 0 : _a.toLowerCase();
-    var command = client.commands.get(cmd);
+    var command = commands.get(cmd);
     command === null || command === void 0 ? void 0 : command.run({ client: client, message: message, args: args });
 });
 (function () { return __awaiter(void 0, void 0, void 0, function () {

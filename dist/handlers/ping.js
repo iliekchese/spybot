@@ -39,7 +39,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.handler = void 0;
 var discord_js_1 = require("discord.js");
 var database_1 = require("../database");
-var punish_1 = require("../utils/punish");
+var utils_1 = require("../utils");
 var handler = function (_a) {
     var client = _a.client;
     return __awaiter(void 0, void 0, void 0, function () {
@@ -54,10 +54,10 @@ var handler = function (_a) {
                                 msg.content.includes('@here') ||
                                 ((_a = msg.mentions.members) === null || _a === void 0 ? void 0 : _a.size) >= 7)) return [3, 4];
                             member = msg.member;
-                            return [4, (0, punish_1.punish)(member, "attempting to mention ".concat(msg.content), msg.guildId)];
+                            return [4, (0, utils_1.punish)(member, "attempting to mention ".concat(msg.content), msg.guildId)];
                         case 1:
                             punishment = _d.sent();
-                            if (punishment === "whitelist")
+                            if (punishment === 'whitelist')
                                 return [2];
                             return [4, msg.delete()];
                         case 2:
@@ -73,7 +73,7 @@ var handler = function (_a) {
                             msg.channel.send({ embeds: [quarantineEmbed] });
                             return [4, database_1.prisma.logsChannel.findUnique({
                                     where: { guild: (_b = msg.guild) === null || _b === void 0 ? void 0 : _b.id },
-                                    select: { channel: true }
+                                    select: { channel: true },
                                 })];
                         case 3:
                             logs = _d.sent();

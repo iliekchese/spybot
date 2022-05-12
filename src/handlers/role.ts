@@ -3,7 +3,6 @@ import { createLog } from '../utils';
 
 export const handler = ({ client }: Handler) => {
 	client.on('roleCreate', async role => {
-		if (role.managed) return;
 		const audits = await role.guild.fetchAuditLogs({
 			type: 'ROLE_CREATE',
 		});
@@ -17,7 +16,6 @@ export const handler = ({ client }: Handler) => {
 	});
 
 	client.on('roleDelete', async role => {
-		if (role.managed) return;
 		const audits = await role.guild.fetchAuditLogs({
 			type: 'ROLE_DELETE',
 		});

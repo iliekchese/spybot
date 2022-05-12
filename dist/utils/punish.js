@@ -36,7 +36,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.punish = void 0;
 var database_1 = require("../database");
 var punish = function (member, reason, guild) { return __awaiter(void 0, void 0, void 0, function () {
     var whitelist, punish, _a, quarantineRole;
@@ -44,12 +43,12 @@ var punish = function (member, reason, guild) { return __awaiter(void 0, void 0,
         switch (_b.label) {
             case 0: return [4, database_1.prisma.whitelist.findUnique({
                     where: { guild: guild },
-                    select: { users: true }
+                    select: { users: true },
                 })];
             case 1:
                 whitelist = _b.sent();
-                if (whitelist === null || whitelist === void 0 ? void 0 : whitelist.users.some(function (id) { return id === member.user.id; }))
-                    return [2, "whitelist"];
+                if (whitelist === null || whitelist === void 0 ? void 0 : whitelist.users.some(function (id) { return id === (member === null || member === void 0 ? void 0 : member.user.id); }))
+                    return [2, 'whitelist'];
                 return [4, database_1.prisma.punish.findUnique({
                         where: { guild: guild },
                         select: { option: true },
@@ -94,4 +93,4 @@ var punish = function (member, reason, guild) { return __awaiter(void 0, void 0,
         }
     });
 }); };
-exports.punish = punish;
+exports.default = punish;

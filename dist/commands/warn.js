@@ -38,7 +38,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var discord_js_1 = require("discord.js");
 var database_1 = require("../database");
-var punish_1 = require("../utils/punish");
+var utils_1 = require("../utils");
 exports.default = {
     name: 'warns',
     run: function (_a) {
@@ -97,7 +97,7 @@ exports.default = {
                     case 5:
                         warnings = (_k.sent()).length;
                         if (!(warnings % wl.limit === 0)) return [3, 7];
-                        return [4, (0, punish_1.punish)(member, reason, message.guildId)];
+                        return [4, (0, utils_1.punish)(member, reason, message.guildId)];
                     case 6:
                         _k.sent();
                         _k.label = 7;

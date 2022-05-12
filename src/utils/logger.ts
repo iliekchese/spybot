@@ -37,8 +37,7 @@ export const createLog = async ({ type, audits, reason, guild, client }: LoggerO
 	});
 	if (whitelist?.users.some(id => id === user?.id)) return;
 	if (!rcl?.limit) return;
-	if (!personLimit?.limit) return;
-	if (personLimit.limit % rcl.limit === 0) {
+	if ((personLimit?.limit || 0) !== 0 && personLimit?.limit! % rcl.limit === 0) {
 		const logsID = await prisma.logsChannel.findUnique({
 			where: { guild: guild.id },
 			select: { channel: true },
@@ -62,24 +61,25 @@ export const createLog = async ({ type, audits, reason, guild, client }: LoggerO
 			.addField('Case', reason)
 			.addField('Punishment', punishment.option)
 			.setColor('#2f3136');
+		const punishCheck = punishment.option === 'quarantine' || 'demote' ? 'd' : 'ed'
 		try {
-			await punish(guild.members.cache.get(user?.id!)!, reason, guild.id);
-			embed.addField(`${punishment}ed`, 'Yes');
-		} catch (_) {
-			embed.addField(`${punishment}ed`, 'No');
+			await punish(await guild.members.fetch(user?.id!)!, reason, guild.id);
+			embed.addField(punishment.option.concat(punishCheck), 'Yes');
+		} catch (err) {
+			embed.addField(punishment.option.concat(punishCheck), 'No');
+			console.error(err)
 		} finally {
 			logs.send({ embeds: [embed] });
 		}
-	} else {
-		await prisma.userLimit.upsert({
-			where: { guild_user_type: { guild: guild.id, user: user?.id!, type } },
-			update: { limit: personLimit.limit + 1 },
-			create: {
-				guild: guild.id,
-				user: user?.id!,
-				type,
-				limit: 1,
-			},
-		});
 	}
+	await prisma.userLimit.upsert({
+		where: { guild_user_type: { guild: guild.id, user: user?.id!, type } },
+		update: { limit: (personLimit?.limit || 0) + 1 },
+		create: {
+			guild: guild.id,
+			user: user?.id!,
+			type,
+			limit: 1,
+		},
+	});
 };
