@@ -3,6 +3,7 @@ import { SlashCommandBuilder } from '@discordjs/builders';
 import { MessageEmbed, TextChannel } from 'discord.js';
 
 export default {
+	name: 'setup',
 	command: new SlashCommandBuilder()
 		.setName('setup')
 		.setDescription('Setup command'),

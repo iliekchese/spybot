@@ -77,14 +77,11 @@ var slashCommands = new discord_js_1.Collection();
 var client = new discord_js_1.Client({
     intents: [discord_js_1.Intents.FLAGS.GUILDS, discord_js_1.Intents.FLAGS.GUILD_MESSAGES],
 });
-process.on('uncaughtException', function (_a) {
-    var message = _a.message;
-    return loxt.error(message);
-});
+process.on('uncaughtException', function (err) { return loxt.error(err); });
 (function () { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4, (0, promises_1.readdir)(node_path_1.default.join(__dirname, "./handlers/"))];
+            case 0: return [4, (0, promises_1.readdir)(node_path_1.default.join(__dirname, "./handlers"))];
             case 1:
                 (_a.sent())
                     .filter(function (file) { return file.endsWith('.js'); })
@@ -100,7 +97,7 @@ process.on('uncaughtException', function (_a) {
                         }
                     });
                 }); });
-                return [4, (0, promises_1.readdir)(node_path_1.default.join(__dirname, "./commands/"))];
+                return [4, (0, promises_1.readdir)(node_path_1.default.join(__dirname, "./commands"))];
             case 2:
                 (_a.sent())
                     .filter(function (file) { return file.endsWith('.js'); })
@@ -128,7 +125,7 @@ process.on('uncaughtException', function (_a) {
                             case 0: return [4, Promise.resolve().then(function () { return __importStar(require(node_path_1.default.join(__dirname, "./slash-commands/".concat(file)))); })];
                             case 1:
                                 pull = (_a.sent()).default;
-                                slashCommands.set(pull.command.name, pull);
+                                slashCommands.set(pull.name, pull);
                                 return [2];
                         }
                     });
@@ -155,6 +152,8 @@ client.once('ready', function () {
     });
 });
 client.on('interactionCreate', function (interaction) {
+    if (interaction.user.bot)
+        return;
     if (!interaction.isCommand())
         return;
     var command = slashCommands.get(interaction.commandName);

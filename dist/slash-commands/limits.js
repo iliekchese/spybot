@@ -40,6 +40,7 @@ var discord_js_1 = require("discord.js");
 var builders_1 = require("@discordjs/builders");
 var database_1 = require("../database");
 exports.default = {
+    name: "limits",
     command: new builders_1.SlashCommandBuilder()
         .setName('limits')
         .setDescription('Manages limits for server')

@@ -4,6 +4,7 @@ import { MessageEmbed } from 'discord.js';
 import { prisma } from '../database';
 
 export default {
+	name: 'whitelist',
 	command: new SlashCommandBuilder()
 		.setName('whitelist')
 		.setDescription('Manage Whitelist of a server')

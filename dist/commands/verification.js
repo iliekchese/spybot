@@ -35,38 +35,47 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-var builders_1 = require("@discordjs/builders");
 var discord_js_1 = require("discord.js");
+var captcha_generator_1 = __importDefault(require("@haileybot/captcha-generator"));
 exports.default = {
-    name: "commands",
-    command: new builders_1.SlashCommandBuilder()
-        .setName('commands')
-        .setDescription('Displays all commands!'),
+    name: 'verification',
     run: function (_a) {
-        var interaction = _a.interaction;
+        var _b;
+        var message = _a.message, args = _a.args;
         return __awaiter(this, void 0, void 0, function () {
-            var commandsEmbed;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
+            var _c, captcha, embed, collected;
+            return __generator(this, function (_d) {
+                switch (_d.label) {
                     case 0:
-                        commandsEmbed = new discord_js_1.MessageEmbed()
-                            .setTitle('<:spybot:939656950231236618> Commands')
-                            .setDescription('<:arrow:951862606958821506> All bot commands, Prefix .')
-                            .addField('Config Commands', '**```.config channelcreatelimit, .config channeldeletelimit, .config rolecreatelimit, .config roledeletelimit, .config kicklimit, .config banlimit, .config punishment, .config logs, .whitelist add, .whitelist remove, .whitelist show, .clearuser, .config help, .setup```**')
-                            .addField('Information Commands', '**```.help, .credits, .vote, .commands, .info```**')
-                            .addField('Moderation', '**```.kick, .ban, .warns add, .warns show, .warns remove```**')
-                            .setColor('#2F3136')
-                            .setFooter({
-                            text: 'Spy Bot',
-                            iconURL: 'https://cdn.discordapp.com/avatars/939629038178295828/861602a3003bf4b82e3397aaf1285ed2.webp?size=80)',
-                        });
-                        return [4, interaction.reply({ embeds: [commandsEmbed] })];
+                        _c = args[0];
+                        switch (_c) {
+                            case 'start': return [3, 1];
+                        }
+                        return [3, 3];
                     case 1:
-                        _b.sent();
-                        return [2];
+                        captcha = new captcha_generator_1.default();
+                        embed = new discord_js_1.MessageEmbed().setTitle('Type out the captcha to complete the verification').setColor('#2F3136');
+                        message.channel.send({ embeds: [embed], files: [new discord_js_1.MessageAttachment(captcha.JPEGStream, "captcha.jpeg")] });
+                        return [4, message.channel.awaitMessages({
+                                filter: function (msg) { return msg.author.id === message.author.id; },
+                                max: 1
+                            })];
+                    case 2:
+                        collected = _d.sent();
+                        if (((_b = collected.first()) === null || _b === void 0 ? void 0 : _b.content.toLowerCase()) === captcha.value.toLowerCase()) {
+                            message.channel.send("Verification completed succesfully!");
+                        }
+                        else {
+                            message.channel.send("Verification failed!");
+                        }
+                        _d.label = 3;
+                    case 3: return [2];
                 }
             });
         });
-    },
+    }
 };

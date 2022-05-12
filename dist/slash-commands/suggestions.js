@@ -40,6 +40,7 @@ var discord_js_1 = require("discord.js");
 var builders_1 = require("@discordjs/builders");
 var database_1 = require("../database");
 exports.default = {
+    name: 'suggestions',
     command: new builders_1.SlashCommandBuilder()
         .setName('suggestions')
         .setDescription('Suggestions command')

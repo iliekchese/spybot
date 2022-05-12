@@ -39,6 +39,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var builders_1 = require("@discordjs/builders");
 var discord_js_1 = require("discord.js");
 exports.default = {
+    name: 'setup',
     command: new builders_1.SlashCommandBuilder()
         .setName('setup')
         .setDescription('Setup command'),

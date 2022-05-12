@@ -42,55 +42,50 @@ var database_1 = require("../database");
 var utils_1 = require("../utils");
 var handler = function (_a) {
     var client = _a.client;
-    return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_b) {
-            client.on('messageCreate', function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-                var member, punishment, quarantineEmbed, logs, pinglogEmbed, logsChannel;
-                var _a, _b, _c;
-                return __generator(this, function (_d) {
-                    switch (_d.label) {
-                        case 0:
-                            if (!(msg.content.includes('@everyone') ||
-                                msg.content.includes('@here') ||
-                                ((_a = msg.mentions.members) === null || _a === void 0 ? void 0 : _a.size) >= 7)) return [3, 4];
-                            member = msg.member;
-                            return [4, (0, utils_1.punish)(member, "attempting to mention ".concat(msg.content), msg.guildId)];
-                        case 1:
-                            punishment = _d.sent();
-                            if (punishment === 'whitelist')
-                                return [2];
-                            return [4, msg.delete()];
-                        case 2:
-                            _d.sent();
-                            quarantineEmbed = new discord_js_1.MessageEmbed()
-                                .setTitle('Quarantine')
-                                .setAuthor({
-                                name: member === null || member === void 0 ? void 0 : member.user.tag,
-                                iconURL: member === null || member === void 0 ? void 0 : member.user.avatarURL(),
-                            })
-                                .setDescription("".concat(member === null || member === void 0 ? void 0 : member.user, " Was succesfully ").concat(punishment, "ed. \n For attempting to mention ").concat(msg.content))
-                                .setColor('#2F3136');
-                            msg.channel.send({ embeds: [quarantineEmbed] });
-                            return [4, database_1.prisma.logsChannel.findUnique({
-                                    where: { guild: (_b = msg.guild) === null || _b === void 0 ? void 0 : _b.id },
-                                    select: { channel: true },
-                                })];
-                        case 3:
-                            logs = _d.sent();
-                            pinglogEmbed = new discord_js_1.MessageEmbed()
-                                .setTitle("**Member ".concat(punishment, "ed**: ").concat(member === null || member === void 0 ? void 0 : member.user.tag))
-                                .setDescription("**Reason**: Attemting to ping. \n **Message**: ".concat(msg.content))
-                                .setColor('#2F3136')
-                                .setThumbnail(member === null || member === void 0 ? void 0 : member.user.avatarURL());
-                            logsChannel = (_c = msg.guild) === null || _c === void 0 ? void 0 : _c.channels.cache.get(logs === null || logs === void 0 ? void 0 : logs.channel);
-                            logsChannel === null || logsChannel === void 0 ? void 0 : logsChannel.send({ embeds: [pinglogEmbed] });
-                            _d.label = 4;
-                        case 4: return [2];
-                    }
-                });
-            }); });
-            return [2];
+    client.on('messageCreate', function (msg) { return __awaiter(void 0, void 0, void 0, function () {
+        var member, punishment, quarantineEmbed, logs, pinglogEmbed, logsChannel;
+        var _a, _b, _c;
+        return __generator(this, function (_d) {
+            switch (_d.label) {
+                case 0:
+                    if (!(msg.content.includes('@everyone') ||
+                        msg.content.includes('@here') ||
+                        ((_a = msg.mentions.members) === null || _a === void 0 ? void 0 : _a.size) >= 7)) return [3, 4];
+                    member = msg.member;
+                    return [4, (0, utils_1.punish)(member, "attempting to mention ".concat(msg.content), msg.guildId)];
+                case 1:
+                    punishment = _d.sent();
+                    if (punishment === 'whitelist')
+                        return [2];
+                    return [4, msg.delete()];
+                case 2:
+                    _d.sent();
+                    quarantineEmbed = new discord_js_1.MessageEmbed()
+                        .setTitle('Quarantine')
+                        .setAuthor({
+                        name: member === null || member === void 0 ? void 0 : member.user.tag,
+                        iconURL: member === null || member === void 0 ? void 0 : member.user.avatarURL(),
+                    })
+                        .setDescription("".concat(member === null || member === void 0 ? void 0 : member.user, " Was succesfully ").concat(punishment, "ed. \n For attempting to mention ").concat(msg.content))
+                        .setColor('#2F3136');
+                    msg.channel.send({ embeds: [quarantineEmbed] });
+                    return [4, database_1.prisma.logsChannel.findUnique({
+                            where: { guild: (_b = msg.guild) === null || _b === void 0 ? void 0 : _b.id },
+                            select: { channel: true },
+                        })];
+                case 3:
+                    logs = _d.sent();
+                    pinglogEmbed = new discord_js_1.MessageEmbed()
+                        .setTitle("**Member ".concat(punishment, "ed**: ").concat(member === null || member === void 0 ? void 0 : member.user.tag))
+                        .setDescription("**Reason**: Attemting to ping. \n **Message**: ".concat(msg.content))
+                        .setColor('#2F3136')
+                        .setThumbnail(member === null || member === void 0 ? void 0 : member.user.avatarURL());
+                    logsChannel = (_c = msg.guild) === null || _c === void 0 ? void 0 : _c.channels.cache.get(logs === null || logs === void 0 ? void 0 : logs.channel);
+                    logsChannel === null || logsChannel === void 0 ? void 0 : logsChannel.send({ embeds: [pinglogEmbed] });
+                    _d.label = 4;
+                case 4: return [2];
+            }
         });
-    });
+    }); });
 };
 exports.handler = handler;

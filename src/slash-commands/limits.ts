@@ -4,6 +4,7 @@ import { SlashCommandBuilder } from '@discordjs/builders';
 import { prisma } from '../database';
 
 export default {
+	name: "limits",
 	command: new SlashCommandBuilder()
 		.setName('limits')
 		.setDescription('Manages limits for server')

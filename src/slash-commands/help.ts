@@ -3,10 +3,11 @@ import { SlashCommandBuilder } from '@discordjs/builders';
 import { MessageActionRow, MessageButton, MessageEmbed } from 'discord.js';
 
 export default {
+	name: "help",
 	command: new SlashCommandBuilder()
 		.setName('help')
 		.setDescription('Displays help command!'),
-
+	
 	async run({ interaction }: SlashArgs) {
 		const helpEmbed = new MessageEmbed()
 			.setTitle('<:spybot:939656950231236618>  Help Guide')

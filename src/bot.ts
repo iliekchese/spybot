@@ -16,33 +16,33 @@ const client = new Client({
 	intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
 });
 
-process.on('uncaughtException', ({ message }) => loxt.error(message));
+process.on('uncaughtException', (err) => loxt.error(err));
 
 (async () => {
-	(await readdir('./handlers/'))
+	(await readdir(path.join(__dirname, `./handlers`)))
 		.filter(file => file.endsWith('.js'))
 		.forEach(async file => {
-			const { handler } = await import(path.join(__dirname, `./dist/handlers/${file}`));
+			const { handler } = await import(path.join(__dirname, `./handlers/${file}`));
 			handler({ client });
 		});
 
-	(await readdir('./commands/'))
+	(await readdir(path.join(__dirname, `./commands`)))
 		.filter(file => file.endsWith('.js'))
 		.forEach(async file => {
 			const { default: pull }: { default: Command } = await import(
-				path.join(__dirname, `./dist/commands/${file}`)
+				path.join(__dirname, `./commands/${file}`)
 			);
 			commands.set(pull.name, pull);
 		});
 	loxt.info('Commands Loaded!');
 
-	(await readdir('./slash-commands/'))
+	(await readdir(path.join(__dirname, `./slash-commands/`)))
 		.filter(file => file.endsWith('.js'))
 		.forEach(async file => {
 			const { default: pull }: { default: Slash } = await import(
-				path.join(__dirname, `./dist/slash-commands/${file}`)
+				path.join(__dirname, `./slash-commands/${file}`)
 			);
-			slashCommands.set(pull.command.name, pull);
+			slashCommands.set(pull.name, pull);
 		});
 	loxt.info('Slash Commands Loaded!');
 })();

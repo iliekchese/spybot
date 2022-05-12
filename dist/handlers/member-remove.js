@@ -36,37 +36,56 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var builders_1 = require("@discordjs/builders");
-var discord_js_1 = require("discord.js");
-exports.default = {
-    name: "commands",
-    command: new builders_1.SlashCommandBuilder()
-        .setName('commands')
-        .setDescription('Displays all commands!'),
-    run: function (_a) {
-        var interaction = _a.interaction;
-        return __awaiter(this, void 0, void 0, function () {
-            var commandsEmbed;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
-                    case 0:
-                        commandsEmbed = new discord_js_1.MessageEmbed()
-                            .setTitle('<:spybot:939656950231236618> Commands')
-                            .setDescription('<:arrow:951862606958821506> All bot commands, Prefix .')
-                            .addField('Config Commands', '**```.config channelcreatelimit, .config channeldeletelimit, .config rolecreatelimit, .config roledeletelimit, .config kicklimit, .config banlimit, .config punishment, .config logs, .whitelist add, .whitelist remove, .whitelist show, .clearuser, .config help, .setup```**')
-                            .addField('Information Commands', '**```.help, .credits, .vote, .commands, .info```**')
-                            .addField('Moderation', '**```.kick, .ban, .warns add, .warns show, .warns remove```**')
-                            .setColor('#2F3136')
-                            .setFooter({
-                            text: 'Spy Bot',
-                            iconURL: 'https://cdn.discordapp.com/avatars/939629038178295828/861602a3003bf4b82e3397aaf1285ed2.webp?size=80)',
-                        });
-                        return [4, interaction.reply({ embeds: [commandsEmbed] })];
-                    case 1:
-                        _b.sent();
-                        return [2];
-                }
-            });
+exports.handler = void 0;
+var utils_1 = require("../utils");
+var handler = function (_a) {
+    var client = _a.client;
+    client.on('guildBanAdd', function (ban) { return __awaiter(void 0, void 0, void 0, function () {
+        var audits;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4, ban.guild.fetchAuditLogs({
+                        limit: 1,
+                        type: 'MEMBER_BAN_ADD',
+                    })];
+                case 1:
+                    audits = _a.sent();
+                    (0, utils_1.createLog)({
+                        audits: audits,
+                        client: client,
+                        guild: ban.guild,
+                        type: 'ban',
+                        reason: 'Breaking Ban Limit',
+                    });
+                    return [2];
+            }
         });
-    },
+    }); });
+    client.on('guildMemberRemove', function (member) { return __awaiter(void 0, void 0, void 0, function () {
+        var audits, log;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4, member.guild.fetchAuditLogs({
+                        limit: 1,
+                        type: 'MEMBER_KICK',
+                    })];
+                case 1:
+                    audits = _a.sent();
+                    log = audits.entries.first();
+                    if (!log)
+                        return [2];
+                    if (log.createdAt < member.joinedAt)
+                        return [2];
+                    (0, utils_1.createLog)({
+                        audits: audits,
+                        client: client,
+                        guild: member.guild,
+                        type: 'kick',
+                        reason: 'Breaking Kick Limit',
+                    });
+                    return [2];
+            }
+        });
+    }); });
 };
+exports.handler = handler;

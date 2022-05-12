@@ -5,6 +5,7 @@ import { MessageEmbed, Permissions } from 'discord.js';
 import { prisma } from '../database';
 
 export default {
+	name: "config",
 	command: new SlashCommandBuilder()
 		.setName('config')
 		.setDescription('Displays config')

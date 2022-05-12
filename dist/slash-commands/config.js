@@ -40,6 +40,7 @@ var builders_1 = require("@discordjs/builders");
 var discord_js_1 = require("discord.js");
 var database_1 = require("../database");
 exports.default = {
+    name: "config",
     command: new builders_1.SlashCommandBuilder()
         .setName('config')
         .setDescription('Displays config')

@@ -4,6 +4,7 @@ import { SlashCommandBuilder } from '@discordjs/builders';
 import { prisma } from '../database';
 
 export default {
+	name: 'suggestions',
 	command: new SlashCommandBuilder()
 		.setName('suggestions')
 		.setDescription('Suggestions command')
