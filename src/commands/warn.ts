@@ -2,7 +2,7 @@ import type { TextChannel } from 'discord.js';
 import type { CommandArgs } from '../types';
 import { MessageEmbed, Permissions } from 'discord.js';
 import { prisma } from '../database';
-import { punish } from '../utils/punish'
+import { punish } from '../utils';
 
 export default {
 	name: 'warns',
@@ -40,7 +40,7 @@ export default {
 					},
 				});
 				const warnings = (await prisma.warn.findMany()).length;
-				if (warnings % wl.limit === 0) await punish(member, reason, message.guildId!)
+				if (warnings % wl.limit === 0) await punish(member, reason, message.guildId!);
 				const logs = await prisma.logsChannel.findUnique({
 					where: { guild: message.guildId! },
 					select: { channel: true },

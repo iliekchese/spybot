@@ -2,7 +2,7 @@ import type { Handler } from '../types';
 import type { TextChannel } from 'discord.js';
 import { MessageEmbed } from 'discord.js';
 import { prisma } from '../database';
-import { punish } from "../utils/punish"
+import { punish } from '../utils';
 
 export const handler = async ({ client }: Handler) => {
 	client.on('messageCreate', async msg => {
@@ -12,9 +12,13 @@ export const handler = async ({ client }: Handler) => {
 			msg.mentions.members?.size! >= 7
 		) {
 			const member = msg.member;
-			const punishment = await punish(member!, `attempting to mention ${msg.content}`, msg.guildId!)
-			if (punishment === "whitelist") return;
-			
+			const punishment = await punish(
+				member!,
+				`attempting to mention ${msg.content}`,
+				msg.guildId!
+			);
+			if (punishment === 'whitelist') return;
+
 			await msg.delete();
 
 			const quarantineEmbed = new MessageEmbed()
@@ -31,7 +35,7 @@ export const handler = async ({ client }: Handler) => {
 
 			const logs = await prisma.logsChannel.findUnique({
 				where: { guild: msg.guild?.id! },
-				select: { channel: true }
+				select: { channel: true },
 			});
 			const pinglogEmbed = new MessageEmbed()
 				.setTitle(`**Member ${punishment}ed**: ${member?.user.tag}`)

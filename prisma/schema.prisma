@@ -17,6 +17,16 @@ model Warn {
   @@unique([guild, user])
 }
 
+model UserLimit {
+  id    String @id @default(auto()) @map("_id") @db.ObjectId
+  guild String
+  user  String
+  type  String
+  limit Int
+
+  @@unique([guild, user, type])
+}
+
 model Limit {
   id    String @id @default(auto()) @map("_id") @db.ObjectId
   guild String

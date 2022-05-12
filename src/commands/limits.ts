@@ -9,7 +9,9 @@ export default {
 			const limits = await prisma.limit.findMany();
 			const limitsEmbed = new MessageEmbed()
 				.setTitle('**Spy Bot | Limits**')
-				.setDescription("If a limit is not here it means that it's not set")
+				.setDescription(
+					"If a limit is not here it means that it's not set, to set it do: `.limits <type: EXAMPLE -> channelcreate> <amount: EXAMPLE -> 5>`"
+				)
 				.setAuthor({
 					name: message.author.tag,
 					iconURL: message.author.displayAvatarURL({ dynamic: true }),

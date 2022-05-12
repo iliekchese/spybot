@@ -4,10 +4,14 @@ import { REST } from '@discordjs/rest';
 import Fastify from 'fastify';
 import { readdir } from 'node:fs/promises';
 import { Loxt } from 'loxt';
+import path from 'node:path';
+import type { Command, Slash } from './types';
 
 const TOKEN = process.env.TOKEN!;
 const loxt = new Loxt();
 const rest = new REST({ version: '10' }).setToken(TOKEN);
+const commands = new Collection<string, Command>();
+const slashCommands = new Collection<string, Slash>();
 const client = new Client({
 	intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
 });
@@ -18,15 +22,33 @@ process.on('uncaughtException', ({ message }) => loxt.error(message));
 	(await readdir('./handlers/'))
 		.filter(file => file.endsWith('.js'))
 		.forEach(async file => {
-			const { handler } = await import(`./handlers/${file}`);
+			const { handler } = await import(path.join(__dirname, `./dist/handlers/${file}`));
 			handler({ client });
 		});
+
+	(await readdir('./commands/'))
+		.filter(file => file.endsWith('.js'))
+		.forEach(async file => {
+			const { default: pull }: { default: Command } = await import(
+				path.join(__dirname, `./dist/commands/${file}`)
+			);
+			commands.set(pull.name, pull);
+		});
+	loxt.info('Commands Loaded!');
+
+	(await readdir('./slash-commands/'))
+		.filter(file => file.endsWith('.js'))
+		.forEach(async file => {
+			const { default: pull }: { default: Slash } = await import(
+				path.join(__dirname, `./dist/slash-commands/${file}`)
+			);
+			slashCommands.set(pull.command.name, pull);
+		});
+	loxt.info('Slash Commands Loaded!');
 })();
 
 loxt.start('Loading');
 
-client.commands = new Collection();
-client.slashCommands = [];
 loxt.info('made by eldi mindcrafter#0001 & AngelNext#9162');
 
 // ------- READY BOT -----
@@ -34,7 +56,7 @@ client.once('ready', () => {
 	// ------- LOAD COMMANDS -----
 	rest
 		.put(Routes.applicationCommands('939629038178295828'), {
-			body: client.slashCommands.map(c => c.command.toJSON()),
+			body: slashCommands.map(c => c.command.toJSON()),
 		})
 		.then(() => loxt.ready('application commands'))
 		.catch(err => loxt.error(err));
@@ -50,7 +72,7 @@ client.once('ready', () => {
 // ------- MAKE COMMANDS INTERACT -----
 client.on('interactionCreate', interaction => {
 	if (!interaction.isCommand()) return;
-	const command = client.slashCommands.find(c => c.command.name === interaction.commandName);
+	const command = slashCommands.get(interaction.commandName);
 	command?.run({ client, interaction });
 });
 

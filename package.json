@@ -13,7 +13,7 @@
 	},
 	"scripts": {
 		"build": "tsc",
-		"start": "cd dist && node bot",
+		"start": "node bot",
 		"build:start": "npm run build && npm run start"
 	},
 	"homepage": "https://angelnext.github.io/spybot-docs/",
@@ -26,10 +26,10 @@
 		"fastify": "^3.29.0",
 		"loxt": "^2.1.1",
 		"nanoid": "^3.3.4",
-		"node": "^17.7.2",
-		"prisma": "^3.14.0"
+		"node": "^17.7.2"
 	},
 	"devDependencies": {
+		"prisma": "^3.14.0",
 		"typescript": "^4.6.4"
 	}
 }
