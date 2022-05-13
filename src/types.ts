@@ -6,6 +6,7 @@ export interface Handler {
 }
 
 export interface Slash {
+	name: string;
 	command: SlashCommandBuilder;
 	run(args: SlashArgs): Promise<void>;
 }

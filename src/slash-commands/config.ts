@@ -6,6 +6,7 @@ import { prisma } from '../database';
 import { PunishOption } from '@prisma/client';
 
 export default {
+	name: "config",
 	command: new SlashCommandBuilder()
 		.setName('config')
 		.setDescription('Displays config')

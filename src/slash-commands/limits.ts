@@ -5,6 +5,7 @@ import { prisma } from '../database';
 import { LimitType } from '@prisma/client';
 
 export default {
+	name: "limits",
 	command: new SlashCommandBuilder()
 		.setName('limits')
 		.setDescription('Manages limits for server')

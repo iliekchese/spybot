@@ -72,7 +72,20 @@ model Channel {
   type    ChannelType
   channel String
 
+<<<<<<< HEAD
   @@unique([guild, type])
+=======
+model SuggestionsChannel {
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  guild   String @unique
+  channel String
+}
+
+model VerificationChannel {
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  guild   String @unique
+  channel String
+>>>>>>> 04bb9a9e3ba38676f69095469391d9efcdde5fc4
 }
 
 model Punish {
