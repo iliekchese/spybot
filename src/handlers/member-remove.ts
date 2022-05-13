@@ -1,7 +1,7 @@
 import type { Handler } from '../types';
 import { createLog } from '../utils';
 
-export const handler = ({ client }: Handler) => {
+export const handler: Handler = ({ client }) => {
 	client.on('guildBanAdd', async ban => {
 		const audits = await ban.guild.fetchAuditLogs({
 			limit: 1,

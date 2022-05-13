@@ -1,9 +1,7 @@
 import type { CommandInteraction, Client, Message } from 'discord.js';
 import type { SlashCommandBuilder } from '@discordjs/builders';
 
-export interface Handler {
-	client: Client;
-}
+export type Handler = (handler: { client: Client }) => void;
 
 export interface Slash {
 	command: SlashCommandBuilder;

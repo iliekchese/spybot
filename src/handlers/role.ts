@@ -1,7 +1,7 @@
 import type { Handler } from '../types';
 import { createLog } from '../utils';
 
-export const handler = ({ client }: Handler) => {
+export const handler: Handler = ({ client }) => {
 	client.on('roleCreate', async role => {
 		const audits = await role.guild.fetchAuditLogs({
 			type: 'ROLE_CREATE',

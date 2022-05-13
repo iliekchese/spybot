@@ -4,7 +4,7 @@ import { MessageEmbed } from 'discord.js';
 import { prisma } from '../database';
 import { punish } from '../utils';
 
-export const handler = ({ client }: Handler) => {
+export const handler: Handler = ({ client }) => {
 	client.on('messageCreate', async msg => {
 		if (
 			msg.content.includes('@everyone') ||
@@ -34,7 +34,7 @@ export const handler = ({ client }: Handler) => {
 			msg.channel.send({ embeds: [quarantineEmbed] });
 
 			const logs = await prisma.channel.findUnique({
-				where: { guild_type: { guild: msg.guild?.id!, type: 'LOGS' } },
+				where: { guild_type: { guild: msg.guildId!, type: 'LOGS' } },
 				select: { channel: true },
 			});
 			const pinglogEmbed = new MessageEmbed()
@@ -42,7 +42,7 @@ export const handler = ({ client }: Handler) => {
 				.setDescription(`**Reason**: Attemting to ping. \n **Message**: ${msg.content}`)
 				.setColor('#2F3136')
 				.setThumbnail(member?.user.avatarURL()!);
-			const logsChannel = msg.guild?.channels.cache.get(logs?.channel!) as TextChannel;
+			const logsChannel = (await msg.guild?.channels.fetch(logs?.channel!)) as TextChannel;
 			logsChannel?.send({ embeds: [pinglogEmbed] });
 		}
 	});
