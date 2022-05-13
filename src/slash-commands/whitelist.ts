@@ -1,4 +1,4 @@
-import type { SlashArgs } from '../types';
+import type { Slash } from '../types';
 import { SlashCommandBuilder } from '@discordjs/builders';
 import { MessageEmbed } from 'discord.js';
 import { prisma } from '../database';
@@ -12,9 +12,7 @@ export default {
 				.setName('add')
 				.setDescription('Add a user to the whitelist')
 				.addUserOption(option =>
-					option
-						.setName('user')
-						.setDescription('The user to add to the whitelist')
+					option.setName('user').setDescription('The user to add to the whitelist')
 				)
 		)
 		.addSubcommand(subcommand =>
@@ -22,18 +20,14 @@ export default {
 				.setName('remove')
 				.setDescription('Remove a user from the whitelist')
 				.addUserOption(option =>
-					option
-						.setName('user')
-						.setDescription('The user to remove from the whitelist')
+					option.setName('user').setDescription('The user to remove from the whitelist')
 				)
 		)
 		.addSubcommand(subcommand =>
-			subcommand
-				.setName('show')
-				.setDescription('List all users on the whitelist')
+			subcommand.setName('show').setDescription('List all users on the whitelist')
 		),
 
-	async run({ interaction }: SlashArgs) {
+	async run({ interaction }) {
 		const whitelist = await prisma.whitelist.findUnique({
 			where: { guild: interaction.guildId! },
 			select: { users: true },
@@ -42,9 +36,7 @@ export default {
 		switch (interaction.options.getSubcommand()) {
 			case 'add':
 				if (interaction.user.id !== interaction.guildId) {
-					await interaction.reply(
-						':x: | **Only The owner of the Server can whitelist people**'
-					);
+					await interaction.reply(':x: | **Only The owner of the Server can whitelist people**');
 					break;
 				}
 				if (!user) {
@@ -69,9 +61,7 @@ export default {
 
 			case 'remove':
 				if (interaction.user.id !== interaction.guild?.id) {
-					await interaction.reply(
-						':x: | **Only The owner of the Server can unwhitelist people**'
-					);
+					await interaction.reply(':x: | **Only The owner of the Server can unwhitelist people**');
 					break;
 				}
 				if (!user) {
@@ -113,4 +103,4 @@ export default {
 				break;
 		}
 	},
-};
+} as Slash;

@@ -1,10 +1,10 @@
-import type { CommandArgs } from '../types';
+import type { Command } from '../types';
 import { MessageEmbed, Permissions } from 'discord.js';
 import { prisma } from '../database';
 
 export default {
 	name: 'whitelist',
-	async run({ message, args }: CommandArgs) {
+	async run({ message, args }) {
 		const whitelist = await prisma.whitelist.findUnique({
 			where: { guild: message.guildId! },
 			select: { users: true },
@@ -76,4 +76,4 @@ export default {
 				break;
 		}
 	},
-};
+} as Command;

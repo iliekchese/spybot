@@ -1,9 +1,9 @@
-import type { CommandArgs } from '../types';
+import type { Command } from '../types';
 import { MessageEmbed, TextChannel } from 'discord.js';
 
 export default {
 	name: 'setup',
-	async run({ message }: CommandArgs) {
+	async run({ message }) {
 		const setupEmbed = new MessageEmbed().setColor('#2F3136').setFooter({
 			text: 'Spy Bot',
 			iconURL:
@@ -49,4 +49,4 @@ export default {
 			message.channel.send({ embeds: [setupEmbed] });
 		}
 	},
-};
+} as Command;

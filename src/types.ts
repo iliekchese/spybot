@@ -15,12 +15,12 @@ export interface Command {
 	run(args: CommandArgs): void | Promise<void>;
 }
 
-export interface SlashArgs {
+interface SlashArgs {
 	client: Client;
 	interaction: CommandInteraction;
 }
 
-export interface CommandArgs {
+interface CommandArgs {
 	client: Client;
 	message: Message;
 	args: string[];

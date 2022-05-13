@@ -1,13 +1,14 @@
-import type { CommandArgs } from '../types';
+import type { Command } from '../types';
 import type { TextChannel } from 'discord.js';
 import { MessageEmbed, Permissions } from 'discord.js';
 import { prisma } from '../database';
+import { PunishOption } from '@prisma/client';
 
 export default {
 	name: 'config',
-	async run({ message, args }: CommandArgs) {
-		const logs = await prisma.logsChannel.findUnique({
-			where: { guild: message.guildId! },
+	async run({ message, args }) {
+		const logs = await prisma.channel.findUnique({
+			where: { guild_type: { guild: message.guildId!, type: 'LOGS' } },
 			select: { channel: true },
 		});
 		switch (args[0]?.toLowerCase()) {
@@ -39,16 +40,17 @@ export default {
 					message.channel.send("You don't have permission to do this!");
 					break;
 				}
-				if (!args[1]) {
+				const punishment = args[1]?.toUpperCase() as PunishOption;
+				if (!punishment) {
 					message.channel.send(':x: | **Provide The punishment**');
 					break;
 				}
 				if (
 					!(
-						args[1] === 'ban' ||
-						args[1] === 'kick' ||
-						args[1] === 'demote' ||
-						args[1] === 'quarantine'
+						punishment === 'BAN' ||
+						punishment === 'KICK' ||
+						punishment === 'DEMOTE' ||
+						punishment === 'QUARANTINE'
 					)
 				) {
 					message.channel.send(
@@ -58,10 +60,10 @@ export default {
 				}
 				await prisma.punish.upsert({
 					where: { guild: message.guildId! },
-					update: { option: args[1] },
+					update: { option: punishment },
 					create: {
 						guild: message.guildId!,
-						option: args[1],
+						option: punishment,
 					},
 				});
 
@@ -82,11 +84,12 @@ export default {
 					message.channel.send(':x: | **That channel is not from this server**');
 					break;
 				}
-				await prisma.logsChannel.upsert({
-					where: { guild: message.guildId! },
+				await prisma.channel.upsert({
+					where: { guild_type: { guild: message.guildId!, type: 'LOGS' } },
 					update: { channel: channel.id },
 					create: {
 						guild: message.guildId!,
+						type: 'LOGS',
 						channel: channel.id,
 					},
 				});
@@ -121,8 +124,8 @@ export default {
 		const channel = await message.guild?.channels.fetch(logs?.channel!);
 		if (!channel) {
 			message.reply(
-				"\nThe logs channel isn't set, consider to set with `.config logs <logs_channel>`!"
+				"The logs channel isn't set, consider to setting it with `.config logs #<logs_channel>`"
 			);
 		}
 	},
-};
+} as Command;

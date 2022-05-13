@@ -1,9 +1,9 @@
-import type { CommandArgs } from '../types';
+import type { Command } from '../types';
 import { MessageEmbed, MessageActionRow, MessageButton } from 'discord.js';
 
 export default {
 	name: 'kick',
-	run({ message, args, client }: CommandArgs) {
+	run({ message, args, client }) {
 		const member = message.mentions.members?.first();
 		const kickEmbed = new MessageEmbed()
 			.setTitle(`Are you sure you want to kick ${member?.user.tag}?`)
@@ -16,14 +16,8 @@ export default {
 			});
 
 		const row = new MessageActionRow().addComponents(
-			new MessageButton()
-				.setCustomId('kickAllowed')
-				.setLabel('Continue')
-				.setStyle('SUCCESS'),
-			new MessageButton()
-				.setCustomId('kickNotAllowed')
-				.setLabel('Cancel')
-				.setStyle('DANGER')
+			new MessageButton().setCustomId('kickAllowed').setLabel('Continue').setStyle('SUCCESS'),
+			new MessageButton().setCustomId('kickNotAllowed').setLabel('Cancel').setStyle('DANGER')
 		);
 
 		message.channel.send({ embeds: [kickEmbed], components: [row] });
@@ -38,4 +32,4 @@ export default {
 			}
 		});
 	},
-};
+} as Command;

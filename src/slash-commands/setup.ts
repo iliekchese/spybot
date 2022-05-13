@@ -1,13 +1,10 @@
-import type { SlashArgs } from '../types';
+import type { Slash } from '../types';
 import { SlashCommandBuilder } from '@discordjs/builders';
 import { MessageEmbed, TextChannel } from 'discord.js';
 
 export default {
-	command: new SlashCommandBuilder()
-		.setName('setup')
-		.setDescription('Setup command'),
-
-	async run({ interaction }: SlashArgs) {
+	command: new SlashCommandBuilder().setName('setup').setDescription('Setup command'),
+	async run({ interaction }) {
 		const setupEmbed = new MessageEmbed().setColor('#2F3136').setFooter({
 			text: 'Spy Bot',
 			iconURL:
@@ -53,4 +50,4 @@ export default {
 			await interaction.reply({ embeds: [setupEmbed] });
 		}
 	},
-};
+} as Slash;

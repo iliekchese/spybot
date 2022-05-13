@@ -1,8 +1,9 @@
-import type { SlashArgs } from '../types';
+import type { Slash } from '../types';
 import type { TextChannel } from 'discord.js';
 import { SlashCommandBuilder } from '@discordjs/builders';
 import { MessageEmbed, Permissions } from 'discord.js';
 import { prisma } from '../database';
+import { PunishOption } from '@prisma/client';
 
 export default {
 	command: new SlashCommandBuilder()
@@ -20,10 +21,10 @@ export default {
 						.setName('punishment')
 						.setDescription('The punishment')
 						.addChoices(
-							{ name: 'ban', value: 'ban' },
-							{ name: 'kick', value: 'kick' },
-							{ name: 'demote', value: 'demote' },
-							{ name: 'quarantine', value: 'quarantine' }
+							{ name: 'BAN', value: 'BAN' },
+							{ name: 'KICK', value: 'KICK' },
+							{ name: 'DEMOTE', value: 'DEMOTE' },
+							{ name: 'QUARANTINE', value: 'QUARANTINE' }
 						)
 						.setRequired(true)
 				)
@@ -38,9 +39,9 @@ export default {
 		)
 		.addSubcommand(subcommand => subcommand.setName('help').setDescription('Config Preview')),
 
-	async run({ interaction }: SlashArgs) {
-		const logs = await prisma.logsChannel.findUnique({
-			where: { guild: interaction.guildId! },
+	async run({ interaction }) {
+		const logs = await prisma.channel.findUnique({
+			where: { guild_type: { guild: interaction.guildId!, type: 'LOGS' } },
 			select: { channel: true },
 		});
 		switch (interaction.options.getSubcommand()) {
@@ -68,7 +69,7 @@ export default {
 				break;
 
 			case 'punishment':
-				const punishment = interaction.options.getString('punishment');
+				const punishment = interaction.options.getString('punishment') as PunishOption;
 				if (!interaction.memberPermissions?.has(Permissions.FLAGS.ADMINISTRATOR)) {
 					await interaction.reply("You don't have permission to do this!");
 					break;
@@ -79,10 +80,10 @@ export default {
 				}
 				if (
 					!(
-						punishment === 'ban' ||
-						punishment === 'kick' ||
-						punishment === 'demote' ||
-						punishment === 'quarantine'
+						punishment === 'BAN' ||
+						punishment === 'KICK' ||
+						punishment === 'DEMOTE' ||
+						punishment === 'QUARANTINE'
 					)
 				) {
 					await interaction.reply(
@@ -112,11 +113,12 @@ export default {
 					await interaction.reply(':x: | **That channel is not from this server**');
 					break;
 				}
-				await prisma.logsChannel.upsert({
-					where: { guild: interaction.guildId! },
+				await prisma.channel.upsert({
+					where: { guild_type: { guild: interaction.guildId!, type: 'LOGS' } },
 					update: { channel: channel.id },
 					create: {
 						guild: interaction.guildId!,
+						type: 'LOGS',
 						channel: channel.id,
 					},
 				});
@@ -156,4 +158,4 @@ export default {
 				break;
 		}
 	},
-};
+} as Slash;

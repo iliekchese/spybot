@@ -7,6 +7,30 @@ generator client {
   provider = "prisma-client-js"
 }
 
+enum ChannelType {
+  SUGGESTIONS
+  LOGS
+  VERIFICATION
+  RULES
+}
+
+enum PunishOption {
+  BAN
+  KICK
+  DEMOTE
+  QUARANTINE
+}
+
+enum LimitType {
+  CHANNELCREATE
+  CHANNELDELETE
+  ROLECREATE
+  ROLEDELETE
+  BAN
+  KICK
+  WARN
+}
+
 model Warn {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   reason    String
@@ -18,19 +42,19 @@ model Warn {
 }
 
 model UserLimit {
-  id    String @id @default(auto()) @map("_id") @db.ObjectId
+  id    String    @id @default(auto()) @map("_id") @db.ObjectId
   guild String
   user  String
-  type  String
+  type  LimitType
   limit Int
 
   @@unique([guild, user, type])
 }
 
 model Limit {
-  id    String @id @default(auto()) @map("_id") @db.ObjectId
+  id    String    @id @default(auto()) @map("_id") @db.ObjectId
   guild String
-  type  String
+  type  LimitType
   limit Int
 
   @@unique([guild, type])
@@ -42,22 +66,19 @@ model Whitelist {
   users String[]
 }
 
-model LogsChannel {
-  id      String @id @default(auto()) @map("_id") @db.ObjectId
-  guild   String @unique
+model Channel {
+  id      String      @id @default(auto()) @map("_id") @db.ObjectId
+  guild   String
+  type    ChannelType
   channel String
-}
 
-model SuggestionsChannel {
-  ID      String @id @default(auto()) @map("_id") @db.ObjectId
-  guild   String @unique
-  channel String
+  @@unique([guild, type])
 }
 
 model Punish {
-  id     String @id @default(auto()) @map("_id") @db.ObjectId
-  guild  String @unique
-  option String
+  id     String       @id @default(auto()) @map("_id") @db.ObjectId
+  guild  String       @unique
+  option PunishOption
 }
 
 model Suggestion {

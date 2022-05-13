@@ -1,4 +1,4 @@
-import type { SlashArgs } from '../types';
+import type { Slash } from '../types';
 import { MessageEmbed, TextChannel } from 'discord.js';
 import { SlashCommandBuilder } from '@discordjs/builders';
 import { prisma } from '../database';
@@ -27,14 +27,14 @@ export default {
 				)
 		),
 
-	async run({ client, interaction }: SlashArgs) {
+	async run({ client, interaction }) {
 		switch (interaction.options.getSubcommand()) {
 			case 'set':
 				const channel = interaction.options.getChannel('channel') as TextChannel | null;
-				await prisma.suggestionsChannel.upsert({
-					where: { guild: interaction.guildId! },
+				await prisma.channel.upsert({
+					where: { guild_type: { guild: interaction.guildId!, type: 'SUGGESTIONS' } },
 					update: { channel: channel?.id! },
-					create: { guild: interaction.guildId!, channel: channel?.id! },
+					create: { guild: interaction.guildId!, type: 'SUGGESTIONS', channel: channel?.id! },
 				});
 				channel?.send('**Suggestions Channel**');
 				await interaction.reply(`**The suggestions channel has been set to <#${channel?.id}>**`);
@@ -52,8 +52,8 @@ export default {
 						name: interaction.user.tag,
 						iconURL: interaction.user.avatarURL()!,
 					});
-				const suggestions = await prisma.suggestionsChannel.findUnique({
-					where: { guild: interaction.guildId! },
+				const suggestions = await prisma.channel.findUnique({
+					where: { guild_type: { guild: interaction.guildId!, type: 'SUGGESTIONS' } },
 					select: { channel: true },
 				});
 				if (!suggestions) {
@@ -70,4 +70,4 @@ export default {
 				break;
 		}
 	},
-};
+} as Slash;

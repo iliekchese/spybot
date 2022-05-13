@@ -1,9 +1,9 @@
-import type { CommandArgs } from '../types';
+import type { Command } from '../types';
 import { MessageEmbed, MessageActionRow, MessageButton } from 'discord.js';
 
 export default {
 	name: 'vote',
-	run({ message }: CommandArgs) {
+	run({ message }) {
 		const voteEmbed = new MessageEmbed()
 			.setTitle('<:spybot:939656950231236618>  Vote')
 			.setDescription(
@@ -29,4 +29,4 @@ export default {
 
 		message.channel.send({ embeds: [voteEmbed], components: [row] });
 	},
-};
+} as Command;

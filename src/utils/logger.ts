@@ -1,3 +1,4 @@
+import type { LimitType } from '@prisma/client';
 import type { Client, Guild, GuildAuditLogs, TextChannel } from 'discord.js';
 import { MessageEmbed } from 'discord.js';
 import { prisma } from '../database';
@@ -10,14 +11,6 @@ interface LoggerOptions {
 	client: Client;
 	guild: Guild;
 }
-
-export type LimitType =
-	| 'channelcreate'
-	| 'channeldelete'
-	| 'rolecreate'
-	| 'roledelete'
-	| 'ban'
-	| 'kick';
 
 export const createLog = async ({ type, audits, reason, guild, client }: LoggerOptions) => {
 	const log = audits.entries.first();
@@ -38,11 +31,11 @@ export const createLog = async ({ type, audits, reason, guild, client }: LoggerO
 	if (whitelist?.users.some(id => id === user?.id)) return;
 	if (!rcl?.limit) return;
 	if ((personLimit?.limit || 0) !== 0 && personLimit?.limit! % rcl.limit === 0) {
-		const logsID = await prisma.logsChannel.findUnique({
-			where: { guild: guild.id },
+		const logsID = await prisma.channel.findUnique({
+			where: { guild_type: { guild: guild.id, type: 'LOGS' } },
 			select: { channel: true },
 		});
-		if (!logsID?.channel) return;
+		if (!logsID) return;
 		const logs = client.channels.cache.get(logsID.channel) as TextChannel;
 		if (!logs) return;
 		const punishment = await prisma.punish.findUnique({
@@ -61,13 +54,14 @@ export const createLog = async ({ type, audits, reason, guild, client }: LoggerO
 			.addField('Case', reason)
 			.addField('Punishment', punishment.option)
 			.setColor('#2f3136');
-		const punishCheck = punishment.option === 'quarantine' || 'demote' ? 'd' : 'ed'
+		const punishCheck =
+			punishment.option === 'QUARANTINE' || punishment.option === 'DEMOTE' ? 'd' : 'ed';
 		try {
 			await punish(await guild.members.fetch(user?.id!)!, reason, guild.id);
 			embed.addField(punishment.option.concat(punishCheck), 'Yes');
 		} catch (err) {
 			embed.addField(punishment.option.concat(punishCheck), 'No');
-			console.error(err)
+			console.error(err);
 		} finally {
 			logs.send({ embeds: [embed] });
 		}

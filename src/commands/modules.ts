@@ -1,9 +1,9 @@
+import type { Command } from '../types';
 import { MessageEmbed } from 'discord.js';
-import type { CommandArgs } from '../types';
 
 export default {
 	name: 'modules',
-	async run({ message }: CommandArgs) {
+	async run({ message }) {
 		const modulesEmbed = new MessageEmbed()
 			.setTitle('Modules')
 			.setDescription('Bot modules`')
@@ -47,4 +47,4 @@ export default {
 			});
 		message.channel.send({ embeds: [modulesEmbed] });
 	},
-};
+} as Command;

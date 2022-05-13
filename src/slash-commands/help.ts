@@ -1,13 +1,10 @@
-import type { SlashArgs } from '../types';
+import type { Slash } from '../types';
 import { SlashCommandBuilder } from '@discordjs/builders';
 import { MessageActionRow, MessageButton, MessageEmbed } from 'discord.js';
 
 export default {
-	command: new SlashCommandBuilder()
-		.setName('help')
-		.setDescription('Displays help command!'),
-
-	async run({ interaction }: SlashArgs) {
+	command: new SlashCommandBuilder().setName('help').setDescription('Displays help command!'),
+	async run({ interaction }) {
 		const helpEmbed = new MessageEmbed()
 			.setTitle('<:spybot:939656950231236618>  Help Guide')
 			.setDescription(
@@ -37,4 +34,4 @@ export default {
 		);
 		await interaction.reply({ embeds: [helpEmbed], components: [row] });
 	},
-};
+} as Slash;

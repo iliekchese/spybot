@@ -1,9 +1,9 @@
-import type { CommandArgs } from '../types';
+import type { Command } from '../types';
 import { MessageEmbed, MessageActionRow, MessageButton } from 'discord.js';
 
 export default {
 	name: 'command',
-	run({ message, args }: CommandArgs) {
+	run({ message, args }) {
 		switch (args[0]) {
 			case 'channelcreatelimit':
 				const channelcreatelimitEmbed = new MessageEmbed()
@@ -123,9 +123,7 @@ export default {
 					});
 				const limit5 = new MessageActionRow().addComponents(
 					new MessageButton()
-						.setURL(
-							'https://eldiplayz.gitbook.io/spy-bot-docs/basic-setups/limits/kick-limit'
-						)
+						.setURL('https://eldiplayz.gitbook.io/spy-bot-docs/basic-setups/limits/kick-limit')
 						.setLabel('Docs')
 						.setStyle('LINK')
 				);
@@ -149,9 +147,7 @@ export default {
 					});
 				const limit6 = new MessageActionRow().addComponents(
 					new MessageButton()
-						.setURL(
-							'https://eldiplayz.gitbook.io/spy-bot-docs/basic-setups/limits/ban-limit'
-						)
+						.setURL('https://eldiplayz.gitbook.io/spy-bot-docs/basic-setups/limits/ban-limit')
 						.setLabel('Docs')
 						.setStyle('LINK')
 				);
@@ -172,9 +168,7 @@ export default {
 					});
 				const limit7 = new MessageActionRow().addComponents(
 					new MessageButton()
-						.setURL(
-							'https://eldiplayz.gitbook.io/spy-bot-docs/basic-setups/limits/ban-limit'
-						)
+						.setURL('https://eldiplayz.gitbook.io/spy-bot-docs/basic-setups/limits/ban-limit')
 						.setLabel('Docs')
 						.setStyle('LINK')
 				);
@@ -182,4 +176,4 @@ export default {
 				break;
 		}
 	},
-};
+} as Command;

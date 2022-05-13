@@ -1,7 +1,8 @@
 {
 	"compilerOptions": {
 		"target": "ES5",
-		"lib": ["ESNext"],
+		"lib": ["ES2017"],
+		"allowJs": true,
 
 		/* Modules */
 		"rootDir": "./src",

@@ -1,9 +1,9 @@
-import type { CommandArgs } from '../types';
+import type { Command } from '../types';
 import { MessageEmbed, MessageActionRow, MessageButton } from 'discord.js';
 
 export default {
 	name: 'info',
-	async run({ message, args }: CommandArgs) {
+	async run({ message, args }) {
 		const member =
 			message.mentions.members?.first() ||
 			message.guild?.members.cache.get(args[0]) ||
@@ -16,10 +16,7 @@ export default {
 				`Account Created`,
 				`<t:${Math.floor(member.user.createdTimestamp / 1000) + 3600}:R>`
 			)
-			.addField(
-				`Joined`,
-				`<t:${Math.floor(member.joinedTimestamp! / 1000) + 3600}:R>`
-			)
+			.addField(`Joined`, `<t:${Math.floor(member.joinedTimestamp! / 1000) + 3600}:R>`)
 			.addField(`Bot`, member.user.bot.toString())
 			.addField(
 				`Roles`,
@@ -37,12 +34,9 @@ export default {
 			});
 
 		const row = new MessageActionRow().addComponents(
-			new MessageButton()
-				.setURL(member.user.avatarURL()!)
-				.setLabel('Users Avatar')
-				.setStyle('LINK')
+			new MessageButton().setURL(member.user.avatarURL()!).setLabel('Users Avatar').setStyle('LINK')
 		);
 
 		message.channel.send({ embeds: [infoEmbed], components: [row] });
 	},
-};
+} as Command;

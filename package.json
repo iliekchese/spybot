@@ -1,6 +1,6 @@
 {
-	"name": "anti-raid",
-	"version": "1.7.0",
+	"name": "spybot",
+	"version": "2.3.1",
 	"description": "A remake of the original anti-raid bot by legend-js",
 	"main": "dist/bot.js",
 	"repository": {
@@ -20,6 +20,7 @@
 	"dependencies": {
 		"@discordjs/builders": "^0.13.0",
 		"@discordjs/rest": "^0.4.1",
+		"@haileybot/captcha-generator": "^1.7.0",
 		"@prisma/client": "^3.14.0",
 		"discord-api-types": "^0.27.3",
 		"discord.js": "^13.6.0",

@@ -1,12 +1,12 @@
 import type { TextChannel } from 'discord.js';
-import type { CommandArgs } from '../types';
+import type { Command } from '../types';
 import { MessageEmbed, Permissions } from 'discord.js';
 import { prisma } from '../database';
 import { punish } from '../utils';
 
 export default {
 	name: 'warns',
-	async run({ message, args }: CommandArgs) {
+	async run({ message, args }) {
 		const reason = args.slice(2).join(' ');
 		const warns = await prisma.warn.findMany();
 		switch (args[0]) {
@@ -21,7 +21,7 @@ export default {
 					break;
 				}
 				const wl = await prisma.limit.findUnique({
-					where: { guild_type: { guild: message.guildId!, type: 'warn' } },
+					where: { guild_type: { guild: message.guildId!, type: 'WARN' } },
 					select: { limit: true },
 				});
 				if (!wl?.limit) {
@@ -41,8 +41,8 @@ export default {
 				});
 				const warnings = (await prisma.warn.findMany()).length;
 				if (warnings % wl.limit === 0) await punish(member, reason, message.guildId!);
-				const logs = await prisma.logsChannel.findUnique({
-					where: { guild: message.guildId! },
+				const logs = await prisma.channel.findUnique({
+					where: { guild_type: { guild: message.guildId!, type: 'LOGS' } },
 					select: { channel: true },
 				});
 				const warnlogEmbed = new MessageEmbed()
@@ -96,19 +96,16 @@ export default {
 
 				const warningsEmbed = new MessageEmbed()
 					.setTitle(`Warnings for ${showMember?.user.tag}`)
-					.setDescription(`**Warnings - 0**`)
+					.setDescription(`**Warnings - ${warns?.length}**`)
 					.setThumbnail(showMember?.user.avatarURL()!)
 					.setColor('#2F3136');
 
-				if (warns) {
-					warningsEmbed.setDescription(`**Warnings - ${warns?.length}**`);
-					warns.forEach(w => {
-						warningsEmbed.addField(w.id, w.reason);
-					});
-				}
+				warns.forEach(w => {
+					warningsEmbed.addField(w.id, w.reason);
+				});
 
 				message.channel.send({ embeds: [warningsEmbed] });
 				break;
 		}
 	},
-};
+} as Command;

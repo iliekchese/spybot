@@ -1,7 +1,8 @@
-import type { SlashArgs } from '../types';
+import type { Slash } from '../types';
 import { Permissions } from 'discord.js';
 import { SlashCommandBuilder } from '@discordjs/builders';
 import { prisma } from '../database';
+import { LimitType } from '@prisma/client';
 
 export default {
 	command: new SlashCommandBuilder()
@@ -64,22 +65,21 @@ export default {
 				)
 		),
 
-	async run({ interaction }: SlashArgs) {
-		const type = interaction.options.getSubcommand();
+	async run({ interaction }) {
+		const type = interaction.options.getSubcommand().toUpperCase() as LimitType;
 		const limit = interaction.options.getInteger('limit');
 		if (!interaction.memberPermissions?.has(Permissions.FLAGS.ADMINISTRATOR)) {
 			await interaction.reply("You don't have permission to do this!");
 			return;
 		}
-
 		const isLimit =
-			type === 'channelcreate' ||
-			type === 'channeldelete' ||
-			type === 'rolecreate' ||
-			type === 'roledelete' ||
-			type === 'kick' ||
-			type === 'ban' ||
-			type === 'warn';
+			type === 'CHANNELCREATE' ||
+			type === 'CHANNELDELETE' ||
+			type === 'ROLECREATE' ||
+			type === 'ROLEDELETE' ||
+			type === 'KICK' ||
+			type === 'BAN' ||
+			type === 'WARN';
 
 		if (!isLimit) {
 			await interaction.reply(`
@@ -103,4 +103,4 @@ export default {
 		});
 		await interaction.reply(`${limit} has been updated!`);
 	},
-};
+} as Slash;

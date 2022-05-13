@@ -12,21 +12,21 @@ const punish = async (member: GuildMember, reason: string, guild: string): Promi
 		select: { option: true },
 	});
 	switch (punish?.option) {
-		case 'kick':
+		case 'KICK':
 			await member?.kick(reason);
 			break;
 
-		case 'ban':
+		case 'BAN':
 			await member?.ban({ reason });
 			break;
 
-		case 'demote':
+		case 'DEMOTE':
 			member?.roles.cache
 				.filter(r => r.name !== '@everyone')
 				.forEach(async r => await member?.roles.remove(r.id));
 			break;
 
-		case 'quarantine':
+		case 'QUARANTINE':
 			const quarantineRole = member?.guild.roles.cache.find(role => role.name === 'Quarantine');
 			member?.roles.cache
 				.filter(r => r.name !== '@everyone')

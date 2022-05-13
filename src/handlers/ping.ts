@@ -33,8 +33,8 @@ export const handler = ({ client }: Handler) => {
 				.setColor('#2F3136');
 			msg.channel.send({ embeds: [quarantineEmbed] });
 
-			const logs = await prisma.logsChannel.findUnique({
-				where: { guild: msg.guild?.id! },
+			const logs = await prisma.channel.findUnique({
+				where: { guild_type: { guild: msg.guild?.id!, type: 'LOGS' } },
 				select: { channel: true },
 			});
 			const pinglogEmbed = new MessageEmbed()

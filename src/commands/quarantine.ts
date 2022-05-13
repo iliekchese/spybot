@@ -1,17 +1,15 @@
-import type { CommandArgs } from '../types';
+import type { Command } from '../types';
 import { MessageEmbed, Permissions } from 'discord.js';
 
 export default {
 	name: 'quarantine',
-	async run({ message, args }: CommandArgs) {
+	async run({ message, args }) {
 		if (!message.member?.permissions.has(Permissions.FLAGS.KICK_MEMBERS)) {
 			message.channel.send("You don't have permission to do this!");
 			return;
 		}
 		const member = message.mentions.members?.first();
-		const role = member?.guild.roles.cache.find(
-			role => role.name === 'Quarantine'
-		);
+		const role = member?.guild.roles.cache.find(role => role.name === 'Quarantine');
 		switch (args[0]) {
 			case 'add':
 				const quarantineEmbed = new MessageEmbed()
@@ -52,4 +50,4 @@ export default {
 				break;
 		}
 	},
-};
+} as Command;

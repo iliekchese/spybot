@@ -1,9 +1,9 @@
-import type { CommandArgs } from '../types';
+import type { Command } from '../types';
 import { MessageEmbed, MessageActionRow, MessageButton } from 'discord.js';
 
 export default {
 	name: 'ban',
-	run({ message, args, client }: CommandArgs) {
+	run({ message, args, client }) {
 		const member = message.mentions.members?.first();
 		const banEmbed = new MessageEmbed()
 			.setTitle(`Are you sure you want to ban ${member?.user.tag}?`)
@@ -11,18 +11,13 @@ export default {
 			.setColor('#2F3136')
 			.setFooter({
 				text: 'Spy Bot',
-				iconURL:			'https://cdn.discordapp.com/avatars/939629038178295828/79c386588754ef3775b8ffd4654669f3.webp?size=80)',
+				iconURL:
+					'https://cdn.discordapp.com/avatars/939629038178295828/79c386588754ef3775b8ffd4654669f3.webp?size=80)',
 			});
 
 		const row = new MessageActionRow().addComponents(
-			new MessageButton()
-				.setCustomId('banAllowed')
-				.setLabel('Continue')
-				.setStyle('SUCCESS'),
-			new MessageButton()
-				.setCustomId('banNotAllowed')
-				.setLabel('Cancel')
-				.setStyle('DANGER')
+			new MessageButton().setCustomId('banAllowed').setLabel('Continue').setStyle('SUCCESS'),
+			new MessageButton().setCustomId('banNotAllowed').setLabel('Cancel').setStyle('DANGER')
 		);
 
 		message.channel.send({ embeds: [banEmbed], components: [row] });
@@ -39,4 +34,4 @@ export default {
 			}
 		});
 	},
-};
+} as Command;

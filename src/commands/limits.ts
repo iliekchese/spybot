@@ -1,16 +1,17 @@
-import type { CommandArgs } from '../types';
+import type { Command } from '../types';
 import { prisma } from '../database';
 import { MessageEmbed, Permissions } from 'discord.js';
 
 export default {
 	name: 'limits',
-	async run({ message, args }: CommandArgs) {
-		if (args[0] === 'show') {
+	async run({ message, args }) {
+		const [type, strLimit] = args;
+		if (type === 'show') {
 			const limits = await prisma.limit.findMany();
 			const limitsEmbed = new MessageEmbed()
 				.setTitle('**Spy Bot | Limits**')
 				.setDescription(
-					"If a limit is not here it means that it's not set, to set it do: `.limits <type: EXAMPLE -> channelcreate> <amount: EXAMPLE -> 5>`"
+					"If a limit is not here it means that it's not set, to set it do: `.limits <type> <amount>`"
 				)
 				.setAuthor({
 					name: message.author.tag,
@@ -28,33 +29,32 @@ export default {
 			message.channel.send({ embeds: [limitsEmbed] });
 			return;
 		}
-		const [type, limit] = args;
 		if (!message.member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
 			message.channel.send("You don't have permission to do this!");
 			return;
 		}
-		if (!args[1]) {
+		if (!strLimit) {
 			message.channel.send(':x: | **Provide The limit**');
 			return;
 		}
-		try {
-			if (Number(args[1]) < 1) {
-				message.channel.send(':x: | **The limit cannot be zero or negative number**');
-				return;
-			}
-		} catch (_) {
+		const limit = parseInt(strLimit);
+		if (isNaN(limit)) {
 			message.channel.send(':x: | **The limit has to be a number**');
+			return;
+		}
+		if (limit < 1) {
+			message.channel.send(':x: | **The limit cannot be zero or negative number**');
 			return;
 		}
 
 		const isLimit =
-			type === 'channelcreate' ||
-			type === 'channeldelete' ||
-			type === 'rolecreate' ||
-			type === 'roledelete' ||
-			type === 'kick' ||
-			type === 'ban' ||
-			type === 'warn';
+			type === 'CHANNELCREATE' ||
+			type === 'CHANNELDELETE' ||
+			type === 'ROLECREATE' ||
+			type === 'ROLEDELETE' ||
+			type === 'KICK' ||
+			type === 'BAN' ||
+			type === 'WARN';
 
 		if (!isLimit) {
 			message.channel.send(`
@@ -69,13 +69,13 @@ export default {
 		}
 		await prisma.limit.upsert({
 			where: { guild_type: { guild: message.guildId!, type } },
-			update: { limit: Number(limit) },
+			update: { limit },
 			create: {
 				guild: message.guildId!,
 				type,
-				limit: Number(limit),
+				limit,
 			},
 		});
-		message.channel.send(`**${type}** has been updated to ${limit}!`);
+		message.channel.send(`**${type}** has been updated to **${limit}**!`);
 	},
-};
+} as Command;

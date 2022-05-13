@@ -1,11 +1,11 @@
-import type { CommandArgs } from '../types';
+import type { Command } from '../types';
 import type { TextChannel } from 'discord.js';
 import { MessageEmbed } from 'discord.js';
 import { prisma } from '../database';
 
 export default {
 	name: 'suggestions',
-	async run({ client, message, args }: CommandArgs) {
+	async run({ client, message, args }) {
 		switch (args[0]) {
 			case 'set':
 				const channel = message.mentions.channels.first() as TextChannel;
@@ -17,8 +17,10 @@ export default {
 					message.channel.send(':x: | **That channel is not from this server**');
 					break;
 				}
-				await prisma.suggestionsChannel.create({
-					data: { guild: message.guild?.id!, channel: channel.id },
+				await prisma.channel.upsert({
+					where: { guild_type: { guild: message.guildId!, type: 'SUGGESTIONS' } },
+					update: { channel: channel.id },
+					create: { guild: message.guild?.id!, type: 'SUGGESTIONS', channel: channel.id },
 				});
 				channel.send('**Suggestions Channel**');
 				message.channel.send(`**The suggestions channel has been set to ${args[1]}**`);
@@ -30,8 +32,8 @@ export default {
 					.setThumbnail(message.author.avatarURL()!)
 					.setDescription(args.slice(1).join(' '))
 					.setColor('#2F3136');
-				const suggestions = await prisma.suggestionsChannel.findUnique({
-					where: { guild: message.guildId! },
+				const suggestions = await prisma.channel.findUnique({
+					where: { guild_type: { guild: message.guildId!, type: 'SUGGESTIONS' } },
 					select: { channel: true },
 				});
 				if (!suggestions) {
@@ -48,4 +50,4 @@ export default {
 				});
 		}
 	},
-};
+} as Command;

@@ -11,7 +11,7 @@ export const handler = ({ client }: Handler) => {
 			audits,
 			client,
 			guild: ban.guild,
-			type: 'ban',
+			type: 'BAN',
 			reason: 'Breaking Ban Limit',
 		});
 	});
@@ -28,7 +28,7 @@ export const handler = ({ client }: Handler) => {
 			audits,
 			client,
 			guild: member.guild,
-			type: 'kick',
+			type: 'KICK',
 			reason: 'Breaking Kick Limit',
 		});
 	});

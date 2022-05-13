@@ -11,7 +11,7 @@ export const handler = ({ client }: Handler) => {
 			audits,
 			client,
 			guild: channel.guild,
-			type: 'channelcreate',
+			type: 'CHANNELCREATE',
 			reason: 'Breaking Channel Create Limit',
 		});
 	});
@@ -25,7 +25,7 @@ export const handler = ({ client }: Handler) => {
 				audits,
 				client,
 				guild: channel.guild,
-				type: 'channeldelete',
+				type: 'CHANNELDELETE',
 				reason: 'Breaking Channel Delete Limit',
 			});
 		}

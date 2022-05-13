@@ -10,7 +10,7 @@ export const handler = ({ client }: Handler) => {
 			audits,
 			client,
 			guild: role.guild,
-			type: 'rolecreate',
+			type: 'ROLECREATE',
 			reason: 'Breaking Role Create Limit',
 		});
 	});
@@ -23,7 +23,7 @@ export const handler = ({ client }: Handler) => {
 			audits,
 			client,
 			guild: role.guild,
-			type: 'roledelete',
+			type: 'ROLEDELETE',
 			reason: 'Breaking Role Delete Limit',
 		});
 	});
