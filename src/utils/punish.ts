@@ -21,17 +21,12 @@ const punish = async (member: GuildMember, reason: string, guild: string): Promi
 			break;
 
 		case 'DEMOTE':
-			member?.roles.cache
-				.filter(r => r.name !== '@everyone')
-				.forEach(async r => await member?.roles.remove(r.id));
+			member.roles.set([]);
 			break;
 
 		case 'QUARANTINE':
 			const quarantineRole = member?.guild.roles.cache.find(role => role.name === 'Quarantine');
-			member?.roles.cache
-				.filter(r => r.name !== '@everyone')
-				.forEach(async r => await member?.roles.remove(r.id));
-			member?.roles.add(quarantineRole!);
+			member.roles.set([quarantineRole!]);
 			break;
 	}
 	return punish?.option!;

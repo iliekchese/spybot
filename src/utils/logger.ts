@@ -36,7 +36,7 @@ export const createLog = async ({ type, audits, reason, guild, client }: LoggerO
 			select: { channel: true },
 		});
 		if (!logsID) return;
-		const logs = client.channels.cache.get(logsID.channel) as TextChannel;
+		const logs = (await client.channels.fetch(logsID.channel)) as TextChannel;
 		if (!logs) return;
 		const punishment = await prisma.punish.findUnique({
 			where: { guild: guild.id },

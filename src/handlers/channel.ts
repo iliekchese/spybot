@@ -2,7 +2,7 @@ import type { Handler } from '../types';
 import { GuildChannel } from 'discord.js';
 import { createLog } from '../utils';
 
-export const handler = ({ client }: Handler) => {
+export const handler: Handler = ({ client }) => {
 	client.on('channelCreate', async channel => {
 		const audits = await channel.guild.fetchAuditLogs({
 			type: 'CHANNEL_CREATE',

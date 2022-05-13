@@ -70,7 +70,7 @@ export default {
 					embed.setColor('GREEN');
 				} else {
 					embed.setDescription(':x: | **No whitelisted Users Found**');
-					embed.setColor('#FF0000');
+					embed.setColor('RED');
 				}
 				message.channel.send({ embeds: [embed] });
 				break;

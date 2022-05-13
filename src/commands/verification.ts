@@ -8,6 +8,11 @@ export default {
 	async run({ message, args }) {
 		switch (args[0]) {
 			case 'start':
+				const verificationChannel = await prisma.channel.findUnique({
+					where: { guild_type: { guild: message.guildId!, type: 'VERIFICATION' } },
+					select: { channel: true },
+				});
+				if (message.channel.id !== verificationChannel?.channel) break;
 				const captcha = new Captcha();
 				const embed = new MessageEmbed()
 					.setTitle('Type out the captcha to complete the verification')
@@ -20,14 +25,25 @@ export default {
 					filter: msg => msg.author.id === message.author.id,
 					max: 1,
 				});
-				if (collected.first()?.content.toLowerCase() === captcha.value.toLowerCase()) {
-					message.channel.send('Verification completed succesfully!');
-				} else {
-					message.channel.send('Verification failed!');
+				if (collected.first()?.content.toLowerCase() !== captcha.value.toLowerCase()) {
+					message.channel.send(':x: | **Verification failed!**');
+					break;
 				}
+				message.channel.send(':white_check_mark: | **Verification completed succesfully!**');
+				const logs = await prisma.channel.findUnique({
+					where: { guild_type: { guild: message.guild?.id!, type: 'LOGS' } },
+					select: { channel: true },
+				});
+				const verifylogEmbed = new MessageEmbed()
+					.setTitle(`Verification Successful:`)
+					.setDescription(`User ${message.author} has verified successfully!`)
+					.setThumbnail(message.author.avatarURL()!)
+					.setColor('GREEN');
+				const logsChannel = message.guild?.channels.cache.get(logs?.channel!) as TextChannel;
+				logsChannel?.send({ embeds: [verifylogEmbed] });
 				break;
 
-			case 'set':
+			case 'channel':
 				const channel = message.mentions.channels.first() as TextChannel;
 				if (!channel) {
 					message.channel.send(':x: | **Mention The channel**');
