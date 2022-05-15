@@ -15,7 +15,7 @@ export default {
 			return;
 		}
 		const amount = interaction.options.getInteger('amount');
-		await (interaction.channel as TextChannel)?.bulkDelete(amount! + 1);
+		await (interaction.channel as TextChannel)?.bulkDelete(amount!);
 		await interaction.reply({ content: `:white_check_mark: | **Deleted ${amount} messages**`, ephemeral: true });
 	},
 } as Slash;
