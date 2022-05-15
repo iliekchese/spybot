@@ -7,6 +7,11 @@ generator client {
   provider = "prisma-client-js"
 }
 
+enum RoleType {
+	VERIFICATION
+	QUARANTINE
+}
+
 enum ChannelType {
   SUGGESTIONS
   LOGS
@@ -86,6 +91,15 @@ model VerificationChannel {
   guild   String @unique
   channel String
 >>>>>>> 04bb9a9e3ba38676f69095469391d9efcdde5fc4
+}
+
+model Role {
+  id      String      @id @default(auto()) @map("_id") @db.ObjectId
+  guild   String
+  type    RoleType
+  role String
+
+  @@unique([guild, type])
 }
 
 model Punish {

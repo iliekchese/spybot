@@ -1,10 +1,18 @@
 import type { Command } from '../types';
-import { MessageEmbed, MessageActionRow, MessageButton } from 'discord.js';
+import { MessageEmbed, MessageActionRow, MessageButton, Permissions } from 'discord.js';
 
 export default {
 	name: 'kick',
-	run({ message, args, client }) {
+	async run({ message, args, client }) {
+		if (!message.member?.permissions.has(Permissions.FLAGS.KICK_MEMBERS)) {
+			message.channel.send(":x: | **You don't have permission to do this!**");
+			return;
+		}
 		const member = message.mentions.members?.first();
+		if (!member) {
+			message.channel.send(":x: | **You must specify a member!**");
+			return;
+		}
 		const kickEmbed = new MessageEmbed()
 			.setTitle(`Are you sure you want to kick ${member?.user.tag}?`)
 			.setDescription('Please click below if you would like to continue')
@@ -20,16 +28,24 @@ export default {
 			new MessageButton().setCustomId('kickNotAllowed').setLabel('Cancel').setStyle('DANGER')
 		);
 
-		message.channel.send({ embeds: [kickEmbed], components: [row] });
+		const msg = await message.channel.send({ embeds: [kickEmbed], components: [row] });
 
 		client.on('interactionCreate', async interaction => {
 			if (!interaction.isButton()) return;
+			if (!message.member?.permissions.has(Permissions.FLAGS.KICK_MEMBERS)) {
+				message.channel.send(":x: | **You don't have permission to do this!**");
+				return;
+			}
 			if (interaction.customId === 'kickAllowed') {
 				member?.kick(args[1]);
-				await interaction.reply(`${member?.user} was succesfully kicked!`);
+				await interaction.reply(`:white_check_mark: | **${member?.user} was succesfully kicked!**`);
 			} else if (interaction.customId === 'kickNotAllowed') {
-				await interaction.reply('Operation canceled.');
+				await interaction.reply(':x: | **Operation canceled.**');
 			}
 		});
+
+		setTimeout(async () => {
+			await msg.delete()
+		}, 3000)
 	},
 } as Command;

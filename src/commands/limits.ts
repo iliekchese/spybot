@@ -5,7 +5,8 @@ import { MessageEmbed, Permissions } from 'discord.js';
 export default {
 	name: 'limits',
 	async run({ message, args }) {
-		const [type, strLimit] = args;
+		const type = args[0].toUpperCase()
+		const strLimit = args[1];
 		if (type === 'show') {
 			const limits = await prisma.limit.findMany();
 			const limitsEmbed = new MessageEmbed()
@@ -57,14 +58,24 @@ export default {
 			type === 'WARN';
 
 		if (!isLimit) {
-			message.channel.send(`
-				Not a valid limit, valid limits are:
-
-				**channelcreate, channeldelete,
-				rolecreate, roledelete, 
-				kick, ban,
-				warn**
-			`);
+			const embed = new MessageEmbed()
+				.setTitle("Not a valid limit, valid limits are:")
+				.setDescription(`
+					- channelcreate
+					- channeldelete
+					- rolecreate
+					- roledelete
+					- kick
+					- ban
+					- warn
+				`)
+      	.setColor('#2F3136')
+				.setFooter({
+					text: 'Spy Bot',
+					iconURL:
+						'https://cdn.discordapp.com/avatars/939629038178295828/79c386588754ef3775b8ffd4654669f3.webp?size=80)',
+				});
+			message.channel.send({ embeds: [embed] });
 			return;
 		}
 		await prisma.limit.upsert({
@@ -76,6 +87,6 @@ export default {
 				limit,
 			},
 		});
-		message.channel.send(`**${type}** has been updated to **${limit}**!`);
+		message.channel.send(`**${type.toLowerCase()}** has been updated to **${limit}**!`);
 	},
 } as Command;
