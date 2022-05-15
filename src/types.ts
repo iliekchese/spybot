@@ -11,6 +11,7 @@ export interface Slash {
 export interface Command {
 	name: string;
 	run(args: CommandArgs): void | Promise<void>;
+	aliases: string[];
 }
 
 interface SlashArgs {

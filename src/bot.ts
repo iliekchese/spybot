@@ -46,6 +46,9 @@ loxt.info('made by eldi mindcrafter#0001 & AngelNext#9162');
 				path.join(__dirname, `./slash-commands/${file}`)
 			);
 			slashCommands.set(pull.command.name, pull);
+			pull.command.aliases.forEach((a) => {
+				slashCommands.set(a, pull);
+			})
 		})
 	loxt.info('Application Commands loaded!')
 })()
@@ -86,7 +89,7 @@ client.on('messageCreate', message => {
 	const args = content.slice(PREFIX.length).trim().split(/ +/);
 	const cmd = args.shift()?.toLowerCase();
 
-	commands.get(cmd!)?.run({ client, message, args });
+	(commands.get(cmd!))?.run({ client, message, args });
 });
 
 // -------- START BOT ------------
