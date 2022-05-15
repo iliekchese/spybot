@@ -30,7 +30,7 @@ export default {
 						iconURL: message.guild?.iconURL()!,
 					})
 					.addField('Logs: ', logs?.channel ? `<#${logs.channel}>` : disabled, false)
-					.addField('Punishment: ', punish?.option ?? disabled, false)
+					.addField('Punishment: ', punish?.option.toLowerCase() ?? disabled, false)
 					.setColor('GREEN');
 				message.channel.send({ embeds: [show] });
 				break;
@@ -99,7 +99,7 @@ export default {
 
 			default:
 				const helpEmbed = new MessageEmbed()
-					.setTitle('<:Settings:939853181180080168> **Anti-Raid | Config**')
+					.setTitle('<:Settings:939853181180080168> **Spy Bot | Config**')
 					.setDescription(
 						`
 							**The Options are listed below:**

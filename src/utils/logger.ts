@@ -20,7 +20,7 @@ export const createLog = async ({ type, audits, reason, guild, client }: LoggerO
 		where: { guild_user_type: { guild: guild.id, user: user?.id!, type } },
 		select: { limit: true },
 	});
-	const rcl = await prisma.limit.findUnique({
+	const l = await prisma.limit.findUnique({
 		where: { guild_type: { guild: guild.id, type } },
 		select: { limit: true },
 	});
@@ -29,8 +29,8 @@ export const createLog = async ({ type, audits, reason, guild, client }: LoggerO
 		select: { users: true },
 	});
 	if (whitelist?.users.some(id => id === user?.id)) return;
-	if (!rcl?.limit) return;
-	if ((personLimit?.limit || 0) !== 0 && personLimit?.limit! % rcl.limit === 0) {
+	if (!l?.limit) return;
+	if ((personLimit?.limit || 0) !== 0 && personLimit?.limit! % l.limit === 0) {
 		const logsID = await prisma.channel.findUnique({
 			where: { guild_type: { guild: guild.id, type: 'LOGS' } },
 			select: { channel: true },
@@ -53,14 +53,15 @@ export const createLog = async ({ type, audits, reason, guild, client }: LoggerO
 			.addField('User', user?.tag!)
 			.addField('Case', reason)
 			.addField('Punishment', punishment.option)
-			.setColor('#2f3136');
 		const punishCheck =
 			punishment.option === 'QUARANTINE' || punishment.option === 'DEMOTE' ? 'd' : 'ed';
 		try {
 			await punish(await guild.members.fetch(user?.id!)!, reason, guild.id);
-			embed.addField(punishment.option.concat(punishCheck), 'Yes');
+			embed.addField(punishment.option.toLowerCase().concat(punishCheck), 'Yes');
+			embed.setColor("#06CB08")
 		} catch (err) {
-			embed.addField(punishment.option.concat(punishCheck), 'No');
+			embed.addField(punishment.option.toLowerCase().concat(punishCheck), 'No');
+			embed.setColor("RED")
 			console.error(err);
 		} finally {
 			logs.send({ embeds: [embed] });

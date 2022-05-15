@@ -6,36 +6,26 @@ export default {
 	async run({ message }) {
 		const modulesEmbed = new MessageEmbed()
 			.setTitle('Modules')
-			.setDescription('Bot modules`')
+			.setDescription('Bot modules')
 			.setColor('#2F3136')
 			.addFields(
 				{
-					name: 'Channel Create Limit',
+					name: 'Anti Raid',
 					value: '`Enabled`',
 					inline: true,
 				},
 				{
-					name: 'Channel Delete Limit',
+					name: 'Moderation',
 					value: '`Enabled`',
 					inline: true,
 				},
 				{
-					name: 'Role Create Limit',
+					name: 'Verification',
 					value: '`Enabled`',
 					inline: true,
 				},
 				{
-					name: 'Role Delete Limit',
-					value: '`Enabled`',
-					inline: true,
-				},
-				{
-					name: 'Kick Limit',
-					value: '`Enabled`',
-					inline: true,
-				},
-				{
-					name: 'Ban Limit',
+					name: 'Logging',
 					value: '`Enabled`',
 					inline: true,
 				}

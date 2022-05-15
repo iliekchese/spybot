@@ -8,14 +8,16 @@ export default {
 	name: 'warns',
 	async run({ message, args }) {
 		const reason = args.slice(2).join(' ');
-		const warns = await prisma.warn.findMany();
+		const member = message.mentions.members?.first();
+		const warns = await prisma.warn.findMany({
+			where: { user: member?.user.id || message.author.id }
+		});
 		switch (args[0]) {
 			case 'add':
 				if (!message.member?.permissions.has(Permissions.FLAGS.KICK_MEMBERS)) {
 					message.channel.send("You don't have permission to do this!");
 					break;
 				}
-				const member = message.mentions.members?.first();
 				if (!member) {
 					message.channel.send('You must specify a member!');
 					break;
@@ -73,7 +75,7 @@ export default {
 					message.channel.send("You don't have permissions to do this!");
 					break;
 				}
-				const { user } = message.mentions.members?.first()! || message.member!;
+				const { user } = member! || message.member!;
 				if (!args[2]) {
 					await prisma.warn.delete({
 						where: { guild_user: { guild: message.guildId!, user: user.id } },

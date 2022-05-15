@@ -1,5 +1,5 @@
 import { Client, Collection, Intents } from 'discord.js';
-import { Routes } from 'discord-api-types/v10';
+import { Routes } from 'discord-api-types/v9';
 import { REST } from '@discordjs/rest';
 import Fastify from 'fastify';
 import { readdir } from 'node:fs/promises';
@@ -9,10 +9,9 @@ import type { Command, Slash } from './types';
 
 const TOKEN = process.env.TOKEN!;
 const loxt = new Loxt();
-const rest = new REST({ version: '10' }).setToken(TOKEN);
+const rest = new REST({ version: '9' }).setToken(TOKEN);
 const commands = new Collection<string, Command>();
 const slashCommands = new Collection<string, Slash>();
-
 const client = new Client({
 	intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
 });
@@ -22,35 +21,38 @@ process.on('uncaughtException', ({ message }) => loxt.error(message));
 loxt.start('Loading');
 loxt.info('made by eldi mindcrafter#0001 & AngelNext#9162');
 
+(async () => {
+	(await readdir(path.join(__dirname, `./handlers`)))
+		.filter(file => file.endsWith('.js'))
+		.forEach(async file => {
+			const { handler } = await import(path.join(__dirname, `./handlers/${file}`));
+			handler({ client });
+		});
+	
+	(await readdir(path.join(__dirname, `./commands`)))
+		.filter(file => file.endsWith('.js'))
+		.forEach(async file => {
+			const { default: pull }: { default: Command } = await import(
+				path.join(__dirname, `./commands/${file}`)
+			);
+			commands.set(pull.name, pull);
+		});
+		loxt.info('Commands Loaded!');
+
+	(await readdir(path.join(__dirname, `./slash-commands`)))
+		.filter(file => file.endsWith('.js'))
+		.forEach(async file => {
+			const { default: pull }: { default: Slash } = await import(
+				path.join(__dirname, `./slash-commands/${file}`)
+			);
+			slashCommands.set(pull.command.name, pull);
+		})
+	loxt.info('Application Commands loaded!')
+})()
+
 // ------- READY BOT -----
 client.once('ready', async () => {
 	try {
-		(await readdir(path.join(__dirname, `./handlers`)))
-			.filter(file => file.endsWith('.js'))
-			.forEach(async file => {
-				const { handler } = await import(path.join(__dirname, `./handlers/${file}`));
-				handler({ client });
-			});
-
-		(await readdir(path.join(__dirname, `./commands`)))
-			.filter(file => file.endsWith('.js'))
-			.forEach(async file => {
-				const { default: pull }: { default: Command } = await import(
-					path.join(__dirname, `./commands/${file}`)
-				);
-				commands.set(pull.name, pull);
-			});
-		loxt.info('Commands Loaded!');
-
-		(await readdir(path.join(__dirname, `./slash-commands`)))
-			.filter(file => file.endsWith('.js'))
-			.forEach(async file => {
-				const { default: pull }: { default: Slash } = await import(
-					path.join(__dirname, `./slash-commands/${file}`)
-				);
-				slashCommands.set(pull.command.name, pull);
-			});
-		loxt.info('Slash Commands Loaded!');
 		await rest.put(Routes.applicationCommands('939629038178295828'), {
 			body: slashCommands.map(c => c.command.toJSON()),
 		});

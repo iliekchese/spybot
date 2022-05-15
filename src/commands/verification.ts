@@ -17,7 +17,7 @@ export default {
 				const embed = new MessageEmbed()
 					.setTitle('Type out the captcha to complete the verification')
 					.setColor('#2F3136');
-				message.channel.send({
+				const msg = await message.channel.send({
 					embeds: [embed],
 					files: [new MessageAttachment(captcha.JPEGStream, 'captcha.jpeg')],
 				});
@@ -26,10 +26,21 @@ export default {
 					max: 1,
 				});
 				if (collected.first()?.content.toLowerCase() !== captcha.value.toLowerCase()) {
-					message.channel.send(':x: | **Verification failed!**');
+					message.member?.send(':x: | **Verification failed!**');
+					await collected.first()?.delete()
+					await message.delete()
+					await msg.delete()
 					break;
 				}
-				message.channel.send(':white_check_mark: | **Verification completed succesfully!**');
+				const verificationRole = await prisma.role.findUnique({
+					where: { guild_type: { guild: message.guildId!, type: 'VERIFICATION' } },
+					select: { role: true }
+				})
+				message.member?.roles.add(verificationRole?.role!)
+				message.member?.send(':white_check_mark: | **Verification completed succesfully!**');
+        await collected.first()?.delete()
+				await message.delete()
+				await msg.delete()
 				const logs = await prisma.channel.findUnique({
 					where: { guild_type: { guild: message.guild?.id!, type: 'LOGS' } },
 					select: { channel: true },
@@ -59,13 +70,20 @@ export default {
 					create: { guild: message.guildId!, type: 'VERIFICATION', channel: channel.id },
 				});
 				const verifyEmbed = new MessageEmbed()
-					.setTitle('<:spybot:939656950231236618>  Verification')
-					.setDescription(
-						'<:arrow:951862606958821506> This server requires you to complete a captcha verification. \n Type `.verification start` to start the verification.'
-					)
+					.setTitle('🤖 Captcha Verification')
+					.setDescription('<:arrow:951862606958821506> Welcome to the server! \n Complete the captcha verification by typing `.verification start` to acsess the server \n \n Make sure to also follow the server rules!')
 					.setColor('#2F3136');
 				channel.send({ embeds: [verifyEmbed] });
-				message.channel.send(`**The Verification channel has been set to ${args[1]}**`);
+				message.channel.send(`:white_check_mark: | **The Verification Channel has been set to ${args[1]}**`);
+
+			case 'role':
+				const role = message.mentions.roles?.first()
+				await prisma.role.upsert({
+					where: { guild_type: { guild: message.guildId!, type: 'VERIFICATION' } },
+					update: { role: role?.id! },
+					create: { guild: message.guildId!, type: 'VERIFICATION', role: role?.id!  }
+				})
+				message.channel.send(`:white_check_mark: | **The Verification Role has been set to ${args[1]}**`)
 		}
 	},
 } as Command;
