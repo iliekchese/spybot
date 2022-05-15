@@ -34,7 +34,7 @@ loxt.info('made by eldi mindcrafter#0001 & AngelNext#9162');
 		.forEach(async file => {
 			const { default: pull }: { default: Command } = await import(join(__dirname, `./commands/${file}`));
 			commands.set(pull.name, pull);
-			pull.aliases.forEach(a => commands.set(a, pull));
+			pull.aliases?.forEach(a => commands.set(a, pull));
 		});
 	loxt.info('Commands Loaded!');
 
