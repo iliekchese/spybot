@@ -42,7 +42,7 @@ loxt.info('made by eldi mindcrafter#0001 & AngelNext#9162');
 		.filter(file => file.endsWith('.js'))
 		.forEach(async file => {
 			const { default: pull }: { default: Slash } = await import(join(__dirname, `./slash-commands/${file}`));
-			slashCommands.set(pull.command.name, pull);
+			slashCommands.set(pull.data.name, pull);
 		});
 	loxt.info('Application Commands loaded!');
 })();
@@ -51,7 +51,7 @@ loxt.info('made by eldi mindcrafter#0001 & AngelNext#9162');
 client.once('ready', async () => {
 	try {
 		await rest.put(Routes.applicationCommands('939629038178295828'), {
-			body: slashCommands.map(c => c.command.toJSON()),
+			body: slashCommands.map(({ data }) => data.toJSON()),
 		});
 		loxt.ready('application commands');
 	} catch (err) {

@@ -3,12 +3,11 @@ import { SlashCommandBuilder } from '@discordjs/builders';
 import { MessageEmbed, TextChannel } from 'discord.js';
 
 export default {
-	command: new SlashCommandBuilder().setName('setup').setDescription('Setup command'),
+	data: new SlashCommandBuilder().setName('setup').setDescription('Setup command'),
 	async run({ interaction }) {
 		const setupEmbed = new MessageEmbed().setColor('#2F3136').setFooter({
 			text: 'Spy Bot',
-			iconURL:
-				'https://cdn.discordapp.com/avatars/939629038178295828/861602a3003bf4b82e3397aaf1285ed2.webp?size=80)',
+			iconURL: 'https://cdn.discordapp.com/avatars/939629038178295828/861602a3003bf4b82e3397aaf1285ed2.webp?size=80)',
 		});
 
 		try {
@@ -39,13 +38,9 @@ export default {
 					});
 				}
 			});
-			setupEmbed
-				.setTitle('Setup Was Completed')
-				.setDescription('✅ Setup was successfully completed');
+			setupEmbed.setTitle('Setup Was Completed').setDescription('✅ Setup was successfully completed');
 		} catch (_) {
-			setupEmbed
-				.setTitle('Setup Not Completed')
-				.setDescription('❌ Setup was not successfully completed');
+			setupEmbed.setTitle('Setup Not Completed').setDescription('❌ Setup was not successfully completed');
 		} finally {
 			await interaction.reply({ embeds: [setupEmbed] });
 		}

@@ -5,65 +5,50 @@ import { prisma } from '../database';
 import { LimitType } from '@prisma/client';
 
 export default {
-	name: "limits",
-	command: new SlashCommandBuilder()
+	data: new SlashCommandBuilder()
 		.setName('limits')
 		.setDescription('Manages limits for server')
 		.addSubcommand(subcommand =>
 			subcommand
 				.setName('channelcreate')
 				.setDescription('Set the channel create limit!')
-				.addIntegerOption(limit =>
-					limit.setName('limit').setDescription('The limit').setRequired(true)
-				)
+				.addIntegerOption(limit => limit.setName('limit').setDescription('The limit').setRequired(true))
 		)
 		.addSubcommand(subcommand =>
 			subcommand
 				.setName('channeldelete')
 				.setDescription('Set the channel delete limit!')
-				.addIntegerOption(limit =>
-					limit.setName('limit').setDescription('The limit').setRequired(true)
-				)
+				.addIntegerOption(limit => limit.setName('limit').setDescription('The limit').setRequired(true))
 		)
 		.addSubcommand(subcommand =>
 			subcommand
 				.setName('rolecreate')
 				.setDescription('Set the role create limit!')
-				.addIntegerOption(limit =>
-					limit.setName('limit').setDescription('The limit').setRequired(true)
-				)
+				.addIntegerOption(limit => limit.setName('limit').setDescription('The limit').setRequired(true))
 		)
 		.addSubcommand(subcommand =>
 			subcommand
 				.setName('roledelete')
 				.setDescription('Set the role delete limit!')
-				.addIntegerOption(limit =>
-					limit.setName('limit').setDescription('The limit').setRequired(true)
-				)
+				.addIntegerOption(limit => limit.setName('limit').setDescription('The limit').setRequired(true))
 		)
 		.addSubcommand(subcommand =>
 			subcommand
 				.setName('ban')
 				.setDescription('Set the ban limit!')
-				.addIntegerOption(limit =>
-					limit.setName('limit').setDescription('The limit').setRequired(true)
-				)
+				.addIntegerOption(limit => limit.setName('limit').setDescription('The limit').setRequired(true))
 		)
 		.addSubcommand(subcommand =>
 			subcommand
 				.setName('kick')
 				.setDescription('Set the kick limit!')
-				.addIntegerOption(limit =>
-					limit.setName('limit').setDescription('The limit').setRequired(true)
-				)
+				.addIntegerOption(limit => limit.setName('limit').setDescription('The limit').setRequired(true))
 		)
 		.addSubcommand(subcommand =>
 			subcommand
 				.setName('warn')
 				.setDescription('Set the warn limit!')
-				.addIntegerOption(limit =>
-					limit.setName('limit').setDescription('The limit').setRequired(true)
-				)
+				.addIntegerOption(limit => limit.setName('limit').setDescription('The limit').setRequired(true))
 		),
 
 	async run({ interaction }) {

@@ -6,13 +6,10 @@ import { prisma } from '../database';
 import { PunishOption } from '@prisma/client';
 
 export default {
-	name: "config",
-	command: new SlashCommandBuilder()
+	data: new SlashCommandBuilder()
 		.setName('config')
 		.setDescription('Displays config')
-		.addSubcommand(subcommand =>
-			subcommand.setName('show').setDescription('Info about the server permissions')
-		)
+		.addSubcommand(subcommand => subcommand.setName('show').setDescription('Info about the server permissions'))
 		.addSubcommand(subcommand =>
 			subcommand
 				.setName('punishment')
@@ -34,9 +31,7 @@ export default {
 			subcommand
 				.setName('logs')
 				.setDescription('Configure logs channel!')
-				.addChannelOption(channel =>
-					channel.setName('channel').setDescription('The channel').setRequired(true)
-				)
+				.addChannelOption(channel => channel.setName('channel').setDescription('The channel').setRequired(true))
 		)
 		.addSubcommand(subcommand => subcommand.setName('help').setDescription('Config Preview')),
 

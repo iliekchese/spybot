@@ -4,15 +4,14 @@ import type { SlashCommandBuilder } from '@discordjs/builders';
 export type Handler = (handler: { client: Client }) => void;
 
 export interface Slash {
-	name: string;
-	command: SlashCommandBuilder;
+	data: SlashCommandBuilder;
 	run(args: SlashArgs): Promise<void>;
 }
 
 export interface Command {
 	name: string;
-	run(args: CommandArgs): void | Promise<void>;
 	aliases: string[];
+	run(args: CommandArgs): void | Promise<void>;
 }
 
 interface SlashArgs {

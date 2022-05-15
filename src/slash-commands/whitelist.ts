@@ -4,29 +4,22 @@ import { MessageEmbed, Permissions } from 'discord.js';
 import { prisma } from '../database';
 
 export default {
-	name: 'whitelist',
-	command: new SlashCommandBuilder()
+	data: new SlashCommandBuilder()
 		.setName('whitelist')
 		.setDescription('Manage Whitelist of a server')
 		.addSubcommand(subcommand =>
 			subcommand
 				.setName('add')
 				.setDescription('Add a user to the whitelist')
-				.addUserOption(option =>
-					option.setName('user').setDescription('The user to add to the whitelist')
-				)
+				.addUserOption(option => option.setName('user').setDescription('The user to add to the whitelist'))
 		)
 		.addSubcommand(subcommand =>
 			subcommand
 				.setName('remove')
 				.setDescription('Remove a user from the whitelist')
-				.addUserOption(option =>
-					option.setName('user').setDescription('The user to remove from the whitelist')
-				)
+				.addUserOption(option => option.setName('user').setDescription('The user to remove from the whitelist'))
 		)
-		.addSubcommand(subcommand =>
-			subcommand.setName('show').setDescription('List all users on the whitelist')
-		),
+		.addSubcommand(subcommand => subcommand.setName('show').setDescription('List all users on the whitelist')),
 
 	async run({ interaction }) {
 		const whitelist = await prisma.whitelist.findUnique({
