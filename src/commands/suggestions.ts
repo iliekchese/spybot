@@ -40,7 +40,7 @@ export default {
 					message.channel.send(':x: | **There is no suggestions channel set:** `.suggestions set <channel>`');
 					break;
 				}
-				const suggestionsChannel = client.channels.cache.get(suggestions?.channel!) as TextChannel;
+				const suggestionsChannel = (await client.channels.fetch(suggestions?.channel!)) as TextChannel;
 				suggestionsChannel?.send({ embeds: [embed] }).then(msg => {
 					msg.react('✅');
 					msg.react('❌');
