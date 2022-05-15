@@ -64,7 +64,7 @@ export default {
 					);
 					break;
 				}
-				const suggestionsChannel = client.channels.cache.get(suggestions.channel!) as TextChannel;
+				const suggestionsChannel = await client.channels.fetch(suggestions.channel!) as TextChannel;
 				const msg = await suggestionsChannel?.send({ embeds: [embed] });
 				msg.react('✅');
 				msg.react('❌');
