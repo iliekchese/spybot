@@ -1,5 +1,6 @@
 import type { Slash } from '../types';
-import { MessageEmbed, TextChannel } from 'discord.js';
+import type { TextChannel } from 'discord.js'
+import { MessageEmbed } from 'discord.js';
 import { SlashCommandBuilder } from '@discordjs/builders';
 import { prisma } from '../database';
 
@@ -24,7 +25,7 @@ export default {
 					title.setName('title').setDescription("The suggestion's title").setRequired(true)
 				)
 				.addStringOption(body =>
-					body.setName('title').setDescription("The suggestion's title").setRequired(true)
+					body.setName('body').setDescription("The suggestion's body").setRequired(true)
 				)
 		),
 
