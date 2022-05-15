@@ -14,18 +14,18 @@ export const handler: Handler = ({ client }) => {
 			where: { guild: message.guildId! },
 			select: { users: true }
 		})
-		if (whitelist?.users.some(id => id === user?.id)) return;
+		if (whitelist?.users.some(id => id === user?.id) || client.user?.id === user?.id) return;
 		const logs = await prisma.channel.findUnique({
 			where: { guild_type: { guild: message.guildId!, type: 'LOGS' } },
 			select: { channel: true }
 		})
 		const messageDeleteEmbed = new MessageEmbed()
 			.setAuthor({
-				name: message.member?.user.tag!,
+				name: message.member?.user.tag || ":x: | Not Found",
 				iconURL: message.member?.user.avatarURL()!,
 			})
 			.setTitle('Deleted Message')
-			.setDescription(`${message.content}`)
+			.setDescription(message.content || ":x: | Not Found")
 			.addField("Channel", message.channel.toString())
 			.addField('Deleted By', user?.toString()!)
 			.setColor('#2F3136');
@@ -46,12 +46,12 @@ export const handler: Handler = ({ client }) => {
 		const msg = await message.channel.messages.fetch(message.id)
 		const messageEditEmbed = new MessageEmbed()
 			.setAuthor({
-				name: message.member?.user.tag!,
+				name: message.member?.user.tag! || ":x: | Not Found",
 				iconURL: message.member?.user.avatarURL()!,
 			})
 			.setTitle('Edited Message')
-			.addField("Old", message.content!)
-			.addField("New", msg.content!)
+			.addField("Old", message.content || ":x: | Not Found")
+			.addField("New", msg.content || ":x: | Not Found")
 			.addField("Channel", message.channel.toString())
 			.setColor('#2F3136');
 		const logsChannel = (await message.guild?.channels.fetch(logs?.channel!)) as TextChannel;

@@ -53,7 +53,7 @@ export default {
 					select: { option: true },
 				});
 				const show = new MessageEmbed()
-					.setTitle('**Anti-Raid | Config**')
+					.setTitle('**Spy Bot | Config**')
 					.setAuthor({
 						name: interaction.user.tag,
 						iconURL: interaction.user.displayAvatarURL({ dynamic: true }),
@@ -64,34 +64,17 @@ export default {
 						iconURL: interaction.guild?.iconURL() ?? '',
 					})
 					.addField('Logs', logs?.channel ? `<#${logs.channel}>` : disabled)
-					.addField('Punishment', punish?.option ?? disabled)
+					.addField('Punishment', punish?.option.toLowerCase() ?? disabled)
 					.setColor('GREEN');
 				await interaction.reply({ embeds: [show] });
 				break;
 
 			case 'punishment':
-				const punishment = interaction.options.getString('punishment') as PunishOption;
 				if (!interaction.memberPermissions?.has(Permissions.FLAGS.ADMINISTRATOR)) {
 					await interaction.reply("You don't have permission to do this!");
 					break;
 				}
-				if (!punishment) {
-					await interaction.reply(':x: | **Provide The punishment**');
-					break;
-				}
-				if (
-					!(
-						punishment === 'BAN' ||
-						punishment === 'KICK' ||
-						punishment === 'DEMOTE' ||
-						punishment === 'QUARANTINE'
-					)
-				) {
-					await interaction.reply(
-						':x: | **The punishment can only be kick, ban, quarantine or demote**'
-					);
-					break;
-				}
+				const punishment = interaction.options.getString('punishment') as PunishOption;
 				await prisma.punish.upsert({
 					where: { guild: interaction.guildId! },
 					update: { option: punishment },
@@ -100,8 +83,7 @@ export default {
 						option: punishment,
 					},
 				});
-
-				await interaction.reply('**The punishment has been set to ' + punishment + '**');
+				await interaction.reply(`**The punishment has been set to ${punishment}**`);
 				break;
 
 			case 'logs':
@@ -110,21 +92,17 @@ export default {
 					break;
 				}
 				const channel = interaction.options.getChannel('channel') as TextChannel | null;
-				if (channel?.guildId !== interaction.guildId!) {
-					await interaction.reply(':x: | **That channel is not from this server**');
-					break;
-				}
 				await prisma.channel.upsert({
 					where: { guild_type: { guild: interaction.guildId!, type: 'LOGS' } },
-					update: { channel: channel.id },
+					update: { channel: channel?.id! },
 					create: {
 						guild: interaction.guildId!,
 						type: 'LOGS',
-						channel: channel.id,
+						channel: channel?.id!,
 					},
 				});
-				channel.send('**Anti Raid logs Channel**');
-				await interaction.reply('**The logs channel has been set to ' + channel + '**');
+				channel?.send('**Spy Bot logs Channel**');
+				await interaction.reply(`**The logs channel has been set to <#${channel?.id}>**`);
 				break;
 
 			case 'help':
@@ -133,19 +111,13 @@ export default {
 					.setDescription(
 						`
 						**The Options are listed below:**
-						config channelCreateLimit
-						config channelDeleteLimit
-						config roleCreateLimit
-						config roleDeleteLimit
-						config banLimit
-						config kickLimit
 						config logs
 						config show
 						config punishment
 						config help
-					`
+						`
 					)
-					.setColor('#FF0000')
+					.setColor('RED')
 					.setThumbnail(interaction.user.displayAvatarURL({ dynamic: true }))
 					.setAuthor({
 						name: interaction.user.tag,

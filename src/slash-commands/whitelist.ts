@@ -1,6 +1,6 @@
 import type { Slash } from '../types';
 import { SlashCommandBuilder } from '@discordjs/builders';
-import { MessageEmbed } from 'discord.js';
+import { MessageEmbed, Permissions } from 'discord.js';
 import { prisma } from '../database';
 
 export default {
@@ -36,15 +36,11 @@ export default {
 		const user = interaction.options.getUser('user');
 		switch (interaction.options.getSubcommand()) {
 			case 'add':
-				if (interaction.user.id !== interaction.guildId) {
-					await interaction.reply(':x: | **Only The owner of the Server can whitelist people**');
+				if (!interaction.memberPermissions?.has(Permissions.FLAGS.ADMINISTRATOR)) {
+					await interaction.reply(":x: | **You don't have permission to do this!**");
 					break;
 				}
-				if (!user) {
-					await interaction.reply(':x: | **Mention The User**');
-					break;
-				}
-				if (whitelist?.users.some(id => id === user.id)) {
+				if (whitelist?.users.some(id => id === user?.id)) {
 					await interaction.reply(':x: | **The User is already whitelisted**');
 					break;
 				}
@@ -52,21 +48,17 @@ export default {
 					where: { guild: interaction.guild?.id! },
 					update: {
 						users: {
-							push: user.id,
+							push: user?.id!,
 						},
 					},
-					create: { guild: interaction.guildId!, users: [user.id] },
+					create: { guild: interaction.guildId!, users: [user?.id!] },
 				});
 				await interaction.reply(`**The user has been whitelisted!**`);
 				break;
 
 			case 'remove':
-				if (interaction.user.id !== interaction.guild?.id) {
-					await interaction.reply(':x: | **Only The owner of the Server can unwhitelist people**');
-					break;
-				}
-				if (!user) {
-					await interaction.reply(':x: | **Mention The User**');
+				if (!interaction.memberPermissions?.has(Permissions.FLAGS.ADMINISTRATOR)) {
+					await interaction.reply(":x: | **You don't have permission to do this!**");
 					break;
 				}
 				if (!whitelist?.users?.find(id => id === user?.id)) {
