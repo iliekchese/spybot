@@ -37,9 +37,7 @@ export default {
 					select: { channel: true },
 				});
 				if (!suggestions) {
-					message.channel.send(
-						':x: | **There is no suggestions channel set:** `.suggestions set <channel>`'
-					);
+					message.channel.send(':x: | **There is no suggestions channel set:** `.suggestions set <channel>`');
 					break;
 				}
 				const suggestionsChannel = client.channels.cache.get(suggestions?.channel!) as TextChannel;
