@@ -41,11 +41,10 @@ export default {
 					break;
 				}
 				const suggestionsChannel = (await client.channels.fetch(suggestions?.channel!)) as TextChannel;
-				suggestionsChannel?.send({ embeds: [embed] }).then(msg => {
-					msg.react('✅');
-					msg.react('❌');
-					message.channel.send('**Suggestion submitted**');
-				});
+				const msg = await suggestionsChannel?.send({ embeds: [embed] });
+				msg.react('✅');
+				msg.react('❌');
+				message.channel.send('**Suggestion submitted**');
 		}
 	},
 } as Command;
