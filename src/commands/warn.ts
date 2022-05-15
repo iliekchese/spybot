@@ -10,7 +10,7 @@ export default {
 		const reason = args.slice(2).join(' ');
 		const member = message.mentions.members?.first();
 		const warns = await prisma.warn.findMany({
-			where: { user: member?.user.id || message.author.id }
+			where: { user: member?.user.id || message.author.id },
 		});
 		switch (args[0]) {
 			case 'add':
@@ -47,24 +47,22 @@ export default {
 					where: { guild_type: { guild: message.guildId!, type: 'LOGS' } },
 					select: { channel: true },
 				});
-				const warnlogEmbed = new MessageEmbed()
+				if (!logs) break;
+				const warnLogEmbed = new MessageEmbed()
 					.setTitle(`**Member Warned**: ${member?.user.tag}`)
 					.setDescription(`**Reason**: ${reason} \n\n **Reporter**: ${message.author}`)
 					.setColor('#2F3136')
 					.setThumbnail(member?.user.avatarURL()!);
-				const logsChannel = message.guild?.channels.cache.get(logs?.channel!) as TextChannel;
-				logsChannel.send({ embeds: [warnlogEmbed] });
+				const logsChannel = (await message.guild?.channels.fetch(logs?.channel!)) as TextChannel;
+				if (!logsChannel) break;
+				logsChannel.send({ embeds: [warnLogEmbed] });
 
-				const warnEmbed = new MessageEmbed()
-					.setDescription(`${member?.user} was warned for ${reason}`)
-					.setColor('#2F3136');
+				const warnEmbed = new MessageEmbed().setDescription(`${member?.user} was warned for ${reason}`).setColor('#2F3136');
 				message.channel.send({ embeds: [warnEmbed] });
 
 				const dmEmbed = new MessageEmbed()
 					.setTitle('Warning')
-					.setDescription(
-						`You were warned in **${message.guild?.name}** \n You currently have: **${warnings}** Warnings`
-					)
+					.setDescription(`You were warned in **${message.guild?.name}** \n You currently have: **${warnings}** Warnings`)
 					.setColor('#2F3136');
 
 				member.user.send({ embeds: [dmEmbed] });
