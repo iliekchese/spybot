@@ -1,7 +1,5 @@
 {
 	"compilerOptions": {
-		"target": "ES5",
-		"lib": ["ES2017"],
 		"allowJs": true,
 
 		/* Modules */
@@ -24,8 +22,9 @@
 		"alwaysStrict": true,
 		"noUnusedLocals": true,
 		"noUnusedParameters": true,
-		"allowUnusedLabels": false /* Skip type checking .d.ts files that are included with TypeScript. */,
-		"skipLibCheck": true /* Skip type checking all .d.ts files. */
+		"allowUnusedLabels": false,
+		"skipLibCheck": true
 	},
-	"exclude": ["/node_modules", "dist"]
+	"include": ["./src"],
+	"exclude": ["/node_modules", "./dist"]
 }

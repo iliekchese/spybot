@@ -1,12 +1,15 @@
 import type { GuildMember } from 'discord.js';
 import { prisma } from '../database';
 
-const punish = async (member: GuildMember, reason: string, guild: string): Promise<string> => {
-	const whitelist = await prisma.whitelist.findUnique({
-		where: { guild },
-		select: { users: true },
-	});
-	if (whitelist?.users.some(id => id === member?.user.id)) return 'whitelist';
+interface PunisherOption {
+	member: GuildMember;
+	reason: string;
+	guild: string;
+}
+
+type Punish = (args: PunisherOption) => Promise<string>;
+
+const punish: Punish = async ({ member, reason, guild }) => {
 	const punish = await prisma.punish.findUnique({
 		where: { guild },
 		select: { option: true },
@@ -21,12 +24,12 @@ const punish = async (member: GuildMember, reason: string, guild: string): Promi
 			break;
 
 		case 'DEMOTE':
-			member.roles.set([]);
+			await member.roles.set([]);
 			break;
 
 		case 'QUARANTINE':
 			const quarantineRole = member?.guild.roles.cache.find(role => role.name === 'Quarantine');
-			member.roles.set([quarantineRole!]);
+			await member.roles.set([quarantineRole!]);
 			break;
 	}
 	return punish?.option!;

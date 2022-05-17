@@ -42,7 +42,13 @@ export default {
 					},
 				});
 				const warnings = (await prisma.warn.findMany()).length;
-				if (warnings % wl.limit === 0) await punish(member, reason, message.guildId!);
+				if (warnings % wl.limit === 0) {
+					await punish({
+						member,
+						reason,
+						guild: message.guildId!,
+					});
+				}
 				const logs = await prisma.channel.findUnique({
 					where: { guild_type: { guild: message.guildId!, type: 'LOGS' } },
 					select: { channel: true },

@@ -6,30 +6,26 @@ import { punish } from '../utils';
 
 export const handler: Handler = ({ client }) => {
 	client.on('messageCreate', async msg => {
-		if (
-			msg.content.includes('@everyone') ||
-			msg.content.includes('@here') ||
-			msg.mentions.members?.size! >= 7
-		) {
+		if (msg.content.includes('@everyone') || msg.content.includes('@here') || msg.mentions.members?.size! >= 7) {
 			const member = msg.member;
-			const punishment = await punish(
-				member!,
-				`attempting to mention ${msg.content}`,
-				msg.guildId!
-			);
-			if (punishment === 'whitelist') return;
-
+			const punishment = await punish({
+				member: member!,
+				reason: `attempting to mention ${msg.content}`,
+				guild: msg.guildId!,
+			});
+			const whitelist = await prisma.whitelist.findUnique({
+				where: { guild: msg.guildId! },
+				select: { users: true },
+			});
+			if (whitelist?.users.some(id => id === member?.user.id)) return;
 			await msg.delete();
-
 			const quarantineEmbed = new MessageEmbed()
 				.setTitle('Quarantine')
 				.setAuthor({
 					name: member?.user.tag!,
 					iconURL: member?.user.avatarURL()!,
 				})
-				.setDescription(
-					`${member?.user} Was succesfully ${punishment}ed. \n For attempting to mention ${msg.content}`
-				)
+				.setDescription(`${member?.user} Was succesfully ${punishment}ed. \n For attempting to mention ${msg.content}`)
 				.setColor('#2F3136');
 			msg.channel.send({ embeds: [quarantineEmbed] });
 
