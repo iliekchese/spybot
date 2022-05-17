@@ -5,6 +5,7 @@ export const handler: Handler = ({ client }) => {
 	client.on('roleCreate', async role => {
 		const audits = await role.guild.fetchAuditLogs({
 			type: 'ROLE_CREATE',
+			limit: 1,
 		});
 		createLog({
 			audits,
@@ -18,6 +19,7 @@ export const handler: Handler = ({ client }) => {
 	client.on('roleDelete', async role => {
 		const audits = await role.guild.fetchAuditLogs({
 			type: 'ROLE_DELETE',
+			limit: 1,
 		});
 		createLog({
 			audits,

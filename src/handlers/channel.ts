@@ -6,6 +6,7 @@ export const handler: Handler = ({ client }) => {
 	client.on('channelCreate', async channel => {
 		const audits = await channel.guild.fetchAuditLogs({
 			type: 'CHANNEL_CREATE',
+			limit: 1,
 		});
 		createLog({
 			audits,
@@ -20,6 +21,7 @@ export const handler: Handler = ({ client }) => {
 		if (channel instanceof GuildChannel) {
 			const audits = await channel.guild.fetchAuditLogs({
 				type: 'CHANNEL_DELETE',
+				limit: 1,
 			});
 			createLog({
 				audits,
