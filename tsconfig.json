@@ -16,7 +16,6 @@
 		"noImplicitAny": true,
 		"strictNullChecks": true,
 		"noImplicitThis": true,
-		"useUnknownInCatchVariables": false,
 		"alwaysStrict": true,
 		"noUnusedLocals": true,
 		"noUnusedParameters": true,
