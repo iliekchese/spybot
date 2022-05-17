@@ -1,2 +1,2 @@
 run = "npm run build:start"
-hidden = [".github", "dist", ".gitignore"]
+hidden = [".github", "/dist", ".gitignore"]
