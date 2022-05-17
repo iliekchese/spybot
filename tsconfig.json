@@ -1,7 +1,5 @@
 {
 	"compilerOptions": {
-		"allowJs": true,
-
 		/* Modules */
 		"rootDir": "./src",
 		"moduleResolution": "Node",
