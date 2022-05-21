@@ -5,18 +5,18 @@
 	"main": "dist/bot.js",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/AngelNext/spybot.git"
+		"url": "git+https://github.com/spybot-discord/spybot.git"
 	},
 	"license": "ISC",
 	"bugs": {
-		"url": "https://github.com/AngelNext/spybot/issues"
+		"url": "https://github.com/spybot-discord/spybot/issues"
 	},
 	"scripts": {
 		"build": "tsc",
 		"start": "node .",
 		"build:start": "npm run build && npm run start"
 	},
-	"homepage": "https://angelnext.github.io/spybot-docs/",
+	"homepage": "https://spybot-discord.github.io/spybot-page/",
 	"dependencies": {
 		"@discordjs/builders": "^0.13.0",
 		"@discordjs/rest": "^0.4.1",
