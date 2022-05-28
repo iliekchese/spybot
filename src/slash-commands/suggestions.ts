@@ -53,8 +53,8 @@ export default {
 				}
 				const suggestionsChannel = (await client.channels.fetch(suggestions.channel!)) as TextChannel;
 				const msg = await suggestionsChannel?.send({ embeds: [embed] });
-				msg.react('✅');
-				msg.react('❌');
+				await msg.react('✅');
+				await msg.react('❌');
 				await interaction.reply('**Suggestion submitted**');
 				break;
 		}
