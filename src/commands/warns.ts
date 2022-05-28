@@ -10,7 +10,7 @@ export default {
 		const reason = args.slice(2).join(' ');
 		const member = message.mentions.members?.first();
 		const warns = await prisma.warn.findMany({
-			where: { user: member?.user.id || message.author.id },
+			where: { guild: message.guildId!, user: member?.user.id || message.author.id },
 		});
 		switch (args[0]) {
 			case 'add':

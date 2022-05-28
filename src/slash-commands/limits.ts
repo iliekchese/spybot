@@ -87,6 +87,6 @@ export default {
 				limit: limit!,
 			},
 		});
-		await interaction.reply(`${limit} has been updated!`);
+		await interaction.reply(`**${type.toLowerCase()}** limit has been updated to **${limit}**!`);
 	},
 } as Slash;

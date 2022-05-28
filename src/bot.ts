@@ -21,32 +21,6 @@ process.on('uncaughtException', ({ message }) => loxt.error(message));
 loxt.start('Loading');
 loxt.info('made by eldi mindcrafter#0001 & AngelNext#9162');
 
-(async () => {
-	(await readdir(join(__dirname, `./handlers`)))
-		.filter(file => file.endsWith('.js'))
-		.forEach(async file => {
-			const { handler } = await import(join(__dirname, `./handlers/${file}`));
-			handler({ client });
-		});
-
-	(await readdir(join(__dirname, `./commands`)))
-		.filter(file => file.endsWith('.js'))
-		.forEach(async file => {
-			const { default: pull }: { default: Command } = await import(join(__dirname, `./commands/${file}`));
-			commands.set(pull.name, pull);
-			pull.aliases?.forEach(a => commands.set(a, pull));
-		});
-	loxt.info('Commands Loaded!');
-
-	(await readdir(join(__dirname, `./slash-commands`)))
-		.filter(file => file.endsWith('.js'))
-		.forEach(async file => {
-			const { default: pull }: { default: Slash } = await import(join(__dirname, `./slash-commands/${file}`));
-			slashCommands.set(pull.data.name, pull);
-		});
-	loxt.info('Application Commands loaded!');
-})();
-
 // ------- READY BOT -----
 client.once('ready', async () => {
 	try {
@@ -84,16 +58,50 @@ client.on('messageCreate', message => {
 	commands.get(cmd!)?.run({ client, message, args });
 });
 
-// -------- START BOT ------------
+/**
+ * Load all commands from a folder.
+ * @param {string} dir
+ * @async
+ */
+const loadCommands = async (dir: string) => {
+	const options: Record<string, (command: any) => void> = {
+		'slash-commands': (command: Slash) => slashCommands.set(command.data.name, command),
+		commands(command: Command) {
+			commands.set(command.name, command);
+			command.aliases?.forEach(a => commands.set(a, command));
+		},
+	};
+	const pathToDir = join(__dirname, `./${dir}`);
+	(await readdir(pathToDir)).filter(file => file.endsWith('.js')).forEach(async file => options[dir](await import(`${pathToDir}/${file}`)));
+};
+
+/**
+ * Load all commands and handlers.
+ * @async
+ */
+const loadAllCommands = async () => {
+	(await readdir(join(__dirname, `./handlers`)))
+		.filter(file => file.endsWith('.js'))
+		.forEach(async file => {
+			const { handler } = await import(join(__dirname, `./handlers/${file}`));
+			handler({ client });
+		});
+	await Promise.all([loadCommands('commands'), loadCommands('slash-commands')]);
+	loxt.info('All Commands loaded!');
+};
+
+/**
+ * Start the bot and all it's processes
+ * @async
+ */
 const main = async () => {
 	const server = Fastify();
 	server.get('/', async () => 'Bot is ready!');
 
 	try {
-		await server.listen(3000, '0.0.0.0');
-		await client.login(TOKEN);
+		await Promise.all([loadAllCommands(), await server.listen(3000, '0.0.0.0'), await client.login(TOKEN)]);
 	} catch (err) {
-		throw err;
+		loxt.error(err);
 	}
 };
 
