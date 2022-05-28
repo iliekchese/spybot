@@ -59,34 +59,32 @@ client.on('messageCreate', message => {
 });
 
 /**
- * Load all commands from a folder.
- * @param {string} dir
- * @async
- */
-const loadCommands = async (dir: string) => {
-	const options: Record<string, (command: any) => void> = {
-		'slash-commands': (command: Slash) => slashCommands.set(command.data.name, command),
-		commands(command: Command) {
-			commands.set(command.name, command);
-			command.aliases?.forEach(a => commands.set(a, command));
-		},
-	};
-	const pathToDir = join(__dirname, `./${dir}`);
-	(await readdir(pathToDir)).filter(file => file.endsWith('.js')).forEach(async file => options[dir](await import(`${pathToDir}/${file}`)));
-};
-
-/**
  * Load all commands and handlers.
  * @async
  */
-const loadAllCommands = async () => {
-	(await readdir(join(__dirname, `./handlers`)))
+const loadCommands = async () => {
+	const pathToHandlers = join(__dirname, './handlers');
+	const pathToSlash = join(__dirname, './slash-commands');
+	const pathToCommand = join(__dirname, './commands');
+	(await readdir(pathToHandlers))
 		.filter(file => file.endsWith('.js'))
 		.forEach(async file => {
-			const { handler } = await import(join(__dirname, `./handlers/${file}`));
+			const { handler } = await import(`${pathToHandlers}/${file}`);
 			handler({ client });
 		});
-	await Promise.all([loadCommands('commands'), loadCommands('slash-commands')]);
+	(await readdir(pathToSlash))
+		.filter(file => file.endsWith('.js'))
+		.forEach(async file => {
+			const { default: s }: { default: Slash } = await import(`${pathToSlash}/${file}`);
+			slashCommands.set(s.data.name, s);
+		});
+	(await readdir(pathToCommand))
+		.filter(file => file.endsWith('.js'))
+		.forEach(async file => {
+			const { default: c }: { default: Command } = await import(`${pathToCommand}/${file}`);
+			commands.set(c.name, c);
+			c.aliases?.forEach(a => commands.set(a, c));
+		});
 	loxt.info('All Commands loaded!');
 };
 
@@ -99,7 +97,7 @@ const main = async () => {
 	server.get('/', async () => 'Bot is ready!');
 
 	try {
-		await Promise.all([loadAllCommands(), await server.listen(3000, '0.0.0.0'), await client.login(TOKEN)]);
+		await Promise.all([loadCommands(), await server.listen(3000, '0.0.0.0'), await client.login(TOKEN)]);
 	} catch (err) {
 		loxt.error(err);
 	}
