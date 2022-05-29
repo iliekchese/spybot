@@ -1,2 +1,4 @@
-run = "npm run build:start"
+run = ["npm", "run", "build:start"]
 hidden = [".github", "/dist", ".gitignore"]
+
+entypoint="dist/bot.js"
