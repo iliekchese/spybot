@@ -64,7 +64,7 @@ export default {
 						user: member.id,
 					},
 				});
-				const warnings = (await prisma.warn.findMany()).length;
+				const warnings = warns.length;
 				if (warnings % wl.limit === 0) {
 					await punish({
 						member,
