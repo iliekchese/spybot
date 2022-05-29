@@ -1,7 +1,7 @@
 import type { CommandInteraction, Client, Message } from 'discord.js';
 import type { SlashCommandBuilder } from '@discordjs/builders';
 
-export type Handler = (handler: { client: Client }) => void;
+export type Logger = (client: Client) => void;
 
 export interface Slash {
 	data: SlashCommandBuilder;
@@ -10,7 +10,7 @@ export interface Slash {
 
 export interface Command {
 	name: string;
-	aliases: string[];
+	aliases?: string[];
 	run(args: CommandArgs): void | Promise<void>;
 }
 

@@ -5,7 +5,7 @@ import Fastify from 'fastify';
 import { readdir } from 'node:fs/promises';
 import { Loxt } from 'loxt';
 import { join } from 'node:path';
-import type { Command, Slash } from './types';
+import type { Command, Logger, Slash } from './types';
 
 const TOKEN = process.env.TOKEN!;
 const loxt = new Loxt();
@@ -58,38 +58,43 @@ client.on('messageCreate', message => {
 	commands.get(cmd!)?.run({ client, message, args });
 });
 
+/** Read commands and return function with command
+ * @param {string} dir - directory to read
+ * @returns The function to be called
+ * @async
+ */
+const readCommands = async (dir: string) => {
+	const files = await readdir(join(__dirname, dir));
+	return (fn: (c: any) => void) =>
+		files
+			.filter(file => file.endsWith('.js'))
+			.forEach(async file => {
+				const command = await import(join(__dirname, dir, file));
+				fn(command.default);
+			});
+};
+
 /**
  * Load all commands and handlers.
  * @async
  */
 const loadCommands = async () => {
-	const pathToHandlers = join(__dirname, './handlers');
-	const pathToSlash = join(__dirname, './slash-commands');
-	const pathToCommand = join(__dirname, './commands');
-	(await readdir(pathToHandlers))
-		.filter(file => file.endsWith('.js'))
-		.forEach(async file => {
-			const { handler } = await import(`${pathToHandlers}/${file}`);
-			handler({ client });
-		});
-	(await readdir(pathToSlash))
-		.filter(file => file.endsWith('.js'))
-		.forEach(async file => {
-			const { default: s }: { default: Slash } = await import(`${pathToSlash}/${file}`);
-			slashCommands.set(s.data.name, s);
-		});
-	(await readdir(pathToCommand))
-		.filter(file => file.endsWith('.js'))
-		.forEach(async file => {
-			const { default: c }: { default: Command } = await import(`${pathToCommand}/${file}`);
-			commands.set(c.name, c);
-			c.aliases?.forEach(a => commands.set(a, c));
-		});
+	const loggers = await readCommands('loggers');
+	const slash = await readCommands('slash-commands');
+	const commandsDir = await readCommands('commands');
+
+	loggers((logger: Logger) => logger(client));
+	slash((s: Slash) => slashCommands.set(s.data.name, s));
+	commandsDir((c: Command) => {
+		commands.set(c.name, c);
+		c.aliases?.forEach(a => commands.set(a, c));
+	});
+
 	loxt.info('All Commands loaded!');
 };
 
 /**
- * Start the bot and all it's processes
+ * Start the bot and all its processes
  * @async
  */
 const main = async () => {

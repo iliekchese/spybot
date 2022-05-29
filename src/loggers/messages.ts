@@ -1,9 +1,9 @@
-import type { Handler } from '../types';
+import type { Logger } from '../types';
 import type { TextChannel } from 'discord.js';
 import { prisma } from '../database';
 import { MessageEmbed } from 'discord.js';
 
-export const handler: Handler = ({ client }) => {
+const messageLogger: Logger = client => {
 	client.on('messageDelete', async message => {
 		const audit = await message.guild?.fetchAuditLogs({
 			type: 'MESSAGE_DELETE',
@@ -58,3 +58,5 @@ export const handler: Handler = ({ client }) => {
 		if (logsChannel) logsChannel.send({ embeds: [messageUpdateEmbed] });
 	});
 };
+
+export default messageLogger;

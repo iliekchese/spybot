@@ -1,10 +1,10 @@
-import type { Handler } from '../types';
+import type { Logger } from '../types';
 import type { TextChannel } from 'discord.js';
 import { MessageEmbed } from 'discord.js';
 import { prisma } from '../database';
 import { punish } from '../utils';
 
-export const handler: Handler = ({ client }) => {
+const pingControlLogger: Logger = client => {
 	client.on('messageCreate', async msg => {
 		if (msg.content.includes('@everyone') || msg.content.includes('@here') || msg.mentions.members?.size! >= 7) {
 			const member = msg.member;
@@ -43,3 +43,5 @@ export const handler: Handler = ({ client }) => {
 		}
 	});
 };
+
+export default pingControlLogger;

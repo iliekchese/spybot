@@ -1,7 +1,7 @@
-import type { Handler } from '../types';
+import type { Logger } from '../types';
 import { createLog } from '../utils';
 
-export const handler: Handler = ({ client }) => {
+const memberRemoveLogger: Logger = client => {
 	client.on('guildBanAdd', async ban => {
 		const audits = await ban.guild.fetchAuditLogs({
 			type: 'MEMBER_BAN_ADD',
@@ -33,3 +33,5 @@ export const handler: Handler = ({ client }) => {
 		});
 	});
 };
+
+export default memberRemoveLogger;
