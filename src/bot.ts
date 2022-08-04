@@ -31,6 +31,7 @@ client.once('ready', async () => {
 	} catch (err) {
 		loxt.error(err);
 	}
+	
 	loxt.info(`Ready on client (${client.user?.tag})`);
 	loxt.info(`watching ${client.guilds.cache.size} Servers, ${client.channels.cache.size} channels & ${client.users.cache.size} users`);
 	client.user?.setActivity(' for Raiders | .help', {
@@ -102,7 +103,11 @@ const main = async () => {
 	server.get('/', async () => 'Bot is ready!');
 
 	try {
-		await Promise.all([loadCommands(), await server.listen(3000, '0.0.0.0'), await client.login(TOKEN)]);
+		await Promise.all([
+			loadCommands(), 
+			server.listen(3000, '0.0.0.0'), 
+			client.login(TOKEN)
+		]);
 	} catch (err) {
 		loxt.error(err);
 	}
